@@ -14,7 +14,6 @@ A collecton of emacs utilities.
 * es-delete-duplicate-lines
 * es-duplicate-line-or-region
 * es-find-function-bound-to
-* es-frame-color-alert
 * es-highlighter
 * es-ido-like-helm
 * es-increase-number-at-point

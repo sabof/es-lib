@@ -64,46 +64,4 @@
     (set-window-dedicated-p nil t)
     (setq window-size-fixed t)))
 
-(defun* es-frame-color-alert (&optional (times 6))
-  (interactive)
-  (let* ((colors (defined-colors))
-         (repeats (* 2 times))
-         (all-frames (frame-list))
-         (original-colors
-          (mapcar (lambda (frame)
-                    (list frame
-                          :bg (frame-parameter frame 'background-color)
-                          :fg (frame-parameter frame 'foreground-color)))
-                  all-frames))
-         (counter 0)
-         the-timer
-         bg-color
-         fg-color
-         current-original-colors)
-    (setq the-timer
-          (run-with-timer
-           0 1 (lambda ()
-                 (block ablock
-                   (when (= counter repeats)
-                     (cancel-timer the-timer)
-                     (return-from ablock))
-                   (dolist (frame all-frames)
-                     (if (evenp counter)
-                         (progn
-                           (setq bg-color (es-random-member colors)
-                                 fg-color (if (dark-hex-color-p
-                                               (emacs-color-to-hex bg-color))
-                                              "white"
-                                              "black"))
-                           (set-frame-parameter frame 'background-color bg-color)
-                           (set-frame-parameter frame 'foreground-color fg-color))
-                         (progn
-                           (setq current-original-colors
-                                 (rest (assq frame original-colors)))
-                           (set-frame-parameter frame 'background-color
-                                                (getf current-original-colors :bg))
-                           (set-frame-parameter frame 'foreground-color
-                                                (getf current-original-colors :fg)))))
-                   (incf counter)))))))
-
 (provide 'es-lib-lexical)

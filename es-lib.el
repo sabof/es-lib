@@ -375,6 +375,7 @@ first call, then marks the statement."
 
 (defun* es-ido-like-helm ()
   (interactive)
+  (require 'recentf)
   (when (window-dedicated-p)
     (message "This is a dedicated window")
     (return-from es-ido-like-helm))
