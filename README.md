@@ -1,6 +1,6 @@
 #es-lib
 A collecton of emacs utilities.
-## Index:
+## Index (auto-generated before each commit):
 
 ### Commands:
 
@@ -19,12 +19,12 @@ A collecton of emacs utilities.
 * es-ido-like-helm
 * es-increase-number-at-point
 * es-jump-line
+* es-make-timer-buffer
 * es-manage-unsaved-buffers
 * es-mouse-yank-replace-symbol
 * es-new-empty-buffer
 * es-push-line
 * es-query-replace-symbol-at-point
-* make-timer-buffer
 
 ### Non-interactive:
 

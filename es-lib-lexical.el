@@ -26,7 +26,7 @@
   (lambda (&rest args)
     (apply func (reverse args))))
 
-(defun* make-timer-buffer ()
+(defun* es-make-timer-buffer ()
   (interactive)
   (let (( start-time (current-time))
         ( buf (generate-new-buffer "*timer*"))
