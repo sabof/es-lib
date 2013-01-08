@@ -26,11 +26,10 @@
   (lambda (&rest args)
     (apply func (reverse args))))
 
-(defun* es-make-timer-buffer ()
-  (interactive)
+(defun* es-make-timer-buffer (time-limit)
+  (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))
         ( buf (generate-new-buffer "*timer*"))
-        ( time-limit 25)
         time-difference
         the-timer)
     (setq the-timer

@@ -76,11 +76,13 @@
   (with-current-buffer (get-buffer buffer-or-name)
     major-mode))
 
-(defun es-mapbuffer (function list)
+(defun es-mapbuffer (function buffer-list)
+  "Perform FUNCTION inside a with-current-buffer for each member of
+BUFFER-LIST."
   (mapcar (lambda (buf)
             (with-current-buffer buf
               (funcall function buf)))
-          list))
+          buffer-list))
 
 (defun es-buffers-where-local-variable-is (var-sym value)
   (remove-if-not (lambda (buf)
