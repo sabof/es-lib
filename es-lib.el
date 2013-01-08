@@ -17,6 +17,15 @@
 (defmacro es-neither (&rest args)
   `(not (or ,@args)))
 
+(defmacro es-define-buffer-local-vars (&rest list)
+  (let (result)
+    (while list
+      (let ((name (pop list))
+            (value (pop list)))
+        (push `(defvar ,name ,value) result)
+        (push `(make-variable-buffer-local (quote ,name)) result)))
+    (cons 'progn (nreverse result))))
+
 ;;; Funcions
 
 (defun es-kill-buffer-dont-ask (&optional buffer)

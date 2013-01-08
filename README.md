@@ -1,6 +1,7 @@
 #es-lib
 A collecton of emacs utilities.
-## Index (auto-generated before each commit):
+## Index:
+_(auto-generated before each commit)_
 
 ### Commands:
 
@@ -75,6 +76,7 @@ A collecton of emacs utilities.
 
 ### Macros:
 
+* es-define-buffer-local-vars
 * es-neither
 * es-silence-messages
 * es-while-point-moving
