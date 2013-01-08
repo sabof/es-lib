@@ -1,4 +1,5 @@
 (require 'cl)
+(require 'es-lib-lexical)
 
 (defmacro es-silence-messages (&rest body)
   `(flet ((message (&rest ignore)))
@@ -222,6 +223,7 @@
 a phrase if the region is active."
   (interactive)
   (require 'highlight-symbol)
+  (require 'hi-lock)
   (if (region-active-p)
       (let* ((phrase (regexp-quote (buffer-substring (point) (mark))))
              ;; hi-lock-interactive-patterns format:
@@ -703,5 +705,10 @@ files."
 
 (defun es-random-member (list)
   (nth (random (length list)) list))
+
+(defun es-pop-to-buffer-vertically (buf)
+  (let ((split-height-threshold 0)
+        (split-width-threshold 0))
+    (pop-to-buffer buf)))
 
 (provide 'es-lib)

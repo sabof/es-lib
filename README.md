@@ -1,8 +1,8 @@
 #es-lib
-A collecton of small, but useful emacs utilities.
-Here is a (possibly inaccurate) index:
+A collecton of emacs utilities.
+## Index:
 
-##Commands:
+### Commands:
 
 * es-ack-pin-folder
 * es-ack-replace-symbol
@@ -14,6 +14,7 @@ Here is a (possibly inaccurate) index:
 * es-delete-duplicate-lines
 * es-duplicate-line-or-region
 * es-find-function-bound-to
+* es-frame-color-alert
 * es-highlighter
 * es-ido-like-helm
 * es-increase-number-at-point
@@ -23,20 +24,26 @@ Here is a (possibly inaccurate) index:
 * es-new-empty-buffer
 * es-push-line
 * es-query-replace-symbol-at-point
+* make-timer-buffer
 
-##Non-interactive:
+### Non-interactive:
 
 * es-active-region-string
 * es-add-at-eol
+* es-back-curry
 * es-buffer-mode
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
 * es-change-number-at-point
+* es-comp
+* es-complement
+* es-constantly
 * es-current-character-indentation
 * es-define-keys
 * es-duplicate-line
 * es-duplicate-region
 * es-find-duplicates
+* es-flip
 * es-goto-previous-non-blank-line
 * es-ido-completing-read-alist
 * es-indentation-end-pos
@@ -51,6 +58,7 @@ Here is a (possibly inaccurate) index:
 * es-mode-keymap
 * es-next-printable-character-pos
 * es-number-at-point
+* es-pop-to-buffer-vertically
 * es-random-member
 * es-replace-prog
 * es-replace-regexp-prog
@@ -62,3 +70,8 @@ Here is a (possibly inaccurate) index:
 * es-total-line-beginning-position
 * es-total-line-end-position
 * es-windows-with-buffer
+
+### Macros:
+
+* es-silence-messages
+* es-while-point-moving
