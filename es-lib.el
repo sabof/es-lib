@@ -21,6 +21,14 @@
                      (list "^ " "^tags$" "^TAGS$")))
              (mapcar 'buffer-name (buffer-list))))
 
+(defun es-unsaved-buffer-list ()
+  (save-window-excursion
+    (loop for buf in (buffer-list)
+          when (progn (switch-to-buffer buf)
+                      (and buffer-file-name
+                           (buffer-modified-p)))
+          collect (buffer-name buf))))
+
 (defun* es-ido-completing-read-alist (prompt alist &rest rest)
   "Each member can also be a string"
   (require 'ido)
@@ -480,14 +488,14 @@ The \"originals\" won't be included."
               (case (read-char
                      "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
                 ( ?!
-                  (dolist (buf (unsaved-buffer-list))
+                  (dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
                       (save-buffer)))
                   (return-from es-manage-unsaved-buffers))
                 ( ?s (save-buffer))
                 ( ?k (kill-buffer-dont-ask))
                 ( ?e (recursive-edit))))
-            ( or (unsaved-buffer-list)
+            ( or (es-unsaved-buffer-list)
                  (progn
                    (message "All buffers are saved")
                    (return-from es-manage-unsaved-buffers))))

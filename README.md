@@ -69,6 +69,7 @@ A collecton of emacs utilities.
 * es-total-forward-line
 * es-total-line-beginning-position
 * es-total-line-end-position
+* es-unsaved-buffer-list
 * es-windows-with-buffer
 
 ### Macros:
