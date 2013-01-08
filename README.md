@@ -32,6 +32,7 @@ A collecton of emacs utilities.
 * es-add-at-eol
 * es-back-curry
 * es-buffer-mode
+* es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
 * es-change-number-at-point
@@ -73,5 +74,6 @@ A collecton of emacs utilities.
 
 ### Macros:
 
+* es-neither
 * es-silence-messages
 * es-while-point-moving

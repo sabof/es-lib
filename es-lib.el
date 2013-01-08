@@ -12,6 +12,15 @@
          (setq ,old-point (point))
          ,@rest))))
 
+(defmacro es-neither (&rest args)
+  `(not (or ,@args)))
+
+(defun es-buffer-name-list ()
+  (remove-if (lambda (name)
+               (some (es-back-curry 'string-match-p name)
+                     (list "^ " "^tags$" "^TAGS$")))
+             (mapcar 'buffer-name (buffer-list))))
+
 (defun* es-ido-completing-read-alist (prompt alist &rest rest)
   "Each member can also be a string"
   (require 'ido)
@@ -107,7 +116,7 @@
 
 (defun es-replace-regexp-prog (regexp replacement &optional from to)
   "By default acts on the whole buffer."
-  (assert (or (neither from to) (and from to)))
+  (assert (or (es-neither from to) (and from to)))
   (save-match-data
     (save-excursion
       (goto-char (point-min))
@@ -381,7 +390,7 @@ first call, then marks the statement."
                             "<" (funcall f:parent-dir item) ">")
                     'face 'font-lock-keyword-face)
                    item)))
-         ( buffer-list (buffer-name-list))
+         ( buffer-list (es-buffer-name-list))
          ( recentf-map (mapcar f:make-recentf-map recentf-list))
          ( merged-list (append buffer-list recentf-map))
          ( no-duplicates
@@ -623,29 +632,34 @@ files."
     (and (buffer-modified-p)
          (y-or-n-p "Save current buffer?")
          (save-buffer))
-    (with-current-buffer
-        (ack-and-a-half from-symbol-or-string nil directory)
-      (set (make-local-variable 'compilation-finish-functions)
-           (list `(lambda (buffer status)
-                    (with-current-buffer buffer
-                      (compilation-next-error 1)
-                      (wgrep-change-to-wgrep-mode)
-                      (es-replace-regexp-prog
-                       ,(if was-symbol
-                            (format
-                             "\\_<%s\\_>"
-                             (regexp-quote
-                              from-symbol-or-string))
-                            (regexp-quote
-                             from-symbol-or-string))
-                       ,to-symbol-or-string
-                       (point)
-                       (point-max))
-                      (when ,auto-save
-                        (let ((wgrep-auto-save-buffer t))
-                          (wgrep-finish-edit)
-                          (quit-window)))
-                      (funcall (or ,finish-func 'ignore)))))))))
+    (ack-and-a-half from-symbol-or-string nil directory)
+    (dolist (window (window-list))
+      (when (eq (es-buffer-mode
+                 (window-buffer window))
+                'ack-and-a-half-mode)
+        (select-window window)))
+    (set (make-local-variable 'compilation-finish-functions)
+         (list `(lambda (buffer status)
+                  (with-current-buffer buffer
+                    (ignore-errors
+                      (compilation-next-error 1))
+                    (wgrep-change-to-wgrep-mode)
+                    (es-replace-regexp-prog
+                     ,(if was-symbol
+                          (format
+                           "\\_<%s\\_>"
+                           (regexp-quote
+                            from-symbol-or-string))
+                          (regexp-quote
+                           from-symbol-or-string))
+                     ,to-symbol-or-string
+                     (point)
+                     (point-max))
+                    (when ,auto-save
+                      (let ((wgrep-auto-save-buffer t))
+                        (wgrep-finish-edit)
+                        (quit-window)))
+                    (funcall (or ,finish-func 'ignore))))))))
 
 (defun* es-change-number-at-point (&optional decrease)
   (let ((number (es-number-at-point)))
