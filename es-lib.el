@@ -1,5 +1,16 @@
 (require 'cl)
 
+(defmacro es-silence-messages (&rest body)
+  `(flet ((message (&rest ignore)))
+     ,@body))
+
+(defmacro es-while-point-moving (&rest rest)
+  (let ((old-point (gensym)))
+    `(let (,old-point)
+       (while (not (equal (point) ,old-point))
+         (setq ,old-point (point))
+         ,@rest))))
+
 (defun* es-ido-completing-read-alist (prompt alist &rest rest)
   "Each member can also be a string"
   (require 'ido)
@@ -10,21 +21,14 @@
     (when selection
       (cdr (find selection alist :key 'car :test 'equal)))))
 
-(defun es-while-point-moving (&rest rest)
-  (let ((old-point (gensym)))
-    `(let (,old-point)
-       (while (not (equal (point) ,old-point))
-         (setq ,old-point (point))
-         ,@rest))))
-
 (defun es-total-line-end-position (&optional pos)
   "Kind of like
  (max (end-of-line) (end-of-visual-line))"
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving
-     (end-of-line)
-     (end-of-visual-line))
+     (end-of-visual-line)
+     (end-of-line))
     (point)))
 
 (defun es-total-line-beginning-position (&optional pos)
@@ -37,9 +41,18 @@
      (beginning-of-visual-line))
     (point)))
 
-(defun es-curry (func &rest more-args)
-  (lambda (&rest args)
-    (apply func (append more-args args))))
+(defun es-total-forward-line (arg)
+  (cond
+    ( (plusp arg)
+      (dotimes (ignore arg)
+        (goto-char (es-total-line-end-position))
+        (forward-char)))
+    ( t
+      (goto-char (es-total-line-beginning-position))
+      (dotimes (ignore (* -1 arg))
+        (backward-char)
+        (goto-char (es-total-line-beginning-position))
+        ))))
 
 (defun es-buffer-mode (buffer-or-name)
   (with-current-buffer (get-buffer buffer-or-name)
@@ -57,10 +70,6 @@
                      (equal (symbol-value var-sym)
                             value)))
                  (buffer-list)))
-
-(defmacro es-silence-messages (&rest body)
-  `(flet ((message (&rest ignore)))
-     ,@body))
 
 (defun es-string-begins-with-p (string beginning)
   "Return t if and only if string begins with BEGINNING"
@@ -130,19 +139,21 @@
         (message "Key sequence unbound"))))
 
 (defun es-add-at-eol (thing)
-  (if (es-line-matches-p "^[ \t]*$")
-      (save-excursion
-        (next-line)
-        (goto-char (fai-last-character-pos))
-        (insert thing))
-      (save-excursion
-        (goto-char (fai-last-character-pos))
-        (insert thing))))
+  (save-excursion
+    (if (es-line-empty-p)
+        (progn
+         (next-line)
+         (goto-char (es-last-character-pos))
+         (insert thing))
+        (progn
+         (goto-char (es-last-character-pos))
+         (insert thing)))))
 
 (defun es-add-semicolon-at-eol ()
   (interactive)
   (es-add-at-eol ";")
-  (fai-test-and-indent))
+  (when (fboundp 'fai-test-and-indent)
+    (fai-test-and-indent)))
 
 (defun es-add-comma-at-eol ()
   (interactive)
@@ -176,15 +187,14 @@
         ( t (beginning-of-line)
             (newline)
             (backward-char)
-            (when (bound-and-true-p fai-mode)
+            (when (fboundp 'fai-test-and-indent)
               (fai-test-and-indent)))))
 
 (defun es-jump-line ()
   "end-of-line + newline."
   (interactive)
   ;; (end-of-line)
-  (funcall (or (key-binding (kbd "C-e"))
-               'end-of-line))
+  (goto-char (es-total-line-end-position))
   (funcall (or (key-binding (kbd "<return>"))
                (key-binding (kbd "\r"))
                (key-binding (kbd "RET"))
@@ -242,11 +252,13 @@ a phrase if the region is active."
   (interactive "e")
   (save-excursion
     (mouse-set-point event)
-    (mmark-symbol-at-point)
+    (es-mark-symbol-at-point)
     (delete-region (point) (mark))
     (yank)))
 
 (defun es-c-expand-region ()
+  "A simple version of expand-region for c-like languages. Marks the symbol on
+first call, then marks the statement."
   (interactive)
   (flet (( post-scriptum ()
            (when (and (equal (point) (line-end-position))
@@ -285,7 +297,7 @@ a phrase if the region is active."
                   (line-end-position))))
            (post-scriptum)))
     (cond ( (not (eq last-command this-command))
-            (mmark-symbol-at-point))
+            (es-mark-symbol-at-point))
           ( (member (char-to-string (char-before (line-end-position)))
                     (list "{" "(" "["))
             (mark-statement-internal))
@@ -356,72 +368,6 @@ a phrase if the region is active."
              (line-end-position))))
   (indent-according-to-mode))
 
-(defun* ack-replace-symbol
-    (from-symbol-or-string
-     to-symbol-or-string
-     &key
-     directory
-     auto-save
-     finish-func
-     silent)
-  "Repalace symbol at point or region contents in multiple
-files."
-  (interactive)
-  (require 'ack-and-a-half)
-  (require 'wgrep)
-  (require 'wgrep-ack)
-  (let ((ack-and-a-half-arguments (list "-Q"))
-        was-symbol)
-    ;; Argument processing
-    (if (called-interactively-p 'any)
-        (progn (setq from-symbol-or-string
-                     (or (es-active-region-string)
-                         (when (symbol-at-point)
-                           (setq was-symbol t)
-                           (symbol-name (symbol-at-point)))
-                         (read-string "Ack Replace what: ")))
-               (setq to-symbol-or-string
-                     (read-string
-                      (format
-                       "Ack Replace %s with: "
-                       from-symbol-or-string)
-                      from-symbol-or-string))
-               (when ack-and-a-half-prompt-for-directory
-                 (setq directory
-                       (read-directory-name "In directory: "))))
-        (progn (when (symbolp from-symbol-or-string)
-                 (setq was-symbol t)
-                 (setq from-symbol-or-string
-                       (symbol-name from-symbol-or-string)))
-               (when (symbolp to-symbol-or-string)
-                 (setq to-symbol-or-string
-                       (symbol-name to-symbol-or-string)))))
-    (and (buffer-modified-p)
-         (y-or-n-p "Save current buffer?")
-         (save-buffer))
-    (with-current-buffer (ack-and-a-half from-symbol-or-string nil directory)
-      (set (make-local-variable 'compilation-finish-functions)
-           (list `(lambda (buffer status)
-                    (with-current-buffer buffer
-                      (wgrep-change-to-wgrep-mode)
-                      (compilation-next-error 1)
-                      (es-replace-regexp-prog
-                       ,(if was-symbol
-                            (format
-                             "\\_<%s\\_>"
-                             (regexp-quote
-                              from-symbol-or-string))
-                            (regexp-quote
-                             from-symbol-or-string))
-                       ,to-symbol-or-string
-                       (point)
-                       (point-max))
-                      (when ,auto-save
-                        (let ((wgrep-auto-save-buffer t))
-                          (wgrep-finish-edit)
-                          (quit-window)))
-                      (funcall (or ,finish-func 'ignore)))))))))
-
 (defun* es-ido-like-helm ()
   (interactive)
   (when (window-dedicated-p)
@@ -487,5 +433,281 @@ The \"originals\" won't be included."
     (delete-region beg end)
     (insert
      (mapconcat #'identity (delete-dups lines) "\n"))))
+
+(defun es-next-printable-character-pos (&optional position)
+  (flet ((char-after-or-nil ()
+           (if (characterp (char-after))
+               (char-to-string (char-after)))))
+    (save-excursion
+      (when position (goto-char position))
+      (loop while (member (char-after-or-nil)
+                          '(" " "	" "\n"))
+            do (forward-char)
+            finally (return (char-after-or-nil))))))
+
+(defun es-mark-symbol-at-point ()
+  (es-silence-messages
+   (if (looking-at "\\=\\(\\s_\\|\\sw\\)*\\_>")
+       (goto-char (match-end 0))
+       (unless (memq (char-before) '(?\) ?\"))
+         (forward-sexp)))
+   (mark-sexp -1)
+   (exchange-point-and-mark)
+   (when (equal (char-after) ?\')
+     (forward-char))))
+
+(defun es-kill-dead-shelss ()
+  (mapc 'kill-buffer-dont-ask
+        (remove-if-not
+         (lambda (buf)
+           (and (eq (es-buffer-mode buf) 'shell-mode)
+                (not (buffer-process buf))))
+         (buffer-list))))
+
+(defun* es-manage-unsaved-buffers()
+  "Similar to what happends when emacs is about to quit."
+  (interactive)
+  (save-excursion
+    (save-window-excursion
+      (mapc ( lambda (buf)
+              (switch-to-buffer buf)
+              (case (read-char
+                     "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
+                ( ?!
+                  (dolist (buf (unsaved-buffer-list))
+                    (with-current-buffer buf
+                      (save-buffer)))
+                  (return-from es-manage-unsaved-buffers))
+                ( ?s (save-buffer))
+                ( ?k (kill-buffer-dont-ask))
+                ( ?e (recursive-edit))))
+            ( or (unsaved-buffer-list)
+                 (progn
+                   (message "All buffers are saved")
+                   (return-from es-manage-unsaved-buffers))))
+      (message "Done"))))
+
+
+(defun es-query-replace-symbol-at-point ()
+  (interactive)
+  (let* (( original
+           (if (region-active-p)
+               (buffer-substring-no-properties
+                (region-beginning)
+                (region-end))
+               (symbol-name
+                (symbol-at-point))))
+         ( replace-what
+           (if (region-active-p)
+               (regexp-quote original)
+               (concat "\\_<"
+                       (regexp-quote original)
+                       "\\_>")))
+         ( replacement
+           (read-from-minibuffer
+            (format "Replace \"%s\" with: " original)
+            original)))
+    (save-excursion
+      (query-replace-regexp
+       replace-what
+       replacement
+       nil (line-beginning-position)
+       (point-max)))
+    (when (save-excursion
+            (re-search-backward
+             replace-what
+             nil t))
+      (save-excursion
+        (query-replace-regexp
+         replace-what
+         replacement
+         nil (point-min) (line-beginning-position))))))
+
+(defun es-last-character-pos ()
+  (save-match-data
+    (save-excursion
+      (end-of-line)
+      (if (re-search-backward
+           "[^ \t]" (line-beginning-position) t)
+          (progn (forward-char)
+                 (point))
+          (line-beginning-position)))))
+
+(defun es-line-folded-p ()
+  "Checks whether the line contains a multiline folding"
+  (not (equal (list (line-beginning-position)
+                    (line-end-position))
+              (list (es-total-line-beginning-position)
+                    (es-total-line-end-position)))))
+
+(defun es-mode-keymap (mode-sym)
+  (symbol-value (intern (concat (symbol-name mode-sym) "-map"))))
+
+(defun es-number-at-point ()
+  (when (looking-at "[[:digit:]-]+")
+    (save-excursion
+      (while (looking-at "[[:digit:]-]+")
+        (backward-char))
+      (list (match-string-no-properties 0)
+            (match-beginning 0)
+            (match-end 0)))))
+
+(defun es-toggle-true-false-maybe ()
+  (save-excursion
+    (flet (( replace (new)
+             (es-mark-symbol-at-point)
+             (delete-region (point) (mark))
+             (insert new)
+             t))
+      (cond ( (eq (symbol-at-point) 'true)
+              (replace "false"))
+            ( (eq (symbol-at-point) 'false)
+              (replace "true"))
+            ( (eq (symbol-at-point) 't)
+              (replace "nil"))
+            ( (equal (word-at-point) "nil")
+              (replace "t"))
+            ( t nil)))))
+
+(defun es-goto-previous-non-blank-line ()
+  (save-match-data
+    (beginning-of-line)
+    (re-search-backward "[^ \n\t]")
+    (beginning-of-line)))
+
+(defun es-current-character-indentation ()
+  "Like (current-indentation), but counts tabs as single characters"
+  (save-excursion
+    (back-to-indentation)
+    (- (point) (line-beginning-position))))
+
+(defun* es-ack-replace-symbol
+    (from-symbol-or-string
+     to-symbol-or-string
+     &key
+     directory
+     auto-save
+     finish-func
+     silent)
+  "Repalace symbol at point, or region contents in multiple
+files."
+  (interactive (list nil nil))
+  (require 'ack-and-a-half)
+  (require 'wgrep)
+  (require 'wgrep-ack)
+  (let ((ack-and-a-half-arguments (list "-Q"))
+        was-symbol)
+    ;; Argument processing
+    (if (called-interactively-p 'any)
+        (progn (setq from-symbol-or-string
+                     (or (es-active-region-string)
+                         (when (symbol-at-point)
+                           (setq was-symbol t)
+                           (symbol-name (symbol-at-point)))
+                         (let (sym)
+                           (when (setq sym (read-string
+                                            "Ack Replace which symbol: "))
+                             (setq was-symbol t)
+                             sym))
+                         (return-from es-ack-replace-symbol)))
+               (setq to-symbol-or-string
+                     (read-string
+                      (format
+                       "Ack Replace %s with: "
+                       from-symbol-or-string)
+                      from-symbol-or-string))
+               (setq directory (ack-and-a-half-read-dir)))
+        (progn (when (symbolp from-symbol-or-string)
+                 (setq was-symbol t)
+                 (setq from-symbol-or-string
+                       (symbol-name from-symbol-or-string)))
+               (when (symbolp to-symbol-or-string)
+                 (setq to-symbol-or-string
+                       (symbol-name to-symbol-or-string)))))
+    (and (buffer-modified-p)
+         (y-or-n-p "Save current buffer?")
+         (save-buffer))
+    (with-current-buffer
+        (ack-and-a-half from-symbol-or-string nil directory)
+      (set (make-local-variable 'compilation-finish-functions)
+           (list `(lambda (buffer status)
+                    (with-current-buffer buffer
+                      (compilation-next-error 1)
+                      (wgrep-change-to-wgrep-mode)
+                      (es-replace-regexp-prog
+                       ,(if was-symbol
+                            (format
+                             "\\_<%s\\_>"
+                             (regexp-quote
+                              from-symbol-or-string))
+                            (regexp-quote
+                             from-symbol-or-string))
+                       ,to-symbol-or-string
+                       (point)
+                       (point-max))
+                      (when ,auto-save
+                        (let ((wgrep-auto-save-buffer t))
+                          (wgrep-finish-edit)
+                          (quit-window)))
+                      (funcall (or ,finish-func 'ignore)))))))))
+
+(defun* es-change-number-at-point (&optional decrease)
+  (let ((number (es-number-at-point)))
+    (if (not number)
+        (progn
+          (save-excursion
+            (when (re-search-backward "[0-9]" (line-beginning-position) t)
+              (es-change-number-at-point decrease)))
+          (multiple-value-bind (num-string beg end) (es-number-at-point)
+            (when (and (numberp beg)
+                       (equal (- end beg) 1))
+              (forward-char))))
+        (multiple-value-bind (num-string beg end) number
+          ;; number
+          (let* ((start-pos (point))
+                 (distance-from-end (- end start-pos))
+                 (increment (* (expt 10 (1- distance-from-end))
+                               (if decrease -1 1)))
+                 (result (+ (string-to-number num-string) increment))
+                 (result-string (number-to-string
+                                 result)))
+            (delete-region beg end)
+            (insert-string result-string)
+            (goto-char (max beg
+                            (+ start-pos
+                               (- (length result-string)
+                                  (length num-string))))))))))
+
+(defun es-ack-pin-folder (folder)
+  "Set ack root directory for one buffer only"
+  (interactive
+   (list (read-directory-name "Directory for ack: ")))
+  (set (make-local-variable
+        'ack-and-a-half-root-directory-functions)
+       (list `(lambda () ,folder)))
+  (set (make-local-variable
+        'ack-and-a-half-prompt-for-directory) nil)
+  (message "Ack directory set to: %s" folder))
+
+(defun es-increase-number-at-point ()
+  (interactive)
+  (unless (es-toggle-true-false-maybe)
+    (es-change-number-at-point)))
+
+(defun es-decrease-number-at-point ()
+  (interactive)
+  (unless (es-toggle-true-false-maybe)
+    (es-change-number-at-point t)))
+
+(defun es-windows-with-buffer (buffer)
+  "In all frames"
+  (remove-if-not
+   (lambda (window)
+     (eq (window-buffer window) buffer))
+   (loop for frame in (frame-list)
+         append (window-list frame))))
+
+(defun es-random-member (list)
+  (nth (random (length list)) list))
 
 (provide 'es-lib)
