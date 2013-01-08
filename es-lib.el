@@ -1,3 +1,30 @@
+;;; es-lib.el --- A collection of emacs utilities
+;;; Version: 0.1
+;;; Author: sabof
+;;; URL: https://github.com/sabof/es-lib
+
+;; This file is NOT part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 3, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program ; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Commentary:
+;; The project is hosted at https://github.com/sabof/es-lib
+
+;;; Code:
+
 (require 'cl)
 (require 'es-lib-lexical)
 
@@ -76,8 +103,7 @@
       (cdr (find selection alist :key 'car :test 'equal)))))
 
 (defun es-total-line-end-position (&optional pos)
-  "Kind of like
-(max (end-of-line) (end-of-visual-line))"
+  "Kind of like \(max \(end-of-line\) \(end-of-visual-line\)\)."
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving
@@ -86,8 +112,7 @@
     (point)))
 
 (defun es-total-line-beginning-position (&optional pos)
-  "Kind of like
-(min (beginning-of-line) (beginning-of-visual-line))"
+  "Kind of like \(min \(beginning-of-line\) \(beginning-of-visual-line\)\)."
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving
@@ -113,8 +138,7 @@
     major-mode))
 
 (defun es-mapbuffer (function buffer-list)
-  "Perform FUNCTION inside a with-current-buffer for each member of
-BUFFER-LIST."
+  "Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST."
   (mapcar (lambda (buf)
             (with-current-buffer buf
               (funcall function buf)))
@@ -128,7 +152,7 @@ BUFFER-LIST."
                  (buffer-list)))
 
 (defun es-string-begins-with-p (string beginning)
-  "Return t if and only if string begins with BEGINNING"
+  "Return t if STRING begins with BEGINNING."
   (string-match-p (concat "^" (regexp-quote beginning)) string))
 
 (defun es-string-remove-properties (string)
@@ -280,8 +304,7 @@ If the line is empty, insert at the end of next line."
      (region-end))))
 
 (defun es-highlighter ()
-  "Like (highlight-symbol-at-point), but will also (un)highlight
-a phrase if the region is active."
+  "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active."
   (interactive)
   (require 'highlight-symbol)
   (require 'hi-lock)
@@ -314,8 +337,8 @@ a phrase if the region is active."
     (yank)))
 
 (defun es-c-expand-region ()
-  "A simple version of expand-region for c-like languages. Marks the symbol on
-first call, then marks the statement."
+  "A simple version of expand-region for c-like languages.
+Marks the symbol on first call, then marks the statement."
   (interactive)
   (flet (( post-scriptum ()
            (when (and (equal (point) (line-end-position))
@@ -592,7 +615,7 @@ The \"originals\" won't be included."
           (line-beginning-position)))))
 
 (defun es-line-folded-p ()
-  "Checks whether the line contains a multiline folding"
+  "Check whether the line contains a multiline folding."
   (not (equal (list (line-beginning-position)
                     (line-end-position))
               (list (es-total-line-beginning-position)
@@ -634,7 +657,7 @@ The \"originals\" won't be included."
     (beginning-of-line)))
 
 (defun es-current-character-indentation ()
-  "Like (current-indentation), but counts tabs as single characters"
+  "Like (current-indentation), but counts tabs as single characters."
   (save-excursion
     (back-to-indentation)
     (- (point) (line-beginning-position))))
@@ -683,7 +706,7 @@ files."
                  (setq to-symbol-or-string
                        (symbol-name to-symbol-or-string)))))
     (and (buffer-modified-p)
-         (y-or-n-p "Save current buffer?")
+         (y-or-n-p "Save current buffer? ")
          (save-buffer))
     (ack-and-a-half from-symbol-or-string nil directory)
     (dolist (window (window-list))
@@ -742,8 +765,8 @@ files."
                                   (length num-string))))))))))
 
 (defun es-ack-pin-folder (folder)
-  "Set ack root directory for one buffer only. Ack won't prompt for a directory
-name in that buffer."
+  "Set ack root directory for one buffer only.
+Ack won't prompt for a directory name in that buffer."
   (interactive
    (list (read-directory-name "Directory for ack: ")))
   (set (make-local-variable
@@ -754,15 +777,16 @@ name in that buffer."
   (message "Ack directory set to: %s" folder))
 
 (defun es-increase-number-at-point ()
-  "Increases the digit at point. The increment some power of 10, depending on
-the positon of the cursor. If there is no number at point, will try to
-increment the previous number on the same line."
+  "Increases the digit at point.
+The increment some power of 10, depending on the positon of the cursor. If there
+is no number at point, will try to increment the previous number on the same
+line."
   (interactive)
   (unless (es-toggle-true-false-maybe)
     (es-change-number-at-point)))
 
 (defun es-decrease-number-at-point ()
-  "See documentation for es-increase-number-at-point."
+  "See documentation for `es-increase-number-at-point'."
   (interactive)
   (unless (es-toggle-true-false-maybe)
     (es-change-number-at-point t)))
@@ -784,3 +808,6 @@ increment the previous number on the same line."
     (pop-to-buffer buf)))
 
 (provide 'es-lib)
+(provide 'es-lib)
+
+;;; es-lib.el ends here

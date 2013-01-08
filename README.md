@@ -8,8 +8,8 @@ _(auto-generated before each commit)_
 * es-ack-pin-folder
 
 ```
-Set ack root directory for one buffer only. Ack won't prompt for a directory
-name in that buffer.
+Set ack root directory for one buffer only.
+Ack won't prompt for a directory name in that buffer.
 ```
 
 * es-ack-replace-symbol
@@ -26,15 +26,15 @@ files.
 * es-c-expand-region
 
 ```
-A simple version of expand-region for c-like languages. Marks the symbol on
-first call, then marks the statement.
+A simple version of expand-region for c-like languages.
+Marks the symbol on first call, then marks the statement.
 ```
 
 * es-comment-dwim
 * es-decrease-number-at-point
 
 ```
-See documentation for es-increase-number-at-point.
+See documentation for `es-increase-number-at-point'.
 ```
 
 * es-delete-duplicate-lines
@@ -43,8 +43,7 @@ See documentation for es-increase-number-at-point.
 * es-highlighter
 
 ```
-Like (highlight-symbol-at-point), but will also (un)highlight
-a phrase if the region is active.
+Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active.
 ```
 
 * es-ido-like-helm
@@ -56,9 +55,10 @@ Choose from a concatenated list of buffers and recent files.
 * es-increase-number-at-point
 
 ```
-Increases the digit at point. The increment some power of 10, depending on
-the positon of the cursor. If there is no number at point, will try to
-increment the previous number on the same line.
+Increases the digit at point.
+The increment some power of 10, depending on the positon of the cursor. If there
+is no number at point, will try to increment the previous number on the same
+line.
 ```
 
 * es-jump-line
@@ -132,7 +132,7 @@ Same as clojure's (constantly).
 * es-current-character-indentation
 
 ```
-Like (current-indentation), but counts tabs as single characters
+Like (current-indentation), but counts tabs as single characters.
 ```
 
 * es-define-keys
@@ -160,7 +160,7 @@ The "originals" won't be included.
 * es-flip
 
 ```
-Creates a function with FUNC's arguments reversed.
+Create a function with FUNC's arguments reversed.
 ```
 
 * es-goto-previous-non-blank-line
@@ -178,7 +178,7 @@ Each member can also be a string
 * es-line-folded-p
 
 ```
-Checks whether the line contains a multiline folding
+Check whether the line contains a multiline folding.
 ```
 
 * es-line-matches-p
@@ -186,8 +186,7 @@ Checks whether the line contains a multiline folding
 * es-mapbuffer
 
 ```
-Perform FUNCTION inside a with-current-buffer for each member of
-BUFFER-LIST.
+Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 ```
 
 * es-mark-symbol-at-point
@@ -212,7 +211,7 @@ By default acts on the whole buffer.
 * es-string-begins-with-p
 
 ```
-Return t if and only if string begins with BEGINNING
+Return t if STRING begins with BEGINNING.
 ```
 
 * es-string-remove-properties
@@ -221,15 +220,13 @@ Return t if and only if string begins with BEGINNING
 * es-total-line-beginning-position
 
 ```
-Kind of like
-(min (beginning-of-line) (beginning-of-visual-line))
+Kind of like (min (beginning-of-line) (beginning-of-visual-line)).
 ```
 
 * es-total-line-end-position
 
 ```
-Kind of like
-(max (end-of-line) (end-of-visual-line))
+Kind of like (max (end-of-line) (end-of-visual-line)).
 ```
 
 * es-unsaved-buffer-list
