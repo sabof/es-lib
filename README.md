@@ -18,6 +18,7 @@ A collecton of emacs utilities.
 * es-ido-like-helm
 * es-increase-number-at-point
 * es-jump-line
+* es-kill-buffer-dont-ask
 * es-make-timer-buffer
 * es-manage-unsaved-buffers
 * es-mouse-yank-replace-symbol

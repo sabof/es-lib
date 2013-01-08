@@ -1,6 +1,8 @@
 (require 'cl)
 (require 'es-lib-lexical)
 
+;;; Macros
+
 (defmacro es-silence-messages (&rest body)
   `(flet ((message (&rest ignore)))
      ,@body))
@@ -14,6 +16,15 @@
 
 (defmacro es-neither (&rest args)
   `(not (or ,@args)))
+
+;;; Funcions
+
+(defun es-kill-buffer-dont-ask (&optional buffer)
+  (interactive)
+  (when buffer (set-buffer buffer))
+  (set-buffer-modified-p nil)
+  (let (kill-buffer-query-functions)
+    (kill-buffer)))
 
 (defun es-buffer-name-list ()
   (remove-if (lambda (name)
@@ -477,7 +488,7 @@ The \"originals\" won't be included."
      (forward-char))))
 
 (defun es-kill-dead-shells ()
-  (mapc 'kill-buffer-dont-ask
+  (mapc 'es-kill-buffer-dont-ask
         (remove-if-not
          (lambda (buf)
            (and (eq (es-buffer-mode buf) 'shell-mode)
@@ -499,7 +510,7 @@ The \"originals\" won't be included."
                       (save-buffer)))
                   (return-from es-manage-unsaved-buffers))
                 ( ?s (save-buffer))
-                ( ?k (kill-buffer-dont-ask))
+                ( ?k (es-kill-buffer-dont-ask))
                 ( ?e (recursive-edit))))
             ( or (es-unsaved-buffer-list)
                  (progn

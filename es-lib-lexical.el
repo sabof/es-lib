@@ -27,6 +27,7 @@
     (apply func (reverse args))))
 
 (defun* es-make-timer-buffer (time-limit)
+  "Accepts a time-limit in minutes"
   (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))
         ( buf (generate-new-buffer "*timer*"))
