@@ -209,7 +209,6 @@
 (defun es-jump-line ()
   "end-of-line + newline."
   (interactive)
-  ;; (end-of-line)
   (goto-char (es-total-line-end-position))
   (call-interactively
    (or (key-binding (kbd "<return>"))
@@ -219,13 +218,15 @@
 
 (defun es-new-empty-buffer ()
   (interactive)
-  (if (or t (> (length (window-list)) 1))
-      (switch-to-buffer (generate-new-buffer "untitled"))
-      (pop-to-buffer (generate-new-buffer "untitled")))
+  (switch-to-buffer (generate-new-buffer "untitled"))
   (lisp-interaction-mode))
 
 (defun* es-define-keys (keymap &rest bindings)
-  "Returns the keymap in the end."
+  "Syntax example:
+\(es-define-keys fundamental-mode-map
+  (kbd \"h\") 'backward-char
+  (kbd \"l\") 'forward-char\)
+ Returns the keymap in the end."
   (while bindings
     (define-key keymap (pop bindings) (pop bindings)))
   keymap)
