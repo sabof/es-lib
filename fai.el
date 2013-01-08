@@ -1,17 +1,9 @@
-(defvar fai-indent-function 'fai-test-and-indent)
-(make-variable-buffer-local 'fai-indent-function)
-
-(defvar fai-indentable-line-p-function (lambda () t))
-(make-variable-buffer-local 'fai-indentable-line-p-function)
-
-(defvar fai-after-change-indentation t)
-(make-variable-buffer-local 'fai-after-change-indentation)
-
-(defvar fai-change-flag nil)
-(make-variable-buffer-local 'fai-change-flag)
-
-(defvar fai-first-keystroke nil)
-(make-variable-buffer-local 'fai-first-keystroke)
+(es-define-buffer-local-vars
+ fai-indent-function 'fai-test-and-indent
+ fai-indentable-line-p-function (lambda () t)
+ fai-after-change-indentation t
+ fai-change-flag nil
+ fai-first-keystroke nil)
 
 (defun fai-test-and-indent ()
   "Run some basic checks (including whether fai-mode is on),
@@ -27,12 +19,19 @@ and (indent-according-to-mode)."
     (when (region-active-p)
       (delete-region (point) (mark)))
     (let ((starting-point (point))
-          (end-point (- (line-end-position) (point))))
+          end-distance
+          line)
       (yank)
+      (setq end-distance (- (line-end-position) (point))
+            line (line-number-at-pos))
       (unless dont-indent
         (indent-region starting-point (point)))
-      (goto-char (- (line-end-position) end-point)))
-    (fai-test-and-indent)))
+      (when (bound-and-true-p font-lock-mode)
+        (font-lock-fontify-region starting-point (point)))
+      (goto-line line)
+      (goto-char (- (line-end-position) end-distance))
+      ;; (fai-test-and-indent)
+      )))
 
 (defun fai-mouse-yank (event &optional dont-indent)
   (interactive "e")
@@ -70,50 +69,6 @@ and (indent-according-to-mode)."
   (when fai-after-change-indentation
     (fai-test-and-indent)))
 
-(defun fai-last-character-pos ()
-  (save-excursion
-    (end-of-line)
-    (let (current-pos)
-      (while (and (not (equal (point) current-pos))
-                  (> (current-column) 0)
-                  (equal (char-before) (aref " " 0)))
-        (setq current-pos (point))
-        (backward-char)))
-    (point)))
-
-(defun fai-end ()
-  (interactive)
-  (if truncate-lines
-      (end-of-visual-line)
-      (end-of-line)))
-
-(defun fai-end-with-region ()
-  "Ex. Can be bound to <S-end>"
-  (interactive)
-  (unless (region-active-p)
-    (set-mark (point)))
-  (fai-end))
-
-(defun fai-home ()
-  (interactive)
-  (let* (old-point
-         same-line
-         ( beginning
-           (save-excursion
-             (beginning-of-line)
-             (setq old-point (point))
-             (beginning-of-visual-line)
-             (setq same-line (eq old-point (point)))
-             (indentation-end-at-pos))))
-    (if same-line
-        (cond ((eq (point) (indentation-end-at-pos))
-               (beginning-of-line))
-              (t (back-to-indentation)))
-        (goto-char beginning))))
-
-(defun fai-after-last-char-p ()
-  (>= (point) (fai-last-character-pos)))
-
 (defun fai-before-or-at-indentation-p ()
   (<= (current-column) (current-indentation)))
 
@@ -138,7 +93,7 @@ and (indent-according-to-mode)."
 
 (defun fai-open-line ()
   (interactive)
-  (let ((was-at-eol (>= (point) (fai-last-character-pos))))
+  (let ((was-at-eol (>= (point) (es-visible-end-of-line))))
     (save-excursion
       (newline))
     (fai-test-and-indent)
@@ -158,12 +113,6 @@ and (indent-according-to-mode)."
                        (- buffer-end-line current-line))
            do (next-logical-line)
            (fai-test-and-indent)))))
-
-(defun fai-back-to-indentation-with-region ()
-  (interactive)
-  (unless (region-active-p)
-    (set-mark (point)))
-  (fai-home))
 
 (defun* fai-newline-and-indent ()
   (interactive)
@@ -186,34 +135,14 @@ and (indent-according-to-mode)."
      (forward-line -1)
      (indent-according-to-mode))))
 
-(defun fai-make-keymap ()
-  (define-keys (make-sparse-keymap)
-    [mouse-2] 'fai-mouse-yank
-    "\C-v" 'fai-indented-yank
-    "\r" 'fai-newline-and-indent
-    [remap open-line] 'fai-open-line
-    [remap delete-char] 'fai-delete
-    [remap paredit-forward-delete] 'fai-delete
-    (kbd "<backspace>") 'fai-backspace
-    ;; META COMMENT:
-    ;; I have no idea what I was talking about
-    ;;
-    ;; Doesn't work because superseded my visual-line-mode
-    ;; Solutions:
-    ;; * Go back to soft-wrap line
-    ;; * Find a way to disable remapped keybindings
-    [remap beginning-of-line] 'fai-home  ; program-only func?
-    [remap beginning-of-visual-line] 'fai-home
-    [remap move-beginning-of-line] 'fai-home
-    (kbd "S-<home>") 'fai-back-to-indentation-with-region))
-
 (defun fai-correct-position-this (&optional dont-change-line)
+  ;; Should be a macrolet
   (flet ( (exec-in-dynamic-enviroment (thunk)
             (let* (( init-pos (point))
                    ( indentation-beginning
-                     (indentation-end-at-pos))
+                     (es-indentation-end-pos))
                    ( last-character
-                     (fai-last-character-pos)))
+                     (es-visible-end-of-line)))
               (funcall thunk))))
     ;; next/prev line
     (exec-in-dynamic-enviroment
@@ -251,6 +180,11 @@ and (indent-according-to-mode)."
   (when fai-after-change-indentation
     (setq fai-change-flag t)))
 
+(defun fai-delete-indentation ()
+  (interactive)
+  (delete-indentation)
+  (fai-test-and-indent))
+
 (defun* fai-post-command-hook ()
   "First key stroke tracking, cursor correction"
   (let ( (last-input-structural
@@ -274,11 +208,9 @@ and (indent-according-to-mode)."
 
 (define-minor-mode fai-mode
     "Fuchikoma Automatic Indentation"
-  nil " fai" (fai-make-keymap)
+  nil " fai" (make-sparse-keymap)
   (eval-after-load "multiple-cursors-core"
     '(pushnew 'fai-mode mc/unsupported-minor-modes))
-  (when (boundp 'visual-line-mode-map)
-    (define-key visual-line-mode-map [remap move-beginning-of-line] nil))
   (if fai-mode
       (progn
         (setq inhibit-modification-hooks nil)
@@ -291,6 +223,16 @@ and (indent-according-to-mode)."
         (pushnew 'fai-indent-changehook before-change-functions)
         (add-hook 'post-command-hook 'fai-post-command-hook t t)
         (run-with-idle-timer 0 t 'fai-indent-ontimer)
-        )))
+        (es-define-keys fai-mode-map
+          [mouse-2] 'fai-mouse-yank
+          "\C-v" 'fai-indented-yank
+          "\r" 'fai-newline-and-indent
+          (kbd "M-^") 'fai-delete-indentation
+          [remap open-line] 'fai-open-line
+          [remap delete-char] 'fai-delete
+          [remap paredit-forward-delete] 'fai-delete
+          (kbd "<backspace>") 'fai-backspace
 
-(provide 'fai)
+          )))
+
+  (provide 'fai)
