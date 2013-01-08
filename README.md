@@ -76,6 +76,7 @@ _(auto-generated before each commit)_
 
 ### Macros:
 
+* es-back-pop
 * es-define-buffer-local-vars
 * es-neither
 * es-silence-messages

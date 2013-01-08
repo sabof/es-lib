@@ -26,6 +26,12 @@
         (push `(make-variable-buffer-local (quote ,name)) result)))
     (cons 'progn (nreverse result))))
 
+(defmacro es-back-pop (symbol)
+  (let ( (result (gensym)))
+    `(let ( (,result (first (last ,symbol))))
+       (setq ,symbol (butlast ,symbol))
+       ,result)))
+
 ;;; Funcions
 
 (defun es-kill-buffer-dont-ask (&optional buffer)
