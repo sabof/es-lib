@@ -383,7 +383,6 @@ first call, then marks the statement."
           cua--explicit-region-start nil)))
 
 (defun es-duplicate-line-or-region ()
-  "Or region"
   (interactive)
   (if (region-active-p)
       (es-duplicate-region)

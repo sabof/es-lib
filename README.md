@@ -6,25 +6,71 @@ _(auto-generated before each commit)_
 ### Commands:
 
 * es-ack-pin-folder
+
+```
+Set ack root directory for one buffer only. Ack won't prompt for a directory
+name in that buffer.
+```
+
 * es-ack-replace-symbol
+
+```
+Repalace symbol at point, or region contents in multiple
+files.
+
+(fn FROM-SYMBOL-OR-STRING TO-SYMBOL-OR-STRING &key DIRECTORY AUTO-SAVE FINISH-FUNC SILENT)
+```
+
 * es-add-comma-at-eol
 * es-add-semicolon-at-eol
 * es-c-expand-region
+
+```
+A simple version of expand-region for c-like languages. Marks the symbol on
+first call, then marks the statement.
+```
+
 * es-comment-dwim
 * es-decrease-number-at-point
 * es-delete-duplicate-lines
 * es-duplicate-line-or-region
 * es-find-function-bound-to
 * es-highlighter
+
+```
+Like (highlight-symbol-at-point), but will also (un)highlight
+a phrase if the region is active.
+```
+
 * es-ido-like-helm
 * es-increase-number-at-point
 * es-jump-line
+
+```
+end-of-line + newline.
+```
+
 * es-kill-buffer-dont-ask
 * es-make-timer-buffer
+
+```
+Accepts a time-limit in minutes
+```
+
 * es-manage-unsaved-buffers
+
+```
+Similar to what happends when emacs is about to quit.
+```
+
 * es-mouse-yank-replace-symbol
 * es-new-empty-buffer
 * es-push-line
+
+```
+beginning-of-line + open line.
+```
+
 * es-query-replace-symbol-at-point
 
 ### Non-interactive:
@@ -41,20 +87,60 @@ _(auto-generated before each commit)_
 * es-complement
 * es-constantly
 * es-current-character-indentation
+
+```
+Like (current-indentation), but counts tabs as single characters
+```
+
 * es-define-keys
+
+```
+Syntax example:
+(es-define-keys fundamental-mode-map
+  (kbd "h") 'backward-char
+  (kbd "l") 'forward-char)
+ Returns the keymap in the end.
+
+(fn KEYMAP &rest BINDINGS)
+```
+
 * es-duplicate-line
 * es-duplicate-region
 * es-find-duplicates
+
+```
+Multiple duplicates will be listed muliple times.
+The "originals" won't be included.
+```
+
 * es-flip
 * es-goto-previous-non-blank-line
 * es-ido-completing-read-alist
+
+```
+Each member can also be a string
+
+(fn PROMPT ALIST &rest REST)
+```
+
 * es-indentation-end-pos
 * es-kill-dead-shells
 * es-line-empty-p
 * es-line-folded-p
+
+```
+Checks whether the line contains a multiline folding
+```
+
 * es-line-matches-p
 * es-line-visible-p
 * es-mapbuffer
+
+```
+Perform FUNCTION inside a with-current-buffer for each member of
+BUFFER-LIST.
+```
+
 * es-mark-symbol-at-point
 * es-mode-keymap
 * es-next-printable-character-pos
@@ -62,17 +148,49 @@ _(auto-generated before each commit)_
 * es-pop-to-buffer-vertically
 * es-random-member
 * es-replace-prog
+
+```
+By default acts on the whole buffer.
+```
+
 * es-replace-regexp-prog
+
+```
+By default acts on the whole buffer.
+```
+
 * es-set-region
 * es-string-begins-with-p
+
+```
+Return t if and only if string begins with BEGINNING
+```
+
 * es-string-remove-properties
 * es-toggle-true-false-maybe
 * es-total-forward-line
 * es-total-line-beginning-position
+
+```
+Kind of like
+ (min (beginning-of-line) (beginning-of-visual-line))
+```
+
 * es-total-line-end-position
+
+```
+Kind of like
+ (max (end-of-line) (end-of-visual-line))
+```
+
 * es-unsaved-buffer-list
 * es-visible-end-of-line
 * es-windows-with-buffer
+
+```
+In all frames
+```
+
 
 ### Macros:
 
