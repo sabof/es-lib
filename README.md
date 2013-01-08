@@ -1,5 +1,18 @@
 #es-lib
-A collecton of emacs utilities.
+A collecton of emacs utilities. Here are some highlights:
+
+* **es-lib-move-text.el**
+  Functions for shifting current line or region in four directions
+* **es-lib-duplicate.el**
+  Functions duplicating the current region
+* **es-lib-total-line.el**
+  Functions for comfortably moving with folded lines
+* **es-lib-number-at-point**
+  Functions for manipulating the number at point.
+
+* **es-ack-replace-symbol**
+  A refactoring tool, with help of which this library was assembled
+
 ## Index:
 _(auto-generated before each commit)_
 
@@ -93,6 +106,30 @@ Similar to what happends when emacs is about to quit.
 ```
 
 * es-mouse-yank-replace-symbol
+* es-move-text-down
+
+```
+Move region or the current line down.
+```
+
+* es-move-text-left
+
+```
+Move region or the current line left.
+```
+
+* es-move-text-right
+
+```
+Move region or the current line right.
+```
+
+* es-move-text-up
+
+```
+Move region or the current line up.
+```
+
 * es-new-empty-buffer
 * es-push-line
 
@@ -101,6 +138,18 @@ beginning-of-line + open line.
 ```
 
 * es-query-replace-symbol-at-point
+* es-total-line-beginning
+
+```
+Interactive version of `es-total-line-beginning-position'.
+```
+
+* es-total-line-end
+
+```
+Interactive version of `es-total-line-end-position'.
+```
+
 
 ### Non-interactive:
 
@@ -122,7 +171,6 @@ Like (apply-partially), but adds arguments to the end.
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
-* es-change-number-at-point
 * es-comp
 
 ```

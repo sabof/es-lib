@@ -37,3 +37,5 @@
   (if (region-active-p)
       (es-duplicate-region)
       (es-duplicate-line)))
+
+(provide 'es-lib-duplicate)
