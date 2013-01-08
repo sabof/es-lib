@@ -232,7 +232,6 @@ and (indent-according-to-mode)."
           [remap delete-char] 'fai-delete
           [remap paredit-forward-delete] 'fai-delete
           (kbd "<backspace>") 'fai-backspace
+          ))))
 
-          )))
-
-  (provide 'fai)
+(provide 'fai)
