@@ -3,6 +3,13 @@
 
 ;;; Macros
 
+
+(defun es-disable-keys (map &rest keylist)
+  (dolist (key keylist)
+    (define-key map key nil)))
+(put 'es-disable-keys 'common-lisp-indent-function
+     '(4 &body))
+
 (defmacro es-silence-messages (&rest body)
   `(flet ((message (&rest ignore)))
      ,@body))
@@ -19,15 +26,8 @@
 
 (defmacro es-define-buffer-local-vars (&rest list)
   "Syntax example:
-(es-define-buffer-local-vars
- mvi-current-image-file nil
- mvi-resize-timer nil
- mvi-is-mvi-buffer nil
- mvi-last-image nil
- mvi-buffer-tmp-file nil
- mvi-buffer-lock nil
- mvi-buffer-queue nil
- )"
+\(es-define-buffer-local-vars
+ mvi-current-image-file nil\)"
   (let (result)
     (while list
       (let ((name (pop list))
@@ -77,7 +77,7 @@
 
 (defun es-total-line-end-position (&optional pos)
   "Kind of like
- (max (end-of-line) (end-of-visual-line))"
+(max (end-of-line) (end-of-visual-line))"
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving
@@ -87,7 +87,7 @@
 
 (defun es-total-line-beginning-position (&optional pos)
   "Kind of like
- (min (beginning-of-line) (beginning-of-visual-line))"
+(min (beginning-of-line) (beginning-of-visual-line))"
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving

@@ -6,7 +6,7 @@
     (apply func (append args more-args))))
 
 (defun es-comp (&rest funcs)
-  "Same as clojure's (comp)"
+  "Same as clojure's (comp)."
   (lambda (arg)
     (let ((arg arg)
           (funcs (reverse funcs)))
@@ -17,12 +17,12 @@
       arg)))
 
 (defun es-complement (func)
-  "Same as clojure's (complement)"
+  "Same as clojure's (complement)."
   (lambda (&rest args)
     (not (apply func args))))
 
 (defun es-constantly (arg)
-  "Same as clojure's (constantly)"
+  "Same as clojure's (constantly)."
   (lambda (&rest args)
     arg))
 

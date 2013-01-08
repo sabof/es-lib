@@ -114,19 +114,19 @@ Like (apply-partially), but adds arguments to the end.
 * es-comp
 
 ```
-Same as clojure's (comp)
+Same as clojure's (comp).
 ```
 
 * es-complement
 
 ```
-Same as clojure's (complement)
+Same as clojure's (complement).
 ```
 
 * es-constantly
 
 ```
-Same as clojure's (constantly)
+Same as clojure's (constantly).
 ```
 
 * es-current-character-indentation
@@ -147,6 +147,7 @@ Syntax example:
 (fn KEYMAP &rest BINDINGS)
 ```
 
+* es-disable-keys
 * es-duplicate-line
 * es-duplicate-region
 * es-find-duplicates
@@ -221,14 +222,14 @@ Return t if and only if string begins with BEGINNING
 
 ```
 Kind of like
- (min (beginning-of-line) (beginning-of-visual-line))
+(min (beginning-of-line) (beginning-of-visual-line))
 ```
 
 * es-total-line-end-position
 
 ```
 Kind of like
- (max (end-of-line) (end-of-visual-line))
+(max (end-of-line) (end-of-visual-line))
 ```
 
 * es-unsaved-buffer-list
@@ -248,14 +249,7 @@ In all frames.
 ```
 Syntax example:
 (es-define-buffer-local-vars
- mvi-current-image-file nil
- mvi-resize-timer nil
- mvi-is-mvi-buffer nil
- mvi-last-image nil
- mvi-buffer-tmp-file nil
- mvi-buffer-lock nil
- mvi-buffer-queue nil
- )
+ mvi-current-image-file nil)
 ```
 
 * es-neither
