@@ -1,10 +1,12 @@
 ;;; -*- lexical-binding: t -*-
 
 (defun es-back-curry (func &rest more-args)
+  "Like (apply-partially), but adds arguments to the end."
   (lambda (&rest args)
     (apply func (append args more-args))))
 
 (defun es-comp (&rest funcs)
+  "Same as clojure's (comp)"
   (lambda (arg)
     (let ((arg arg)
           (funcs (reverse funcs)))
@@ -15,19 +17,22 @@
       arg)))
 
 (defun es-complement (func)
+  "Same as clojure's (complement)"
   (lambda (&rest args)
     (not (apply func args))))
 
 (defun es-constantly (arg)
+  "Same as clojure's (constantly)"
   (lambda (&rest args)
     arg))
 
 (defun es-flip (func)
+  "Creates a function with FUNC's arguments reversed."
   (lambda (&rest args)
     (apply func (reverse args))))
 
 (defun* es-make-timer-buffer (time-limit)
-  "Accepts a time-limit in minutes"
+  "Accepts a time-limit in minutes."
   (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))
         ( buf (generate-new-buffer "*timer*"))

@@ -18,6 +18,16 @@
   `(not (or ,@args)))
 
 (defmacro es-define-buffer-local-vars (&rest list)
+  "Syntax example:
+(es-define-buffer-local-vars
+ mvi-current-image-file nil
+ mvi-resize-timer nil
+ mvi-is-mvi-buffer nil
+ mvi-last-image nil
+ mvi-buffer-tmp-file nil
+ mvi-buffer-lock nil
+ mvi-buffer-queue nil
+ )"
   (let (result)
     (while list
       (let ((name (pop list))
@@ -181,6 +191,8 @@ BUFFER-LIST."
         (message "Key sequence unbound"))))
 
 (defun es-add-at-eol (thing)
+  "Insert THING at end of line.
+If the line is empty, insert at the end of next line."
   (save-excursion
     (if (es-line-empty-p)
         (progn
@@ -413,6 +425,7 @@ first call, then marks the statement."
   (indent-according-to-mode))
 
 (defun* es-ido-like-helm ()
+  "Choose from a concatenated list of buffers and recent files."
   (interactive)
   (require 'recentf)
   (when (window-dedicated-p)
@@ -741,17 +754,21 @@ name in that buffer."
   (message "Ack directory set to: %s" folder))
 
 (defun es-increase-number-at-point ()
+  "Increases the digit at point. The increment some power of 10, depending on
+the positon of the cursor. If there is no number at point, will try to
+increment the previous number on the same line."
   (interactive)
   (unless (es-toggle-true-false-maybe)
     (es-change-number-at-point)))
 
 (defun es-decrease-number-at-point ()
+  "See documentation for es-increase-number-at-point."
   (interactive)
   (unless (es-toggle-true-false-maybe)
     (es-change-number-at-point t)))
 
 (defun es-windows-with-buffer (buffer)
-  "In all frames"
+  "In all frames."
   (remove-if-not
    (lambda (window)
      (eq (window-buffer window) buffer))

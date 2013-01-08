@@ -32,6 +32,11 @@ first call, then marks the statement.
 
 * es-comment-dwim
 * es-decrease-number-at-point
+
+```
+See documentation for es-increase-number-at-point.
+```
+
 * es-delete-duplicate-lines
 * es-duplicate-line-or-region
 * es-find-function-bound-to
@@ -43,7 +48,19 @@ a phrase if the region is active.
 ```
 
 * es-ido-like-helm
+
+```
+Choose from a concatenated list of buffers and recent files.
+```
+
 * es-increase-number-at-point
+
+```
+Increases the digit at point. The increment some power of 10, depending on
+the positon of the cursor. If there is no number at point, will try to
+increment the previous number on the same line.
+```
+
 * es-jump-line
 
 ```
@@ -54,7 +71,7 @@ end-of-line + newline.
 * es-make-timer-buffer
 
 ```
-Accepts a time-limit in minutes
+Accepts a time-limit in minutes.
 ```
 
 * es-manage-unsaved-buffers
@@ -77,15 +94,41 @@ beginning-of-line + open line.
 
 * es-active-region-string
 * es-add-at-eol
+
+```
+Insert THING at end of line.
+If the line is empty, insert at the end of next line.
+```
+
 * es-back-curry
+
+```
+Like (apply-partially), but adds arguments to the end.
+```
+
 * es-buffer-mode
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
 * es-change-number-at-point
 * es-comp
+
+```
+Same as clojure's (comp)
+```
+
 * es-complement
+
+```
+Same as clojure's (complement)
+```
+
 * es-constantly
+
+```
+Same as clojure's (constantly)
+```
+
 * es-current-character-indentation
 
 ```
@@ -114,6 +157,11 @@ The "originals" won't be included.
 ```
 
 * es-flip
+
+```
+Creates a function with FUNC's arguments reversed.
+```
+
 * es-goto-previous-non-blank-line
 * es-ido-completing-read-alist
 
@@ -188,7 +236,7 @@ Kind of like
 * es-windows-with-buffer
 
 ```
-In all frames
+In all frames.
 ```
 
 
@@ -196,6 +244,20 @@ In all frames
 
 * es-back-pop
 * es-define-buffer-local-vars
+
+```
+Syntax example:
+(es-define-buffer-local-vars
+ mvi-current-image-file nil
+ mvi-resize-timer nil
+ mvi-is-mvi-buffer nil
+ mvi-last-image nil
+ mvi-buffer-tmp-file nil
+ mvi-buffer-lock nil
+ mvi-buffer-queue nil
+ )
+```
+
 * es-neither
 * es-silence-messages
 * es-while-point-moving
