@@ -157,10 +157,10 @@
     (if (es-line-empty-p)
         (progn
           (next-line)
-          (goto-char (es-last-character-pos))
+          (goto-char (es-visible-end-of-line))
           (insert thing))
         (progn
-          (goto-char (es-last-character-pos))
+          (goto-char (es-visible-end-of-line))
           (insert thing)))))
 
 (defun es-add-semicolon-at-eol ()
@@ -473,7 +473,7 @@ The \"originals\" won't be included."
    (when (equal (char-after) ?\')
      (forward-char))))
 
-(defun es-kill-dead-shelss ()
+(defun es-kill-dead-shells ()
   (mapc 'kill-buffer-dont-ask
         (remove-if-not
          (lambda (buf)
@@ -540,7 +540,7 @@ The \"originals\" won't be included."
          replacement
          nil (point-min) (line-beginning-position))))))
 
-(defun es-last-character-pos ()
+(defun es-visible-end-of-line ()
   (save-match-data
     (save-excursion
       (end-of-line)
@@ -701,7 +701,8 @@ files."
                                   (length num-string))))))))))
 
 (defun es-ack-pin-folder (folder)
-  "Set ack root directory for one buffer only"
+  "Set ack root directory for one buffer only. Ack won't prompt for a directory
+name in that buffer."
   (interactive
    (list (read-directory-name "Directory for ack: ")))
   (set (make-local-variable

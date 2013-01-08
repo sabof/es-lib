@@ -47,8 +47,7 @@ A collecton of emacs utilities.
 * es-goto-previous-non-blank-line
 * es-ido-completing-read-alist
 * es-indentation-end-pos
-* es-kill-dead-shelss
-* es-last-character-pos
+* es-kill-dead-shells
 * es-line-empty-p
 * es-line-folded-p
 * es-line-matches-p
@@ -70,6 +69,7 @@ A collecton of emacs utilities.
 * es-total-line-beginning-position
 * es-total-line-end-position
 * es-unsaved-buffer-list
+* es-visible-end-of-line
 * es-windows-with-buffer
 
 ### Macros:
