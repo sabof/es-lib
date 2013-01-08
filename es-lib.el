@@ -87,7 +87,6 @@
   (setq deactivate-mark nil))
 
 (defun es-line-matches-p (regexp)
-  "*****"
   (string-match-p
    regexp
    (buffer-substring
@@ -106,8 +105,7 @@
   (not (es-line-empty-p)))
 
 (defun es-replace-regexp-prog (regexp replacement &optional from to)
-  "By default acts on the whole buffer.
-*****"
+  "By default acts on the whole buffer."
   (assert (or (neither from to) (and from to)))
   (save-match-data
     (save-excursion
@@ -119,8 +117,7 @@
           (replace-match replacement t nil))))))
 
 (defun es-replace-prog (original replacement &optional from to)
-  "By default acts on the whole buffer.
-*****"
+  "By default acts on the whole buffer."
   (save-match-data
     (save-excursion
       (goto-char (point-min))
@@ -131,7 +128,6 @@
           (replace-match replacement t nil))))))
 
 (defun es-find-function-bound-to (key-sequence)
-  "*****"
   (interactive "kFind function bound to: ")
   (let ((symbol (key-binding key-sequence)))
     (if (fboundp symbol)
@@ -142,12 +138,12 @@
   (save-excursion
     (if (es-line-empty-p)
         (progn
-         (next-line)
-         (goto-char (es-last-character-pos))
-         (insert thing))
+          (next-line)
+          (goto-char (es-last-character-pos))
+          (insert thing))
         (progn
-         (goto-char (es-last-character-pos))
-         (insert thing)))))
+          (goto-char (es-last-character-pos))
+          (insert thing)))))
 
 (defun es-add-semicolon-at-eol ()
   (interactive)
@@ -201,7 +197,6 @@
                'newline)))
 
 (defun es-new-empty-buffer ()
-  "*****"
   (interactive)
   (if (or t (> (length (window-list)) 1))
       (switch-to-buffer (generate-new-buffer "untitled"))
@@ -209,8 +204,7 @@
   (lisp-interaction-mode))
 
 (defun* es-define-keys (keymap &rest bindings)
-  "Returns the keymap in the end.
-*****"
+  "Returns the keymap in the end."
   (while bindings
     (define-key keymap (pop bindings) (pop bindings)))
   keymap)
