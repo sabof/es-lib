@@ -38,7 +38,19 @@ See documentation for `es-increase-number-at-point'.
 ```
 
 * es-delete-duplicate-lines
+* es-duplicate-line
+
+```
+Duplicate current line.
+```
+
 * es-duplicate-line-or-region
+* es-duplicate-region
+
+```
+Duplicate the active region.
+```
+
 * es-find-function-bound-to
 * es-highlighter
 
@@ -148,8 +160,6 @@ Syntax example:
 ```
 
 * es-disable-keys
-* es-duplicate-line
-* es-duplicate-region
 * es-find-duplicates
 
 ```

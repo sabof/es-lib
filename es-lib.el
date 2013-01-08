@@ -27,6 +27,7 @@
 
 (require 'cl)
 (require 'es-lib-lexical)
+(require 'es-lib-move-text)
 
 ;;; Macros
 
@@ -388,6 +389,8 @@ Marks the symbol on first call, then marks the statement."
           ( t (select-line-internal)))))
 
 (defun es-duplicate-line ()
+  "Duplicate current line."
+  (interactive)
   (let* (( pnt (point))
          ( start (es-total-line-beginning-position))
          ( end (es-total-line-end-position))
@@ -398,6 +401,8 @@ Marks the symbol on first call, then marks the statement."
     (goto-char (+ 1 end (- pnt start)))))
 
 (defun es-duplicate-region ()
+  "Duplicate the active region."
+  (interactive)
   (let (( copy-store
           (or (es-active-region-string)
               (error "No active region")))
