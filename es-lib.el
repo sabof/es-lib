@@ -27,6 +27,8 @@
 
 (require 'cl)
 (require 'es-lib-lexical)
+(require 'es-lib-total-line)
+(require 'es-lib-duplicate)
 (require 'es-lib-move-text)
 
 ;;; Macros
@@ -102,37 +104,6 @@
                            (mapcar 'car alist) rest)))
     (when selection
       (cdr (find selection alist :key 'car :test 'equal)))))
-
-(defun es-total-line-end-position (&optional pos)
-  "Kind of like \(max \(end-of-line\) \(end-of-visual-line\)\)."
-  (save-excursion
-    (when pos (goto-char pos))
-    (es-while-point-moving
-     (end-of-visual-line)
-     (end-of-line))
-    (point)))
-
-(defun es-total-line-beginning-position (&optional pos)
-  "Kind of like \(min \(beginning-of-line\) \(beginning-of-visual-line\)\)."
-  (save-excursion
-    (when pos (goto-char pos))
-    (es-while-point-moving
-     (beginning-of-line)
-     (beginning-of-visual-line))
-    (point)))
-
-(defun es-total-forward-line (arg)
-  (cond
-    ( (plusp arg)
-      (dotimes (ignore arg)
-        (goto-char (es-total-line-end-position))
-        (forward-char)))
-    ( t
-      (goto-char (es-total-line-beginning-position))
-      (dotimes (ignore (* -1 arg))
-        (backward-char)
-        (goto-char (es-total-line-beginning-position))
-        ))))
 
 (defun es-buffer-mode (buffer-or-name)
   (with-current-buffer (get-buffer buffer-or-name)
@@ -388,46 +359,6 @@ Marks the symbol on first call, then marks the statement."
             (mark-colon-internal))
           ( t (select-line-internal)))))
 
-(defun es-duplicate-line ()
-  "Duplicate current line."
-  (interactive)
-  (let* (( pnt (point))
-         ( start (es-total-line-beginning-position))
-         ( end (es-total-line-end-position))
-         ( copy-store (buffer-substring start end)))
-    (goto-char end)
-    (newline)
-    (insert copy-store)
-    (goto-char (+ 1 end (- pnt start)))))
-
-(defun es-duplicate-region ()
-  "Duplicate the active region."
-  (interactive)
-  (let (( copy-store
-          (or (es-active-region-string)
-              (error "No active region")))
-        b-pos er-pos)
-    (goto-char (region-end))
-    ;; For things like (mark-paragraph)
-    (unless (zerop (current-column))
-      (newline))
-    (set-mark (setq b-pos (point)))
-    (insert copy-store)
-    (setq er-pos (- (line-end-position) (point)))
-    (unless (or (eq major-mode 'haskell-mode)
-                (eq indent-line-function 'insert-tab))
-      (indent-region b-pos (point)))
-    (goto-char (- (line-end-position) er-pos))
-    (activate-mark)
-    (setq deactivate-mark nil
-          cua--explicit-region-start nil)))
-
-(defun es-duplicate-line-or-region ()
-  (interactive)
-  (if (region-active-p)
-      (es-duplicate-region)
-      (es-duplicate-line)))
-
 (defun es-comment-dwim ()
   (interactive)
   (cond ( (region-active-p)
@@ -629,15 +560,6 @@ The \"originals\" won't be included."
 (defun es-mode-keymap (mode-sym)
   (symbol-value (intern (concat (symbol-name mode-sym) "-map"))))
 
-(defun es-number-at-point ()
-  (when (looking-at "[[:digit:]-]+")
-    (save-excursion
-      (while (looking-at "[[:digit:]-]+")
-        (backward-char))
-      (list (match-string-no-properties 0)
-            (match-beginning 0)
-            (match-end 0)))))
-
 (defun es-toggle-true-false-maybe ()
   (save-excursion
     (flet (( replace (new)
@@ -742,33 +664,6 @@ files."
                         (quit-window)))
                     (funcall (or ,finish-func 'ignore))))))))
 
-(defun* es-change-number-at-point (&optional decrease)
-  (let ((number (es-number-at-point)))
-    (if (not number)
-        (progn
-          (save-excursion
-            (when (re-search-backward "[0-9]" (line-beginning-position) t)
-              (es-change-number-at-point decrease)))
-          (multiple-value-bind (num-string beg end) (es-number-at-point)
-            (when (and (numberp beg)
-                       (equal (- end beg) 1))
-              (forward-char))))
-        (multiple-value-bind (num-string beg end) number
-          ;; number
-          (let* ((start-pos (point))
-                 (distance-from-end (- end start-pos))
-                 (increment (* (expt 10 (1- distance-from-end))
-                               (if decrease -1 1)))
-                 (result (+ (string-to-number num-string) increment))
-                 (result-string (number-to-string
-                                 result)))
-            (delete-region beg end)
-            (insert-string result-string)
-            (goto-char (max beg
-                            (+ start-pos
-                               (- (length result-string)
-                                  (length num-string))))))))))
-
 (defun es-ack-pin-folder (folder)
   "Set ack root directory for one buffer only.
 Ack won't prompt for a directory name in that buffer."
@@ -780,21 +675,6 @@ Ack won't prompt for a directory name in that buffer."
   (set (make-local-variable
         'ack-and-a-half-prompt-for-directory) nil)
   (message "Ack directory set to: %s" folder))
-
-(defun es-increase-number-at-point ()
-  "Increases the digit at point.
-The increment some power of 10, depending on the positon of the cursor. If there
-is no number at point, will try to increment the previous number on the same
-line."
-  (interactive)
-  (unless (es-toggle-true-false-maybe)
-    (es-change-number-at-point)))
-
-(defun es-decrease-number-at-point ()
-  "See documentation for `es-increase-number-at-point'."
-  (interactive)
-  (unless (es-toggle-true-false-maybe)
-    (es-change-number-at-point t)))
 
 (defun es-windows-with-buffer (buffer)
   "In all frames."

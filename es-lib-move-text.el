@@ -50,13 +50,17 @@
          (fboundp 'fold-dwim-hide)
          (save-excursion
            (end-of-line)
-           (when (equal (char-before) (aref "{" 0))
+           (when (equal (char-before) ?\{)
              (fold-dwim-hide))))))
 
 (defun* es--indent-rigidly-internal (arg)
   (cond ( (region-active-p)
-          (let ((start (es-total-line-beginning-position (region-beginning)))
-                (end (es--section-marking-end-of-line (region-end))))
+          (let (( start
+                  (es-total-line-beginning-position
+                   (region-beginning)))
+                ( end
+                  (es--section-marking-end-of-line
+                   (region-end))))
             (set-mark end)
             (goto-char start)
             (indent-rigidly start end arg)
@@ -74,7 +78,7 @@
             (if (> new-indent cur-column)
                 (indent-to new-indent)
                 (goto-char (+ new-indent (line-beginning-position)))
-                ;; kill rest
+                (delete-region (point) (line-end-position))
                 )))
         ( t (indent-rigidly
              (es-total-line-beginning-position (point))
