@@ -1,16 +1,19 @@
 #es-lib
 A collecton of emacs utilities. Here are some highlights:
 
-* **es-lib-move-text.el**
+#### Files:
+
+* **es-lib-move-text.el:**
   Functions for shifting current line or region in four directions
-* **es-lib-duplicate.el**
+* **es-lib-duplicate.el:**
   Functions duplicating the current region
-* **es-lib-total-line.el**
+* **es-lib-total-line.el:**
   Functions for comfortably moving with folded lines
-* **es-lib-number-at-point**
+* **es-lib-number-at-point:**
   Functions for manipulating the number at point.
 
-* **es-ack-replace-symbol**
+#### Functions:
+* **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
