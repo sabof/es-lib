@@ -25,8 +25,6 @@
 
 ;;; Code:
 
-;;; Code:
-
 (defun es-total-line-end-position (&optional pos)
   "Kind of like \(max \(end-of-line\) \(end-of-visual-line\)\)."
   (save-excursion
@@ -80,7 +78,6 @@
         (goto-char indentation-end))))
 (put 'es-total-line-beginning 'CUA 'move)
 
-(provide 'es-lib-total-line)
 (provide 'es-lib-total-line)
 
 ;;; es-lib-total-line.el ends here

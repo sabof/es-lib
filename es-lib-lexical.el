@@ -95,6 +95,5 @@
     (setq window-size-fixed t)))
 
 (provide 'es-lib-lexical)
-(provide 'es-lib-lexical)
 
 ;;; es-lib-lexical.el ends here

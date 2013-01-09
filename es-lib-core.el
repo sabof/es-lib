@@ -2,7 +2,6 @@
 
 ;;; Macros
 
-
 (defun es-disable-keys (map &rest keylist)
   (dolist (key keylist)
     (define-key map key nil)))
@@ -114,7 +113,9 @@
     (line-beginning-position)
     (line-end-position))))
 
+;;; At pos?
 (defun es-indentation-end-pos (&optional position)
+
   (save-excursion
     (when position (goto-char position))
     (+ (current-indentation) (line-beginning-position))))
@@ -171,8 +172,8 @@ If the line is empty, insert at the end of next line."
 (defun es-add-semicolon-at-eol ()
   (interactive)
   (es-add-at-eol ";")
-  (when (fboundp 'fai-test-and-indent)
-    (fai-test-and-indent)))
+  (when (fboundp 'fai-indent-line-maybe)
+    (fai-indent-line-maybe)))
 
 (defun es-add-comma-at-eol ()
   (interactive)
@@ -208,8 +209,8 @@ If the line is empty, insert at the end of next line."
         ( t (beginning-of-line)
             (newline)
             (backward-char)
-            (when (fboundp 'fai-test-and-indent)
-              (fai-test-and-indent)))))
+            (when (fboundp 'fai-indent-line-maybe)
+              (fai-indent-line-maybe)))))
 
 (defun es-jump-line ()
   "end-of-line + newline."
@@ -660,5 +661,78 @@ Ack won't prompt for a directory name in that buffer."
   (let ((split-height-threshold 0)
         (split-width-threshold 0))
     (pop-to-buffer buf)))
+
+(defun es-point-between-pairs-p ()
+  (let ((result nil))
+    (mapcar*
+     (lambda (character-pair)
+       (if (and (characterp (char-before))
+                (characterp (char-after))
+                (equal (char-to-string (char-before))
+                       (car character-pair))
+                (equal (char-to-string (char-after))
+                       (cdr character-pair)))
+           (setq result t)))
+     '(("\"" . "\"")
+       ("\'" . "\'")
+       ("{" . "}")
+       ("(" . ")")
+       ("[" . "]")))
+    result))
+
+(defun es-fixup-whitespace (&optional before after)
+  "Fixup white space between objects around point.
+Leave one space or none, according to the context.
+
+An improvment over the built-in fixup-whitespace.
+You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
+  (interactive "*")
+  (delete-horizontal-space)
+  (macrolet ((sp-member (arg)
+               `(member ,arg SPairRaw)))
+    (let* ((SPairRaw (list (or (char-before) before)
+                           (or (char-after) after)))
+           (SPair (mapcar (lambda (char)
+                            (if (characterp char)
+                                (char-to-string char)))
+                          SPairRaw))
+           (insert-space
+            (block insert-space-b
+              ;; All Langs
+              (when (or (and (sp-member ?\") (in-string-p))
+                        (equal SPairRaw '(  ?>  ?<  ))
+                        (sp-member ?\s)
+                        (sp-member ?\n)
+                        ;; (eq '(   ?\(   ?\(   ) SPairRaw)
+                        (member (first SPairRaw)
+                                '(   ?\(   ))
+                        (member (second SPairRaw)
+                                '(   ?\)   ?\n   )))
+                (return-from insert-space-b nil))
+              ;; C Family
+              (when (memq major-mode '(php-mode  c-mode  js2-mode  js-mode  css-mode))
+                (when (equal (first SPairRaw) ?\;)
+                  (return-from insert-space-b t))
+                (when (or (equal (second SPairRaw) ?\;)
+                          (equal SPairRaw '(?\} ?\}))
+                          (and (in-string-p) (sp-member ?\'))
+                          (member (second SPairRaw) '(?\n  ?\)   ?\(   ?,   ?:   nil)))
+                  (return-from insert-space-b nil)))
+              ;; Lisp Family
+              (when (memq major-mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode))
+                (when (or (equal SPairRaw '(  ?'  ?\(  )))
+                  (return-from insert-space-b nil))
+                (when (or (equal SPairRaw '(  ?\)  ?\(  ))
+                          (and (sp-member ?\)) (not (eq (char-before) (char-after))))
+                          (and (sp-member ?\() (not (eq (char-before) (char-after)))))
+                  (return-from insert-space-b t)))
+              (when (memq major-mode '(nxml-mode php-mode web-mode))
+                (when (or (sp-member ?<)
+                          (sp-member ?>))
+                  (return-from insert-space-b nil)))
+              t)))
+      (when insert-space
+        (insert ?\s))
+      insert-space)))
 
 (provide 'es-lib-core)

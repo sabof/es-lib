@@ -43,8 +43,8 @@
         (setq deactivate-mark nil
               cua--explicit-region-start nil)
         (progn (move-to-column column t)
-               (when (fboundp 'fai-test-and-indent)
-                 (fai-test-and-indent))
+               (when (fboundp 'fai-indent-line-maybe)
+                 (fai-indent-line-maybe))
                (setq deactivate-mark t)))
     (and first-line-was-folded
          (fboundp 'fold-dwim-hide)

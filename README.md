@@ -17,7 +17,7 @@ A collecton of emacs utilities. Here are some highlights:
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
-_(auto-generated before each commit)_
+_Auto-generated before each commit. Total items in the library: 78_
 
 ### Commands:
 
@@ -68,6 +68,16 @@ Duplicate the active region.
 ```
 
 * es-find-function-bound-to
+* es-fixup-whitespace
+
+```
+Fixup white space between objects around point.
+Leave one space or none, according to the context.
+
+An improvment over the built-in fixup-whitespace.
+You might want to do (defalias 'fixup-whitespace 'es-fixup-whitespace)
+```
+
 * es-highlighter
 
 ```
@@ -254,6 +264,7 @@ Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 * es-mode-keymap
 * es-next-printable-character-pos
 * es-number-at-point
+* es-point-between-pairs-p
 * es-pop-to-buffer-vertically
 * es-random-member
 * es-replace-prog
