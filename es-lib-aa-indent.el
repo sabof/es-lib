@@ -39,7 +39,7 @@ All indentation happends through this function."
           (return-from es-aai--indent-region))))))
 
 (defun es-aai-indent-defun ()
-  "Indents current defun, if it is smaller than `es-aai-indent-limit'.
+  "Indent current defun, if it is smaller than `es-aai-indent-limit'.
 Otherwise call `es-aai-indent-forward'."
   (let (init-pos
         end-pos
@@ -78,7 +78,6 @@ Otherwise call `es-aai-indent-forward'."
                   (> (- (point) starting-point)
                      es-aai-indented-yank-limit))
         (es-aai--indent-region starting-point (point)))
-
       ;; (when (bound-and-true-p font-lock-mode)
       ;;   (font-lock-fontify-region starting-point (point)))
       (goto-line line)

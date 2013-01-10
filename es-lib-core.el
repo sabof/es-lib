@@ -474,7 +474,6 @@ The \"originals\" won't be included."
                    (return-from es-manage-unsaved-buffers))))
       (message "Done"))))
 
-
 (defun es-query-replace-symbol-at-point ()
   (interactive)
   (let* (( original

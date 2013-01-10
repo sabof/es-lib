@@ -162,7 +162,7 @@ Go back to indentation if point is before indentation.
 * es-aai-indent-defun
 
 ```
-Indents current defun, if it is smaller than `es-aai-indent-limit'.
+Indent current defun, if it is smaller than `es-aai-indent-limit'.
 Otherwise call `es-aai-indent-forward'.
 ```
 
