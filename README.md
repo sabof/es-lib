@@ -23,7 +23,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 99_
+_Auto-generated before each commit. Total items in the library: 100_
 
 #### Table of contents:
 
@@ -339,6 +339,12 @@ Return t if STRING begins with BEGINNING.
 * es-string-remove-properties
 * es-toggle-true-false-maybe
 * es-unsaved-buffer-list
+* es-var-documentation
+
+```
+Get variable documentation, or nil if there isn't one.
+```
+
 * es-windows-with-buffer
 
 ```

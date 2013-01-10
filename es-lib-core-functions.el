@@ -614,4 +614,10 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
       (unload-feature feature t)))
   (require feature))
 
+(defun es-var-documentation (sym)
+  "Get variable documentation, or nil if there isn't one."
+  (ignore-errors
+    (documentation-property
+     sym 'variable-documentation t)))
+
 (provide 'es-lib-core-functions)

@@ -4,11 +4,6 @@
 (require 'loadhist)
 (require 'apropos)
 
-(defun es-var-documentation (sym)
-  (ignore-errors
-    (documentation-property
-     sym 'variable-documentation t)))
-
 (defun es-analyze-feature-loadhist (feature)
   (let* (( all-syms (feature-symbols feature))
          ( funs-raw (mapcar 'cdr
@@ -18,7 +13,7 @@
                                     (eq (car thing)
                                         'defun)))
                              all-syms)))
-         ( aliases (prog1 (cl-remove-if-not
+         ( func-aliases (prog1 (cl-remove-if-not
                            'symbolp
                            funs-raw
                            :key 'symbol-function)
@@ -36,7 +31,7 @@
           :commands commands
           :macros macros
           :defvars vars
-          :aliases aliases)))
+          :func-aliases func-aliases)))
 
 (defun es--type-name (type)
   (case type
@@ -44,7 +39,7 @@
     (:commands "Commands")
     (:defvars "Defvars")
     (:macros "Macros")
-    (:aliases "Aliases")))
+    (:func-aliases "Aliases")))
 
 (defun es-lib-features ()
   (let ((libs (mapcar (es-comp 'intern 'file-name-base)
