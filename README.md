@@ -12,7 +12,8 @@ A collecton of emacs utilities. Here are some highlights:
 * **es-lib-number-at-point:**
   Functions for manipulating the number at point.
 * **es-lib-aa-indent:**
-  Automatic automatic indentation. Code gets indented as you type.
+  Automatic automatic indentation. Code gets indented as you type. See
+  es-aai-mode docstring for details.
 
 #### Functions:
 * **es-ack-replace-symbol:**

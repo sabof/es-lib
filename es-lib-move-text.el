@@ -98,11 +98,13 @@
 (defun es-move-text-left ()
   "Move region or the current line left."
   (interactive)
-  (es--indent-rigidly-internal (* -1 (es--current-mode-indent-step))))
+  (es--indent-rigidly-internal
+   (* -1 (es--current-mode-indent-step))))
 
 (defun es-move-text-right ()
   "Move region or the current line right."
   (interactive)
-  (es--indent-rigidly-internal (es--current-mode-indent-step)))
+  (es--indent-rigidly-internal
+   (es--current-mode-indent-step)))
 
 (provide 'es-lib-move-text)
