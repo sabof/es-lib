@@ -17,7 +17,7 @@ A collecton of emacs utilities. Here are some highlights:
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
-_Auto-generated before each commit. Total items in the library: 78_
+_Auto-generated before each commit. Total items in the library: 95_
 
 ### Commands:
 
@@ -161,6 +161,28 @@ Interactive version of `es-total-line-beginning-position'.
 
 ```
 Interactive version of `es-total-line-end-position'.
+```
+
+* fai-backspace
+
+```
+Like `backward-delete-char', but removes the resulting gap when point is at EOL.
+```
+
+* fai-delete-char
+
+```
+Like `delete-char', but deletes indentation, if point is at it, or before it.
+```
+
+* fai-indented-yank
+* fai-mouse-yank
+* fai-mouse-yank-dont-indent
+* fai-newline-and-indent
+* fai-open-line
+
+```
+Open line, and indent the following.
 ```
 
 
@@ -307,6 +329,63 @@ Kind of like (max (end-of-line) (end-of-visual-line)).
 
 ```
 In all frames.
+```
+
+* fai--indent-region
+
+```
+Indent region lines where `fai-indentable-line-p-function' returns non-nil.
+```
+
+* fai--init
+* fai-before-change-function
+
+```
+Change tracking.
+```
+
+* fai-correct-position-this
+
+```
+Go back to indentation if point is before indentation.
+```
+
+* fai-indent-defun
+
+```
+Indents current defun, if it is smaller than `fai-indent-limit'.
+Otherwise call `fai-indent-forward'.
+```
+
+* fai-indent-forward
+
+```
+Indent current line, and (1- `fai-indent-limit') lines afterwards.
+```
+
+* fai-indent-line-maybe
+
+```
+(indent-according-to-mode) when `fai-indentable-line-p-function' returns non-nil.
+All indentation happends through this function.
+```
+
+* fai-major-mode-setup
+
+```
+Optimizations for speicfic modes
+```
+
+* fai-minor-mode-setup
+
+```
+Change interfering minor modes.
+```
+
+* fai-post-command-hook
+
+```
+First key stroke tracking, cursor correction
 ```
 
 
