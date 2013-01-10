@@ -261,11 +261,12 @@ Otherwise call `es-aai-indent-forward'."
   (es-aai--major-mode-setup))
 
 (define-minor-mode es-aai-mode
-    "Fuchikoma Automatic Indentation"
-  nil " fai" (make-sparse-keymap)
+    "Automatic automatic indentation."
+  nil " aai" (make-sparse-keymap)
   (if es-aai-mode
       (es-aai--init)))
 
-
+(defalias 'es-aa-indent-mode 'es-aai-mode)
+(defvaralias 'es-aa-indent-mode 'es-aai-mode)
 
 (provide 'es-lib-aa-indent)

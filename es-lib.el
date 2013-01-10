@@ -31,6 +31,7 @@
 (require 'es-lib-total-line)
 (require 'es-lib-move-text)
 (require 'es-lib-number-at-point)
+(require 'es-lib-aa-indent)
 
 (provide 'es-lib)
 
