@@ -172,8 +172,8 @@ If the line is empty, insert at the end of next line."
 (defun es-add-semicolon-at-eol ()
   (interactive)
   (es-add-at-eol ";")
-  (when (fboundp 'fai-indent-line-maybe)
-    (fai-indent-line-maybe)))
+  (when (fboundp 'es-aai-indent-line-maybe)
+    (es-aai-indent-line-maybe)))
 
 (defun es-add-comma-at-eol ()
   (interactive)
@@ -209,8 +209,8 @@ If the line is empty, insert at the end of next line."
         ( t (beginning-of-line)
             (newline)
             (backward-char)
-            (when (fboundp 'fai-indent-line-maybe)
-              (fai-indent-line-maybe)))))
+            (when (fboundp 'es-aai-indent-line-maybe)
+              (es-aai-indent-line-maybe)))))
 
 (defun es-jump-line ()
   "end-of-line + newline."

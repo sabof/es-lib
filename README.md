@@ -21,6 +21,28 @@ _Auto-generated before each commit. Total items in the library: 95_
 
 ### Commands:
 
+* es-aai-backspace
+
+```
+Like `backward-delete-char', but removes the resulting gap when point is at EOL.
+```
+
+* es-aai-delete-char
+
+```
+Like `delete-char', but deletes indentation, if point is at it, or before it.
+```
+
+* es-aai-indented-yank
+* es-aai-mouse-yank
+* es-aai-mouse-yank-dont-indent
+* es-aai-newline-and-indent
+* es-aai-open-line
+
+```
+Open line, and indent the following.
+```
+
 * es-ack-pin-folder
 
 ```
@@ -163,30 +185,65 @@ Interactive version of `es-total-line-beginning-position'.
 Interactive version of `es-total-line-end-position'.
 ```
 
-* fai-backspace
-
-```
-Like `backward-delete-char', but removes the resulting gap when point is at EOL.
-```
-
-* fai-delete-char
-
-```
-Like `delete-char', but deletes indentation, if point is at it, or before it.
-```
-
-* fai-indented-yank
-* fai-mouse-yank
-* fai-mouse-yank-dont-indent
-* fai-newline-and-indent
-* fai-open-line
-
-```
-Open line, and indent the following.
-```
-
 
 ### Non-interactive:
+
+* es-aai--indent-region
+
+```
+Indent region lines where `es-aai-indentable-line-p-function' returns non-nil.
+```
+
+* es-aai--init
+* es-aai--major-mode-setup
+
+```
+Optimizations for speicfic modes
+```
+
+* es-aai--minor-mode-setup
+
+```
+Change interacting minor modes.
+```
+
+* es-aai-before-change-function
+
+```
+Change tracking.
+```
+
+* es-aai-correct-position-this
+
+```
+Go back to indentation if point is before indentation.
+```
+
+* es-aai-indent-defun
+
+```
+Indents current defun, if it is smaller than `es-aai-indent-limit'.
+Otherwise call `es-aai-indent-forward'.
+```
+
+* es-aai-indent-forward
+
+```
+Indent current line, and (1- `es-aai-indent-limit') lines afterwards.
+```
+
+* es-aai-indent-line-maybe
+
+```
+(indent-according-to-mode) when `es-aai-indentable-line-p-function' returns non-nil.
+All indentation happends through this function.
+```
+
+* es-aai-post-command-hook
+
+```
+First key stroke tracking, cursor correction
+```
 
 * es-active-region-string
 * es-add-at-eol
@@ -329,63 +386,6 @@ Kind of like (max (end-of-line) (end-of-visual-line)).
 
 ```
 In all frames.
-```
-
-* fai--indent-region
-
-```
-Indent region lines where `fai-indentable-line-p-function' returns non-nil.
-```
-
-* fai--init
-* fai-before-change-function
-
-```
-Change tracking.
-```
-
-* fai-correct-position-this
-
-```
-Go back to indentation if point is before indentation.
-```
-
-* fai-indent-defun
-
-```
-Indents current defun, if it is smaller than `fai-indent-limit'.
-Otherwise call `fai-indent-forward'.
-```
-
-* fai-indent-forward
-
-```
-Indent current line, and (1- `fai-indent-limit') lines afterwards.
-```
-
-* fai-indent-line-maybe
-
-```
-(indent-according-to-mode) when `fai-indentable-line-p-function' returns non-nil.
-All indentation happends through this function.
-```
-
-* fai-major-mode-setup
-
-```
-Optimizations for speicfic modes
-```
-
-* fai-minor-mode-setup
-
-```
-Change interfering minor modes.
-```
-
-* fai-post-command-hook
-
-```
-First key stroke tracking, cursor correction
 ```
 
 
