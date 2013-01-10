@@ -1,48 +1,10 @@
 (require 'cl)
 
-;;; Macros
-
 (defun es-disable-keys (map &rest keylist)
   (dolist (key keylist)
     (define-key map key nil)))
 (put 'es-disable-keys 'common-lisp-indent-function
      '(4 &body))
-
-(defmacro es-silence-messages (&rest body)
-  `(flet ((message (&rest ignore)))
-     ,@body))
-
-(defmacro es-while-point-moving (&rest rest)
-  "Normally belongs to es-lib-navigate, but it since it's a
-macro, it must always be evaluated before it's used"
-  (let ((old-point (gensym)))
-    `(let (,old-point)
-       (while (not (equal (point) ,old-point))
-         (setq ,old-point (point))
-         ,@rest))))
-
-(defmacro es-neither (&rest args)
-  `(not (or ,@args)))
-
-(defmacro es-define-buffer-local-vars (&rest list)
-  "Syntax example:
-\(es-define-buffer-local-vars
- mvi-current-image-file nil\)"
-  (let (result)
-    (while list
-      (let ((name (pop list))
-            (value (pop list)))
-        (push `(defvar ,name ,value) result)
-        (push `(make-variable-buffer-local (quote ,name)) result)))
-    (cons 'progn (nreverse result))))
-
-(defmacro es-back-pop (symbol)
-  (let ( (result (gensym)))
-    `(let ( (,result (first (last ,symbol))))
-       (setq ,symbol (butlast ,symbol))
-       ,result)))
-
-;;; Funcions
 
 (defun es-kill-buffer-dont-ask (&optional buffer)
   (interactive)
