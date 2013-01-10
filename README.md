@@ -24,7 +24,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 97_
+_Auto-generated before each commit. Total items in the library: 98_
 
 #### Table of contents:
 
@@ -70,7 +70,7 @@ the cursor correction and delete-char behaviour,
 you can add
 
 (set (make-local-variable
-      'es-aai-after-change-indentation) t)
+      'es-aai-after-change-indentation) nil)
 
 if the mode indents well in all but a few cases, you can change the
 `es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
@@ -105,6 +105,12 @@ Maximum number of lines for after-change indentation.
 
 ```
 For mode-specifc cusomizations.
+```
+
+* es-aai-indented-yank-limit
+
+```
+Maximum number of character to indent for `es-aai-indented-yank'
 ```
 
 * es-aai-mode-map

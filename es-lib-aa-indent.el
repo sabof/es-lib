@@ -7,6 +7,8 @@
 Useful when you want to keep the keymap and cursor repositioning.")
 (defvar es-aai-indent-limit 20
   "Maximum number of lines for after-change indentation.")
+(defvar es-aai-indented-yank-limit 4000
+  "Maximum number of character to indent for `es-aai-indented-yank'")
 
 (es-define-buffer-local-vars
  es-aai--change-flag nil)
@@ -74,7 +76,7 @@ Otherwise call `es-aai-indent-forward'."
             line (line-number-at-pos))
       (unless (or dont-indent
                   (> (- (point) starting-point)
-                     4000))
+                     es-aai-indented-yank-limit))
         (es-aai--indent-region starting-point (point)))
 
       ;; (when (bound-and-true-p font-lock-mode)
@@ -288,7 +290,7 @@ the cursor correction and delete-char behaviour,
 you can add
 
 \(set \(make-local-variable
-      'es-aai-after-change-indentation\) t\)
+      'es-aai-after-change-indentation\) nil\)
 
 if the mode indents well in all but a few cases, you can change the
 `es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
