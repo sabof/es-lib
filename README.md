@@ -24,16 +24,18 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 98_
+_Auto-generated before each commit. Total items in the library: 103_
 
 #### Table of contents:
 
 * [es-lib-aa-indent](#es-lib-aa-indent)
-* [es-lib-core](#es-lib-core)
+* [es-lib-core-functions](#es-lib-core-functions)
+* [es-lib-core-macros](#es-lib-core-macros)
 * [es-lib-duplicate](#es-lib-duplicate)
 * [es-lib-lexical](#es-lib-lexical)
 * [es-lib-move-text](#es-lib-move-text)
 * [es-lib-number-at-point](#es-lib-number-at-point)
+* [es-lib-text-navigate](#es-lib-text-navigate)
 * [es-lib-total-line](#es-lib-total-line)
 
 
@@ -186,7 +188,7 @@ Correct the cursor, and possibly indent.
 ```
 
 
-## es-lib-core
+## es-lib-core-functions
 
 
 #### Macros:
@@ -281,7 +283,6 @@ beginning-of-line + open line.
 
 #### Non-interactive:
 
-* es-active-region-string
 * es-add-at-eol
 
 ```
@@ -293,12 +294,6 @@ If the line is empty, insert at the end of next line.
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
-* es-current-character-indentation
-
-```
-Like (current-indentation), but counts tabs as single characters.
-```
-
 * es-define-keys
 
 ```
@@ -319,7 +314,6 @@ Multiple duplicates will be listed muliple times.
 The "originals" won't be included.
 ```
 
-* es-goto-previous-non-blank-line
 * es-ido-completing-read-alist
 
 ```
@@ -328,27 +322,15 @@ Each member can also be a string
 (fn PROMPT ALIST &rest REST)
 ```
 
-* es-indentation-end-pos
 * es-kill-dead-shells
-* es-line-empty-p
-* es-line-folded-p
-
-```
-Check whether the line contains a multiline folding.
-```
-
-* es-line-matches-p
-* es-line-visible-p
 * es-mapbuffer
 
 ```
 Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 ```
 
-* es-mark-symbol-at-point
 * es-mode-keymap
 * es-next-printable-character-pos
-* es-point-between-pairs-p
 * es-pop-to-buffer-vertically
 * es-random-member
 * es-replace-prog
@@ -363,7 +345,6 @@ By default acts on the whole buffer.
 By default acts on the whole buffer.
 ```
 
-* es-set-region
 * es-string-begins-with-p
 
 ```
@@ -373,13 +354,30 @@ Return t if STRING begins with BEGINNING.
 * es-string-remove-properties
 * es-toggle-true-false-maybe
 * es-unsaved-buffer-list
-* es-visible-end-of-line
 * es-windows-with-buffer
 
 ```
 In all frames.
 ```
 
+
+## es-lib-core-macros
+
+
+#### Macros:
+
+* es-back-pop
+* es-define-buffer-local-vars
+
+```
+Syntax example:
+(es-define-buffer-local-vars
+ mvi-current-image-file nil)
+```
+
+* es-neither
+* es-silence-messages
+* es-while-point-moving
 
 ## es-lib-duplicate
 
@@ -499,6 +497,34 @@ line.
 #### Non-interactive:
 
 * es-number-at-point
+
+## es-lib-text-navigate
+
+
+#### Non-interactive:
+
+* es-active-region-string
+* es-current-character-indentation
+
+```
+Like (current-indentation), but counts tabs as single characters.
+```
+
+* es-goto-previous-non-blank-line
+* es-indentation-end-pos
+* es-line-empty-p
+* es-line-folded-p
+
+```
+Check whether the line contains a multiline folding.
+```
+
+* es-line-matches-p
+* es-line-visible-p
+* es-mark-symbol-at-point
+* es-point-between-pairs-p
+* es-set-region
+* es-visible-end-of-line
 
 ## es-lib-total-line
 

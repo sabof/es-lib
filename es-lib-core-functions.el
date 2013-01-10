@@ -608,4 +608,4 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
         (insert ?\s))
       insert-space)))
 
-(provide 'es-lib-core)
+(provide 'es-lib-core-functions)
