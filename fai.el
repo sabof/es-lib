@@ -12,24 +12,35 @@ Useful when you want to keep the keymap and cursor repositioning.")
  fai-change-flag nil)
 
 (defun fai-indent-line-maybe ()
-  "\(indent-according-to-mode\) when `fai-indentable-line-p-function' returns non-nil."
+  "\(indent-according-to-mode\) when `fai-indentable-line-p-function' returns non-nil.
+All indentation happends through this function."
   (when (and fai-mode
              (not (eq indent-line-function 'insert-tab))
              (funcall fai-indentable-line-p-function))
     (indent-according-to-mode)))
 
 (defun fai-indent-forward ()
-  "Indent current line, and `fai-indent-limit' lines afterwards."
+  "Indent current line, and \(1- `fai-indent-limit'\) lines afterwards."
   (save-excursion
-    (fai-indent-line-maybe)
-    (dotimes (ignore fai-indent-limit)
-      (forward-line)
-      (fai-indent-line-maybe))))
+    (loop repeat fai-indent-limit do
+          (fai-indent-line-maybe)
+          (forward-line))))
+
+(defun* fai--indent-region (start end)
+  "Indent region lines where `fai-indentable-line-p-function' returns non-nil."
+  (save-excursion
+    (let ((end-line (line-number-at-pos end)))
+      (goto-char start)
+      (while (<= (line-number-at-pos) end-line)
+        (fai-indent-line-maybe)
+        (when (plusp (forward-line))
+          (return-from fai--indent-region))))))
 
 (defun fai-indent-defun ()
   "Indents current defun, if it is smaller than `fai-indent-limit'.
-Otherwise `fai-indent-forward'."
+Otherwise call `fai-indent-forward'."
   (let (init-pos
+        end-pos
         line-end-distance)
     (condition-case nil
         (save-excursion
@@ -41,8 +52,9 @@ Otherwise `fai-indent-forward'."
                           (line-number-at-pos init-pos)))
                    fai-indent-limit)
             (error "defun too long"))
+          (setq end-pos (point))
           (goto-char init-pos)
-          (indent-pp-sexp))
+          (fai--indent-region init-pos end-pos))
       (error (fai-indent-forward)))
     (fai-correct-position-this)))
 
@@ -60,9 +72,10 @@ Otherwise `fai-indent-forward'."
       (unless (or dont-indent
                   (> (- (point) starting-point)
                      4000))
-        (indent-region starting-point (point)))
-      (when (bound-and-true-p font-lock-mode)
-        (font-lock-fontify-region starting-point (point)))
+        (fai--indent-region starting-point (point)))
+
+      ;; (when (bound-and-true-p font-lock-mode)
+      ;;   (font-lock-fontify-region starting-point (point)))
       (goto-line line)
       (goto-char (- (line-end-position) end-distance)))))
 
@@ -85,38 +98,39 @@ Otherwise `fai-indent-forward'."
   (interactive "e")
   (fai-mouse-yank event t))
 
-(defun fai-delete (&optional from-backspace)
+(defun fai-delete-char (&optional from-backspace)
+  "Like `delete-char', but deletes indentation, if point is at it, or before it."
   (interactive)
   (if (region-active-p)
       (delete-region (point) (mark))
-      ;; The following functionality might overlap;
-      (if (>= (point)
-              (es-visible-end-of-line))
+      (if (>= (point) (es-visible-end-of-line))
           (progn
             (delete-region (point) (1+ (line-end-position)))
-            (when (and (fixup-whitespace)
+            (when (and (es-fixup-whitespace)
                        (not from-backspace))
               (backward-char)))
           (delete-char 1))))
 
 (defun fai-backspace ()
+  "Like `backward-delete-char', but removes the resulting gap when point is at EOL."
   (interactive)
-  (cond ( (and (not (bound-and-true-p autopair-mode))
+  (cond ( (region-active-p)
+          (delete-region (point) (mark)))
+        ( (and (not (bound-and-true-p autopair-mode))
                (es-point-between-pairs-p))
           (delete-char 1)
           (delete-char -1))
-        ( (region-active-p)
-          (delete-region (point) (mark)))
         ( (<= (current-column)
               (current-indentation))
-          (previous-logical-line)
-          (end-of-line)
-          (fai-delete t))
+          (forward-line -1)
+          (goto-char (line-end-position))
+          (fai-delete-char t))
         ( (bound-and-true-p paredit-mode)
           (paredit-backward-delete))
         ( t (backward-delete-char 1))))
 
 (defun fai-open-line ()
+  "Open line, and indent the following."
   (interactive)
   (let ((was-at-eol (>= (point) (es-visible-end-of-line))))
     (save-excursion
@@ -127,16 +141,17 @@ Otherwise `fai-indent-forward'."
 
 (defun* fai-newline-and-indent ()
   (interactive)
+  ;; For c-like languages
   (when (and (not (region-active-p))
              (equal (char-before) ?{ )
              (equal (char-after) ?} ))
     (newline)
     (save-excursion
       (newline))
-    (indent-according-to-mode)
+    (fai-indent-line-maybe)
     (save-excursion
       (forward-char)
-      (indent-according-to-mode))
+      (fai-indent-line-maybe))
     (return-from fai-newline-and-indent))
   (when (region-active-p)
     (delete-region (point) (mark)))
@@ -145,10 +160,10 @@ Otherwise `fai-indent-forward'."
   (when (memq major-mode '(nxml-mode web-mode))
     (save-excursion
       (forward-line -1)
-      (indent-according-to-mode))))
+      (fai-indent-line-maybe))))
 
 (defun fai-correct-position-this ()
-  "Go back to indentation, if point is before indentation."
+  "Go back to indentation if point is before indentation."
   (let ((indentation-beginning (es-indentation-end-pos)))
     (when (< (point) indentation-beginning)
       (goto-char indentation-beginning))))
@@ -175,7 +190,8 @@ Otherwise `fai-indent-forward'."
                            (bound-and-true-p multiple-cursors-mode))
                (> (es-indentation-end-pos) (point)))
       (cond ( (memq this-command '(backward-char left-char))
-              (end-of-line 0))
+              (forward-line -1)
+              (goto-char (line-end-position)))
             ( (memq this-command
                     '(forward-char right-char
                       previous-line next-line))
@@ -185,45 +201,57 @@ Otherwise `fai-indent-forward'."
                fai-change-flag
                (buffer-modified-p)
                (or first-keystroke
-                   (not (memq
-                         this-command
-                         '(save-buffer
-                           delete-horizontal-space
-                           undo
-                           undo-tree-undo
-                           undo-tree-redo
-                           quoted-insert
-                           backward-paragraph
-                           self-insert-command))))
+                   (not (memq this-command
+                              '(save-buffer
+                                delete-horizontal-space
+                                undo
+                                undo-tree-undo
+                                undo-tree-redo
+                                quoted-insert
+                                backward-paragraph
+                                self-insert-command))))
                (not (region-active-p)))
       (funcall fai-indent-function))
     (setq fai-change-flag nil)))
 
-(defun fai--init ()
+(defun fai-major-mode-setup ()
+  "Optimizations for speicfic modes"
+  (when (memq major-mode
+              '(lisp-interaction-mode
+                common-lisp-mode
+                emacs-lisp-mode))
+    (set (make-local-variable 'fai-indent-function)
+         'fai-indent-defun)))
+
+(defun fai-minor-mode-setup ()
+  "Change interfering minor modes."
   (eval-after-load "multiple-cursors-core"
     '(pushnew 'fai-mode mc/unsupported-minor-modes))
   (eval-after-load "paredit"
     '(es-define-keys fai-mode-map
-      [remap paredit-forward-delete] 'fai-delete
+      [remap paredit-forward-delete] 'fai-delete-char
       [remap paredit-backward-delete] 'fai-backspace))
   (eval-after-load "cua-base"
-    (define-key cua--region-keymap [remap delete-char]
+    '(define-key cua--region-keymap [remap delete-char]
       (lambda ()
         (interactive)
         (if fai-mode
-            (fai-delete)
-            (cua-delete-region)))))
-  (setq inhibit-modification-hooks nil)
+            (fai-delete-char)
+            (cua-delete-region))))))
+
+(defun fai--init ()
   (pushnew 'fai-before-change-function before-change-functions)
   (add-hook 'post-command-hook 'fai-post-command-hook t t)
+  (when cua-mode
+    (es-define-keys fai-mode-map
+      (kbd "C-v") 'fai-indented-yank))
   (es-define-keys fai-mode-map
     [mouse-2] 'fai-mouse-yank
-    [remap cua-paste] 'fai-indented-yank
     [remap yank] 'fai-indented-yank
     [remap newline] 'fai-newline-and-indent
     [remap open-line] 'fai-open-line
-    [remap delete-char] 'fai-delete
-    [remap forward-delete] 'fai-delete
+    [remap delete-char] 'fai-delete-char
+    [remap forward-delete] 'fai-delete-char
     [remap backward-delete-char-untabify] 'fai-backspace
     [remap backward-delete-char] 'fai-backspace
     ))
