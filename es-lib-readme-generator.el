@@ -4,13 +4,6 @@
 (require 'loadhist)
 (require 'apropos)
 
-(defun es-reload-feature (feature)
-  "Not very nice, but ensures that all definitions are fresh."
-  (when (featurep feature)
-    (ignore-errors
-      (unload-feature feature t)))
-  (require feature))
-
 (defun es-var-documentation (sym)
   (ignore-errors
     (documentation-property
@@ -76,7 +69,7 @@
 
 (let ((total-items 0))
   (defun es-feature-report (feature)
-    (es-reload-feature feature)
+    (es-reset-feature feature)
     (let (( analyzed
             (mapcar (lambda (thing)
                       (if (consp thing)
@@ -125,7 +118,7 @@
           (insert (format "#es-lib
 A collecton of emacs utilities. Here are some highlights:
 
-#### Files:
+#### Packages:
 
 * **es-lib-move-text:**
   Functions for shifting current line or region in four directions

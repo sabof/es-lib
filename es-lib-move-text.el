@@ -20,7 +20,7 @@
              (when was-active
                (goto-char (region-beginning)))
              (es-line-folded-p)))
-         ( column (current-column))
+         ( initial-column (current-column))
          ( start (es-total-line-beginning-position
                   (if was-active
                       (region-beginning)
@@ -42,16 +42,21 @@
     (if (or was-active first-line-was-folded)
         (setq deactivate-mark nil
               cua--explicit-region-start nil)
-        (progn (move-to-column column t)
-               (when (fboundp 'es-aai-indent-line-maybe)
-                 (es-aai-indent-line-maybe))
-               (setq deactivate-mark t)))
+        (progn (move-to-column initial-column t)
+               (deactivate-mark)))
     (and first-line-was-folded
          (fboundp 'fold-dwim-hide)
          (save-excursion
-           (end-of-line)
-           (when (equal (char-before) ?\{)
-             (fold-dwim-hide))))))
+           (cond ( (memq major-mode
+                         '(lisp-mode
+                           emacs-lisp-mode
+                           lisp-interaction-mode
+                           common-lisp-mode))
+                   (fold-dwim-hide))
+                 ( (progn (goto-char (line-end-position))
+                          (equal (char-before) ?\{))
+                   (fold-dwim-hide)
+                   ))))))
 
 (defun* es--indent-rigidly-internal (arg)
   (cond ( (region-active-p)

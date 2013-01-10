@@ -608,4 +608,10 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
         (insert ?\s))
       insert-space)))
 
+(defun es-reset-feature (feature)
+  (when (featurep feature)
+    (ignore-errors
+      (unload-feature feature t)))
+  (require feature))
+
 (provide 'es-lib-core-functions)

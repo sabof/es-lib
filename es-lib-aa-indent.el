@@ -174,7 +174,8 @@ Otherwise call `es-aai-indent-forward'."
 
 (defun es-aai-before-change-function (&rest ignore)
   "Change tracking."
-  (setq es-aai--change-flag t))
+  (when es-aai-mode
+    (setq es-aai--change-flag t)))
 
 (defun* es-aai-post-command-hook ()
   "Correct the cursor, and possibly indent."
@@ -189,33 +190,33 @@ Otherwise call `es-aai-indent-forward'."
                 (or last-input-structural
                     (not (eq last-command 'self-insert-command))))))
     ;; Correct position
-    (when (and (es-neither (region-active-p)
-                           (bound-and-true-p cua--rectangle)
-                           (bound-and-true-p multiple-cursors-mode))
-               (> (es-indentation-end-pos) (point)))
-      (cond ( (memq this-command '(backward-char left-char))
-              (forward-line -1)
-              (goto-char (line-end-position)))
-            ( (memq this-command
-                    '(forward-char right-char
-                      previous-line next-line))
-              (back-to-indentation))))
-    ;; It won't indent if corrected
-    (when (and es-aai-after-change-indentation
-               es-aai--change-flag
-               (buffer-modified-p)
-               (or first-keystroke
-                   (not (memq this-command
-                              '(save-buffer
-                                delete-horizontal-space
-                                undo
-                                undo-tree-undo
-                                undo-tree-redo
-                                quoted-insert
-                                backward-paragraph
-                                self-insert-command))))
-               (not (region-active-p)))
-      (funcall es-aai-indent-function))
+    (when (and (not (region-active-p)))
+      (when (and (es-neither (bound-and-true-p cua--rectangle)
+                             (bound-and-true-p multiple-cursors-mode))
+                 (> (es-indentation-end-pos) (point)))
+        (cond ( (memq this-command '(backward-char left-char))
+                (forward-line -1)
+                (goto-char (line-end-position)))
+              ( (memq this-command
+                      '(forward-char right-char
+                        previous-line next-line))
+                (back-to-indentation))))
+      ;; It won't indent if corrected
+      (when (and es-aai-after-change-indentation
+                 es-aai--change-flag
+                 (buffer-modified-p)
+                 (or first-keystroke
+                     (not (memq this-command
+                                '(save-buffer
+                                  delete-horizontal-space
+                                  undo
+                                  undo-tree-undo
+                                  undo-tree-redo
+                                  quoted-insert
+                                  backward-paragraph
+                                  self-insert-command))))
+                 )
+        (funcall es-aai-indent-function)))
     (setq es-aai--change-flag nil)))
 
 (defun es-aai--major-mode-setup ()
@@ -246,8 +247,8 @@ Otherwise call `es-aai-indent-forward'."
     '(eldoc-add-command 'es-aai-indented-yank)))
 
 (defun es-aai--init ()
-  (pushnew 'es-aai-before-change-function before-change-functions)
   (add-hook 'post-command-hook 'es-aai-post-command-hook t t)
+  (pushnew 'es-aai-before-change-function before-change-functions)
   (when cua-mode
     (es-define-keys es-aai-mode-map
       (kbd "C-v") 'es-aai-indented-yank))

@@ -1,7 +1,7 @@
 #es-lib
 A collecton of emacs utilities. Here are some highlights:
 
-#### Files:
+#### Packages:
 
 * **es-lib-move-text:**
   Functions for shifting current line or region in four directions
@@ -23,7 +23,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 98_
+_Auto-generated before each commit. Total items in the library: 99_
 
 #### Table of contents:
 
@@ -329,6 +329,7 @@ By default acts on the whole buffer.
 By default acts on the whole buffer.
 ```
 
+* es-reset-feature
 * es-string-begins-with-p
 
 ```
