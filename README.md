@@ -3,17 +3,16 @@ A collecton of emacs utilities. Here are some highlights:
 
 #### Files:
 
-* **es-lib-move-text.el:**
+* **es-lib-move-text:**
   Functions for shifting current line or region in four directions
-* **es-lib-duplicate.el:**
+* **es-lib-duplicate:**
   Functions duplicating the current region
-* **es-lib-total-line.el:**
+* **es-lib-total-line:**
   Functions for comfortably moving with folded lines
 * **es-lib-number-at-point:**
   Functions for manipulating the number at point.
 * **es-lib-aa-indent:**
-  Automatic automatic indentation. Code gets indented as you type. See
-  es-aa-indent-mode docstring for details.
+  Automatic automatic indentation. Code gets indented as you type.
 
 #### Functions:
 
