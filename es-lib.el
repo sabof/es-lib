@@ -25,8 +25,8 @@
 
 ;;; Code:
 
-(require 'es-lib-core-functions)
 (require 'es-lib-core-macros)
+(require 'es-lib-core-functions)
 (require 'es-lib-text-navigate)
 (require 'es-lib-lexical)
 (require 'es-lib-duplicate)
