@@ -20,7 +20,7 @@ A collecton of emacs utilities. Here are some highlights:
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
-_Auto-generated before each commit. Total items in the library: 95_
+_Auto-generated before each commit. Total items in the library: 97_
 
 ### Commands:
 
@@ -256,6 +256,7 @@ Insert THING at end of line.
 If the line is empty, insert at the end of next line.
 ```
 
+* es-analyze-feature-loadhist
 * es-back-curry
 
 ```
@@ -349,6 +350,12 @@ Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 * es-point-between-pairs-p
 * es-pop-to-buffer-vertically
 * es-random-member
+* es-reload-feature
+
+```
+Not very nice, but ensures that all definitions are fresh.
+```
+
 * es-replace-prog
 
 ```
