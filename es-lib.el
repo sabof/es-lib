@@ -25,7 +25,8 @@
 
 ;;; Code:
 
-(require 'es-lib-core)
+(require 'es-lib-core-functions)
+(require 'es-lib-text-navigate)
 (require 'es-lib-lexical)
 (require 'es-lib-duplicate)
 (require 'es-lib-total-line)

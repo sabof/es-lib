@@ -13,6 +13,8 @@
      ,@body))
 
 (defmacro es-while-point-moving (&rest rest)
+  "Normally belongs to es-lib-navigate, but it since it's a
+macro, it must always be evaluated before it's used"
   (let ((old-point (gensym)))
     `(let (,old-point)
        (while (not (equal (point) ,old-point))
@@ -99,32 +101,6 @@
   (with-temp-buffer
     (insert string)
     (buffer-substring-no-properties (point-min) (point-max))))
-
-(defun es-set-region (point mark)
-  (push-mark mark)
-  (goto-char point)
-  (activate-mark)
-  (setq deactivate-mark nil))
-
-(defun es-line-matches-p (regexp)
-  (string-match-p
-   regexp
-   (buffer-substring
-    (line-beginning-position)
-    (line-end-position))))
-
-;;; At pos?
-(defun es-indentation-end-pos (&optional position)
-
-  (save-excursion
-    (when position (goto-char position))
-    (+ (current-indentation) (line-beginning-position))))
-
-(defun es-line-empty-p ()
-  (es-line-matches-p "^[ 	]*$"))
-
-(defun es-line-visible-p ()
-  (not (es-line-empty-p)))
 
 (defun es-replace-regexp-prog (regexp replacement &optional from to)
   "By default acts on the whole buffer."
@@ -238,12 +214,6 @@ If the line is empty, insert at the end of next line."
   keymap)
 (put 'es-define-keys 'common-lisp-indent-function
      '(4 &body))
-
-(defun es-active-region-string ()
-  (when (region-active-p)
-    (buffer-substring
-     (region-beginning)
-     (region-end))))
 
 (defun es-highlighter ()
   "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active."
@@ -432,17 +402,6 @@ The \"originals\" won't be included."
             do (forward-char)
             finally (return (char-after-or-nil))))))
 
-(defun es-mark-symbol-at-point ()
-  (es-silence-messages
-   (if (looking-at "\\=\\(\\s_\\|\\sw\\)*\\_>")
-       (goto-char (match-end 0))
-       (unless (memq (char-before) '(?\) ?\"))
-         (forward-sexp)))
-   (mark-sexp -1)
-   (exchange-point-and-mark)
-   (when (equal (char-after) ?\')
-     (forward-char))))
-
 (defun es-kill-dead-shells ()
   (mapc 'es-kill-buffer-dont-ask
         (remove-if-not
@@ -509,23 +468,6 @@ The \"originals\" won't be included."
          replacement
          nil (point-min) (line-beginning-position))))))
 
-(defun es-visible-end-of-line ()
-  (save-match-data
-    (save-excursion
-      (end-of-line)
-      (if (re-search-backward
-           "[^ \t]" (line-beginning-position) t)
-          (progn (forward-char)
-                 (point))
-          (line-beginning-position)))))
-
-(defun es-line-folded-p ()
-  "Check whether the line contains a multiline folding."
-  (not (equal (list (line-beginning-position)
-                    (line-end-position))
-              (list (es-total-line-beginning-position)
-                    (es-total-line-end-position)))))
-
 (defun es-mode-keymap (mode-sym)
   (symbol-value (intern (concat (symbol-name mode-sym) "-map"))))
 
@@ -545,18 +487,6 @@ The \"originals\" won't be included."
             ( (equal (word-at-point) "nil")
               (replace "t"))
             ( t nil)))))
-
-(defun es-goto-previous-non-blank-line ()
-  (save-match-data
-    (beginning-of-line)
-    (re-search-backward "[^ \n\t]")
-    (beginning-of-line)))
-
-(defun es-current-character-indentation ()
-  "Like (current-indentation), but counts tabs as single characters."
-  (save-excursion
-    (back-to-indentation)
-    (- (point) (line-beginning-position))))
 
 (defun* es-ack-replace-symbol
     (from-symbol-or-string
@@ -660,24 +590,6 @@ Ack won't prompt for a directory name in that buffer."
   (let ((split-height-threshold 0)
         (split-width-threshold 0))
     (pop-to-buffer buf)))
-
-(defun es-point-between-pairs-p ()
-  (let ((result nil))
-    (mapcar*
-     (lambda (character-pair)
-       (if (and (characterp (char-before))
-                (characterp (char-after))
-                (equal (char-to-string (char-before))
-                       (car character-pair))
-                (equal (char-to-string (char-after))
-                       (cdr character-pair)))
-           (setq result t)))
-     '(("\"" . "\"")
-       ("\'" . "\'")
-       ("{" . "}")
-       ("(" . ")")
-       ("[" . "]")))
-    result))
 
 (defun es-fixup-whitespace (&optional before after)
   "Fixup white space between objects around point.
