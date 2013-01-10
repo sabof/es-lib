@@ -177,7 +177,7 @@ Otherwise call `es-aai-indent-forward'."
   (setq es-aai--change-flag t))
 
 (defun* es-aai-post-command-hook ()
-  "First key stroke tracking, cursor correction"
+  "Correct the cursor, and possibly indent."
   (unless es-aai-mode
     (return-from es-aai-post-command-hook))
   (let* (( last-input-structural

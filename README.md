@@ -19,6 +19,8 @@ A collecton of emacs utilities. Here are some highlights:
 
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
+* **es-ido-like-helm:**
+  Choose from a concatenated list of buffers and open files. I have it bound to <menu>.
 
 # Index:
 
@@ -185,7 +187,7 @@ All indentation happends through this function.
 * es-aai-post-command-hook
 
 ```
-First key stroke tracking, cursor correction
+Correct the cursor, and possibly indent.
 ```
 
 
