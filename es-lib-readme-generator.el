@@ -74,10 +74,10 @@
     (es-reload-feature feature)
     (let ((analyzed (es-analyze-feature-loadhist feature)))
       (with-temp-buffer
-        (insert "### " (symbol-name feature) "\n")
+        (insert "\n### " (symbol-name feature) "\n\n")
         (dolist (type '(:defvars :macros :commands :defuns-ni))
           (unless (zerop (length (getf analyzed type)))
-            (insert "#### " (es--type-name type) ":\n")
+            (insert "\n#### " (es--type-name type) ":\n\n")
             (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
               (unless (search "--" (symbol-name item))
                 (insert "* " (symbol-name item) "\n")
@@ -110,7 +110,7 @@
         (save-window-excursion
           (find-file (mmake-path "site-lisp/my-scripts/es-lib/README.md"))
           (erase-buffer)
-          (insert "#es-lib
+          (insert (format "#es-lib
 A collecton of emacs utilities. Here are some highlights:
 
 #### Files:
@@ -128,17 +128,20 @@ A collecton of emacs utilities. Here are some highlights:
   es-aai-mode docstring for details.
 
 #### Functions:
+
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
-"
-                  (format "## Index:
+## Index:
+
 _Auto-generated before each commit. Total items in the library: %s_
-"
-                          total-items)
-                  "### Table of contents \n"
-                  (es-toc (es-lib-features))
-                  index)
+
+### Table of contents:
+%s
+%s"
+                          total-items
+                          (es-toc (es-lib-features))
+                          index))
           (save-buffer))))))
 
 (provide 'es-lib-readme-generator)

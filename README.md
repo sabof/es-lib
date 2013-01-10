@@ -16,12 +16,15 @@ A collecton of emacs utilities. Here are some highlights:
   es-aai-mode docstring for details.
 
 #### Functions:
+
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
+
 _Auto-generated before each commit. Total items in the library: 99_
-### Table of contents
+
+### Table of contents:
 
 * [es-lib-aa-indent](#es-lib-aa-indent)
 * [es-lib-core](#es-lib-core)
@@ -31,8 +34,13 @@ _Auto-generated before each commit. Total items in the library: 99_
 * [es-lib-number-at-point](#es-lib-number-at-point)
 * [es-lib-total-line](#es-lib-total-line)
 
+
+
 ### es-lib-aa-indent
+
+
 #### Defvars:
+
 * es-aa-indent-mode
 
 ```
@@ -75,7 +83,9 @@ Non-nil if Es-aai mode is enabled.
 Keymap for `es-aai-mode'.
 ```
 
+
 #### Commands:
+
 * es-aai-backspace
 
 ```
@@ -137,7 +147,9 @@ if the mode indents pretty in all but a few cases, you can change the
 Open line, and indent the following.
 ```
 
+
 #### Non-interactive:
+
 * es-aai-before-change-function
 
 ```
@@ -176,8 +188,12 @@ All indentation happends through this function.
 First key stroke tracking, cursor correction
 ```
 
+
 ### es-lib-core
+
+
 #### Macros:
+
 * es-back-pop
 * es-define-buffer-local-vars
 
@@ -190,7 +206,9 @@ Syntax example:
 * es-neither
 * es-silence-messages
 * es-while-point-moving
+
 #### Commands:
+
 * es-ack-pin-folder
 
 ```
@@ -263,7 +281,9 @@ beginning-of-line + open line.
 ```
 
 * es-query-replace-symbol-at-point
+
 #### Non-interactive:
+
 * es-active-region-string
 * es-add-at-eol
 
@@ -363,8 +383,12 @@ Return t if STRING begins with BEGINNING.
 In all frames.
 ```
 
+
 ### es-lib-duplicate
+
+
 #### Commands:
+
 * es-duplicate-line
 
 ```
@@ -378,15 +402,21 @@ Duplicate current line.
 Duplicate the active region.
 ```
 
+
 ### es-lib-lexical
+
+
 #### Commands:
+
 * es-make-timer-buffer
 
 ```
 Accepts a time-limit in minutes.
 ```
 
+
 #### Non-interactive:
+
 * es-back-curry
 
 ```
@@ -417,8 +447,12 @@ Same as clojure's (constantly).
 Create a function with FUNC's arguments reversed.
 ```
 
+
 ### es-lib-move-text
+
+
 #### Commands:
+
 * es-move-text-down
 
 ```
@@ -443,9 +477,15 @@ Move region or the current line right.
 Move region or the current line up.
 ```
 
+
 #### Non-interactive:
+
+
 ### es-lib-number-at-point
+
+
 #### Commands:
+
 * es-decrease-number-at-point
 
 ```
@@ -461,10 +501,16 @@ is no number at point, will try to increment the previous number on the same
 line.
 ```
 
+
 #### Non-interactive:
+
 * es-number-at-point
+
 ### es-lib-total-line
+
+
 #### Commands:
+
 * es-total-line-beginning
 
 ```
@@ -477,7 +523,9 @@ Interactive version of `es-total-line-beginning-position'.
 Interactive version of `es-total-line-end-position'.
 ```
 
+
 #### Non-interactive:
+
 * es-total-forward-line
 * es-total-line-beginning-position
 
