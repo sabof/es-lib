@@ -21,6 +21,16 @@ A collecton of emacs utilities. Here are some highlights:
 
 ## Index:
 _Auto-generated before each commit. Total items in the library: 99_
+### Table of contents
+
+* [es-lib-aa-indent](#es-lib-aa-indent)
+* [es-lib-core](#es-lib-core)
+* [es-lib-duplicate](#es-lib-duplicate)
+* [es-lib-lexical](#es-lib-lexical)
+* [es-lib-move-text](#es-lib-move-text)
+* [es-lib-number-at-point](#es-lib-number-at-point)
+* [es-lib-total-line](#es-lib-total-line)
+
 ### es-lib-aa-indent
 #### Defvars:
 * es-aa-indent-mode

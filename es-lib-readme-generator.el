@@ -48,6 +48,27 @@
     (:macros "Macros")
     (:aliases "Aliases")))
 
+(defun es-lib-features ()
+  (let ((libs (mapcar (es-comp 'intern 'file-name-base)
+                      (directory-files
+                       (mmake-path "site-lisp/my-scripts/es-lib")
+                       nil "^es-"))))
+    (remove-if (lambda (featch)
+                 (memq featch
+                       '(es-lib-readme-generator
+                         es-lib)))
+               libs)))
+
+(defun es-toc (features)
+  (with-temp-buffer
+    (insert "\n")
+    (dolist (feature features)
+      (insert
+       (format "* [%s](#%s)\n"
+               feature feature)))
+    (insert "\n")
+    (buffer-string)))
+
 (let ((total-items 0))
   (defun es-feature-report (feature)
     (es-reload-feature feature)
@@ -75,15 +96,7 @@
         (buffer-string))))
 
   (defun es-lib-report ()
-    (let* (( libs (mapcar (es-comp 'intern 'file-name-base)
-                          (directory-files
-                           (mmake-path "site-lisp/my-scripts/es-lib")
-                           nil "^es-")))
-           ( libs (remove-if (lambda (featch)
-                               (memq featch
-                                     '(es-lib-readme-generator
-                                       es-lib)))
-                             libs)))
+    (let* (( libs (es-lib-features)))
       (setq total-items 0)
       (with-temp-buffer
         (dolist (feature libs)
@@ -118,12 +131,14 @@ A collecton of emacs utilities. Here are some highlights:
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
-")
-          (insert (format "## Index:
+"
+                  (format "## Index:
 _Auto-generated before each commit. Total items in the library: %s_
 "
-                          total-items))
-          (insert index)
+                          total-items)
+                  "### Table of contents \n"
+                  (es-toc (es-lib-features))
+                  index)
           (save-buffer))))))
 
 (provide 'es-lib-readme-generator)
