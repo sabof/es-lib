@@ -20,10 +20,52 @@ A collecton of emacs utilities. Here are some highlights:
   A refactoring tool, with help of which this library was assembled
 
 ## Index:
-_Auto-generated before each commit. Total items in the library: 97_
+_Auto-generated before each commit. Total items in the library: 99_
+### es-lib-aa-indent
+#### Defvars:
+* es-aa-indent-mode
 
-### Commands:
+```
+(not documented)
+```
 
+* es-aai-after-change-indentation
+
+```
+Whether to reindent after every change.
+```
+
+* es-aai-indent-function
+
+```
+Function to call after ever change, when
+```
+
+* es-aai-indent-limit
+
+```
+Maximum number of lines for after-change indentation.
+```
+
+* es-aai-indentable-line-p-function
+
+```
+For mode-specifc cusomizations.
+```
+
+* es-aai-mode
+
+```
+Non-nil if Es-aai mode is enabled.
+```
+
+* es-aai-mode-map
+
+```
+Keymap for `es-aai-mode'.
+```
+
+#### Commands:
 * es-aai-backspace
 
 ```
@@ -37,6 +79,45 @@ Like `delete-char', but deletes indentation, if point is at it, or before it.
 ```
 
 * es-aai-indented-yank
+* es-aai-mode
+
+```
+Automatic automatic indentation.
+Works pretty well for lisp out of the box.
+Other modes might need some tweaking to set up:
+If you trust the mode's automatic indentation completely, you can add to it's
+init hook:
+
+(set (make-local-variable 'es-aai-indent-function)
+     'es-aai-indent-defun)
+
+or
+
+(set (make-local-variable 'es-aai-indent-function)
+     'es-aai-indent-forward)
+
+depending on whether the language has small and clearly
+identifiable functions, that `beginning-of-defun' and
+`end-of-defun' can find.
+
+If on the other hand you don't trust the mode at all, but like
+the cursor correction and delete-char behaviour,
+
+you can add
+
+(set (make-local-variable
+      'es-aai-after-change-indentation) t)
+
+if the mode indents pretty in all but a few cases, you can change the
+`es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
+
+(set (make-local-variable
+      'es-aai-indentable-line-p-function)
+     (lambda ()
+       (not (or (es-line-matches-p "EOD")
+                (es-line-matches-p "EOT")))))
+```
+
 * es-aai-mouse-yank
 * es-aai-mouse-yank-dont-indent
 * es-aai-newline-and-indent
@@ -46,170 +127,7 @@ Like `delete-char', but deletes indentation, if point is at it, or before it.
 Open line, and indent the following.
 ```
 
-* es-ack-pin-folder
-
-```
-Set ack root directory for one buffer only.
-Ack won't prompt for a directory name in that buffer.
-```
-
-* es-ack-replace-symbol
-
-```
-Repalace symbol at point, or region contents in multiple
-files.
-
-(fn FROM-SYMBOL-OR-STRING TO-SYMBOL-OR-STRING &key DIRECTORY AUTO-SAVE FINISH-FUNC SILENT)
-```
-
-* es-add-comma-at-eol
-* es-add-semicolon-at-eol
-* es-c-expand-region
-
-```
-A simple version of expand-region for c-like languages.
-Marks the symbol on first call, then marks the statement.
-```
-
-* es-comment-dwim
-* es-decrease-number-at-point
-
-```
-See documentation for `es-increase-number-at-point'.
-```
-
-* es-delete-duplicate-lines
-* es-duplicate-line
-
-```
-Duplicate current line.
-```
-
-* es-duplicate-line-or-region
-* es-duplicate-region
-
-```
-Duplicate the active region.
-```
-
-* es-find-function-bound-to
-* es-fixup-whitespace
-
-```
-Fixup white space between objects around point.
-Leave one space or none, according to the context.
-
-An improvment over the built-in fixup-whitespace.
-You might want to do (defalias 'fixup-whitespace 'es-fixup-whitespace)
-```
-
-* es-highlighter
-
-```
-Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active.
-```
-
-* es-ido-like-helm
-
-```
-Choose from a concatenated list of buffers and recent files.
-```
-
-* es-increase-number-at-point
-
-```
-Increases the digit at point.
-The increment some power of 10, depending on the positon of the cursor. If there
-is no number at point, will try to increment the previous number on the same
-line.
-```
-
-* es-jump-line
-
-```
-end-of-line + newline.
-```
-
-* es-kill-buffer-dont-ask
-* es-make-timer-buffer
-
-```
-Accepts a time-limit in minutes.
-```
-
-* es-manage-unsaved-buffers
-
-```
-Similar to what happends when emacs is about to quit.
-```
-
-* es-mouse-yank-replace-symbol
-* es-move-text-down
-
-```
-Move region or the current line down.
-```
-
-* es-move-text-left
-
-```
-Move region or the current line left.
-```
-
-* es-move-text-right
-
-```
-Move region or the current line right.
-```
-
-* es-move-text-up
-
-```
-Move region or the current line up.
-```
-
-* es-new-empty-buffer
-* es-push-line
-
-```
-beginning-of-line + open line.
-```
-
-* es-query-replace-symbol-at-point
-* es-total-line-beginning
-
-```
-Interactive version of `es-total-line-beginning-position'.
-```
-
-* es-total-line-end
-
-```
-Interactive version of `es-total-line-end-position'.
-```
-
-
-### Non-interactive:
-
-* es-aai--indent-region
-
-```
-Indent region lines where `es-aai-indentable-line-p-function' returns non-nil.
-```
-
-* es-aai--init
-* es-aai--major-mode-setup
-
-```
-Optimizations for speicfic modes
-```
-
-* es-aai--minor-mode-setup
-
-```
-Change interacting minor modes.
-```
-
+#### Non-interactive:
 * es-aai-before-change-function
 
 ```
@@ -248,6 +166,94 @@ All indentation happends through this function.
 First key stroke tracking, cursor correction
 ```
 
+### es-lib-core
+#### Macros:
+* es-back-pop
+* es-define-buffer-local-vars
+
+```
+Syntax example:
+(es-define-buffer-local-vars
+ mvi-current-image-file nil)
+```
+
+* es-neither
+* es-silence-messages
+* es-while-point-moving
+#### Commands:
+* es-ack-pin-folder
+
+```
+Set ack root directory for one buffer only.
+Ack won't prompt for a directory name in that buffer.
+```
+
+* es-ack-replace-symbol
+
+```
+Repalace symbol at point, or region contents in multiple
+files.
+
+(fn FROM-SYMBOL-OR-STRING TO-SYMBOL-OR-STRING &key DIRECTORY AUTO-SAVE FINISH-FUNC SILENT)
+```
+
+* es-add-comma-at-eol
+* es-add-semicolon-at-eol
+* es-c-expand-region
+
+```
+A simple version of expand-region for c-like languages.
+Marks the symbol on first call, then marks the statement.
+```
+
+* es-comment-dwim
+* es-delete-duplicate-lines
+* es-find-function-bound-to
+* es-fixup-whitespace
+
+```
+Fixup white space between objects around point.
+Leave one space or none, according to the context.
+
+An improvment over the built-in fixup-whitespace.
+You might want to do (defalias 'fixup-whitespace 'es-fixup-whitespace)
+```
+
+* es-highlighter
+
+```
+Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active.
+```
+
+* es-ido-like-helm
+
+```
+Choose from a concatenated list of buffers and recent files.
+```
+
+* es-jump-line
+
+```
+end-of-line + newline.
+```
+
+* es-kill-buffer-dont-ask
+* es-manage-unsaved-buffers
+
+```
+Similar to what happends when emacs is about to quit.
+```
+
+* es-mouse-yank-replace-symbol
+* es-new-empty-buffer
+* es-push-line
+
+```
+beginning-of-line + open line.
+```
+
+* es-query-replace-symbol-at-point
+#### Non-interactive:
 * es-active-region-string
 * es-add-at-eol
 
@@ -256,35 +262,10 @@ Insert THING at end of line.
 If the line is empty, insert at the end of next line.
 ```
 
-* es-analyze-feature-loadhist
-* es-back-curry
-
-```
-Like (apply-partially), but adds arguments to the end.
-```
-
 * es-buffer-mode
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
-* es-comp
-
-```
-Same as clojure's (comp).
-```
-
-* es-complement
-
-```
-Same as clojure's (complement).
-```
-
-* es-constantly
-
-```
-Same as clojure's (constantly).
-```
-
 * es-current-character-indentation
 
 ```
@@ -309,12 +290,6 @@ Syntax example:
 ```
 Multiple duplicates will be listed muliple times.
 The "originals" won't be included.
-```
-
-* es-flip
-
-```
-Create a function with FUNC's arguments reversed.
 ```
 
 * es-goto-previous-non-blank-line
@@ -346,16 +321,9 @@ Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 * es-mark-symbol-at-point
 * es-mode-keymap
 * es-next-printable-character-pos
-* es-number-at-point
 * es-point-between-pairs-p
 * es-pop-to-buffer-vertically
 * es-random-member
-* es-reload-feature
-
-```
-Not very nice, but ensures that all definitions are fresh.
-```
-
 * es-replace-prog
 
 ```
@@ -377,6 +345,129 @@ Return t if STRING begins with BEGINNING.
 
 * es-string-remove-properties
 * es-toggle-true-false-maybe
+* es-unsaved-buffer-list
+* es-visible-end-of-line
+* es-windows-with-buffer
+
+```
+In all frames.
+```
+
+### es-lib-duplicate
+#### Commands:
+* es-duplicate-line
+
+```
+Duplicate current line.
+```
+
+* es-duplicate-line-or-region
+* es-duplicate-region
+
+```
+Duplicate the active region.
+```
+
+### es-lib-lexical
+#### Commands:
+* es-make-timer-buffer
+
+```
+Accepts a time-limit in minutes.
+```
+
+#### Non-interactive:
+* es-back-curry
+
+```
+Like (apply-partially), but adds arguments to the end.
+```
+
+* es-comp
+
+```
+Same as clojure's (comp).
+```
+
+* es-complement
+
+```
+Same as clojure's (complement).
+```
+
+* es-constantly
+
+```
+Same as clojure's (constantly).
+```
+
+* es-flip
+
+```
+Create a function with FUNC's arguments reversed.
+```
+
+### es-lib-move-text
+#### Commands:
+* es-move-text-down
+
+```
+Move region or the current line down.
+```
+
+* es-move-text-left
+
+```
+Move region or the current line left.
+```
+
+* es-move-text-right
+
+```
+Move region or the current line right.
+```
+
+* es-move-text-up
+
+```
+Move region or the current line up.
+```
+
+#### Non-interactive:
+### es-lib-number-at-point
+#### Commands:
+* es-decrease-number-at-point
+
+```
+See documentation for `es-increase-number-at-point'.
+```
+
+* es-increase-number-at-point
+
+```
+Increases the digit at point.
+The increment some power of 10, depending on the positon of the cursor. If there
+is no number at point, will try to increment the previous number on the same
+line.
+```
+
+#### Non-interactive:
+* es-number-at-point
+### es-lib-total-line
+#### Commands:
+* es-total-line-beginning
+
+```
+Interactive version of `es-total-line-beginning-position'.
+```
+
+* es-total-line-end
+
+```
+Interactive version of `es-total-line-end-position'.
+```
+
+#### Non-interactive:
 * es-total-forward-line
 * es-total-line-beginning-position
 
@@ -389,27 +480,3 @@ Kind of like (min (beginning-of-line) (beginning-of-visual-line)).
 ```
 Kind of like (max (end-of-line) (end-of-visual-line)).
 ```
-
-* es-unsaved-buffer-list
-* es-visible-end-of-line
-* es-windows-with-buffer
-
-```
-In all frames.
-```
-
-
-### Macros:
-
-* es-back-pop
-* es-define-buffer-local-vars
-
-```
-Syntax example:
-(es-define-buffer-local-vars
- mvi-current-image-file nil)
-```
-
-* es-neither
-* es-silence-messages
-* es-while-point-moving

@@ -9,7 +9,7 @@ Useful when you want to keep the keymap and cursor repositioning.")
   "Maximum number of lines for after-change indentation.")
 
 (es-define-buffer-local-vars
- es-aai-change-flag nil)
+ es-aai--change-flag nil)
 
 (defun es-aai-indent-line-maybe ()
   "\(indent-according-to-mode\) when `es-aai-indentable-line-p-function' returns non-nil.
@@ -174,7 +174,7 @@ Otherwise call `es-aai-indent-forward'."
 
 (defun es-aai-before-change-function (&rest ignore)
   "Change tracking."
-  (setq es-aai-change-flag t))
+  (setq es-aai--change-flag t))
 
 (defun* es-aai-post-command-hook ()
   "First key stroke tracking, cursor correction"
@@ -202,7 +202,7 @@ Otherwise call `es-aai-indent-forward'."
               (back-to-indentation))))
     ;; It won't indent if corrected
     (when (and es-aai-after-change-indentation
-               es-aai-change-flag
+               es-aai--change-flag
                (buffer-modified-p)
                (or first-keystroke
                    (not (memq this-command
@@ -216,7 +216,7 @@ Otherwise call `es-aai-indent-forward'."
                                 self-insert-command))))
                (not (region-active-p)))
       (funcall es-aai-indent-function))
-    (setq es-aai-change-flag nil)))
+    (setq es-aai--change-flag nil)))
 
 (defun es-aai--major-mode-setup ()
   "Optimizations for speicfic modes"

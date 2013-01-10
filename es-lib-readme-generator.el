@@ -1,4 +1,6 @@
 ;;; -*- lexical-binding: t -*-
+;; For internal use, and to satisfy curiosity.
+
 (require 'loadhist)
 (require 'apropos)
 
@@ -28,83 +30,69 @@
                             funs-raw
                             :key 'symbol-function))))
          ( funs (remove-if 'apropos-macrop funs-raw))
+         ( commands (prog1 (remove-if-not 'commandp funs)
+                      (setq funs (remove-if 'commandp funs))))
          ( macros (remove-if-not 'apropos-macrop funs-raw))
          ( vars (remove-if-not 'symbolp all-syms)))
-    (list :defuns funs
+    (list :defuns-ni funs
+          :commands commands
           :macros macros
           :defvars vars
           :aliases aliases)))
 
 (defun es--type-name (type)
   (case type
-    (:defuns "Commands")
-    (:defvars "Non-interactive")
+    (:defuns-ni "Non-interactive")
+    (:commands "Commands")
+    (:defvars "Defvars")
     (:macros "Macros")
     (:aliases "Aliases")))
 
 (let ((total-items 0))
-  (defun es-package-report (feature)
+  (defun es-feature-report (feature)
     (es-reload-feature feature)
     (let ((analyzed (es-analyze-feature-loadhist feature)))
       (with-temp-buffer
         (insert "### " (symbol-name feature) "\n")
-        (dolist (type '(:defuns :macros :defvars))
-          (insert "#### " (es--type-name type) ":\n")
-          (dolist (item (getf analyzed type))
-            (insert ))))))
+        (dolist (type '(:defvars :macros :commands :defuns-ni))
+          (unless (zerop (length (getf analyzed type)))
+            (insert "#### " (es--type-name type) ":\n")
+            (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
+              (unless (search "--" (symbol-name item))
+                (insert "* " (symbol-name item) "\n")
+                (cond ( (and (eq type :defvars)
+                             (apropos-documentation-property
+                              item 'variable-documentation t))
+                        (insert "\n```\n"
+                                (apropos-documentation-property
+                                 item 'variable-documentation t)
+                                "\n```\n\n"))
+                      ( (documentation item)
+                        (insert "\n```\n"
+                                (documentation item)
+                                "\n```\n\n")))
+                (incf total-items)))))
+        (buffer-string))))
 
-  (defun es-lib-index ()
-    (flet (( print-symbol-list (list)
-             (dolist (sym list)
-               (insert "* " (symbol-name sym) "\n")
-               (when (documentation sym)
-                 (insert "\n```\n")
-                 (let* ((parts (split-string (documentation sym) "\n"))
-                        (last (last parts)))
-                   ;; (setf (first parts) (concat "<em>" (first parts)) )
-                   ;; (setf (car last) (concat (car last) "</em>"))
-                   (apply 'insert
-                          (mapcar
-                           (lambda (part)
-                             (concat ;; "    "
-                              part "\n"))
-                           parts)))
-                 (insert "```\n\n")
-                 ))))
-      (save-excursion
-        (save-window-excursion
-          (let (( libs (mapcar
-                        'file-name-base
-                        (directory-files
-                         (mmake-path "site-lisp/my-scripts/es-lib")
-                         nil "^es-")))
-                defuns commands non-interactive macros)
-            (dolist (lib libs)
-              (find-library lib)
-              (eval-buffer)
-              (setq defuns (append (buffer-defuns) defuns))
-              (setq macros (append (buffer-macros) macros)))
-            (setq total-items (reduce '+ (list defuns macros)
-                                      :key 'length))
-            (setq commands (remove-if-not 'commandp defuns))
-            (setq non-interactive (remove-if 'commandp defuns))
-            (setq commands (cl-sort commands 'string< :key 'symbol-name))
-            (setq non-interactive (cl-sort non-interactive 'string< :key 'symbol-name))
-            (setq macros (cl-sort macros 'string< :key 'symbol-name))
-            (with-temp-buffer
-              (insert "\n### Commands:\n\n")
-              (print-symbol-list commands)
-
-              (insert "\n### Non-interactive:\n\n")
-              (print-symbol-list non-interactive)
-
-              (insert "\n### Macros:\n\n")
-              (print-symbol-list macros)
-              (buffer-string)))))))
+  (defun es-lib-report ()
+    (let* (( libs (mapcar (es-comp 'intern 'file-name-base)
+                          (directory-files
+                           (mmake-path "site-lisp/my-scripts/es-lib")
+                           nil "^es-")))
+           ( libs (remove-if (lambda (featch)
+                               (memq featch
+                                     '(es-lib-readme-generator
+                                       es-lib)))
+                             libs)))
+      (setq total-items 0)
+      (with-temp-buffer
+        (dolist (feature libs)
+          (insert (es-feature-report feature)))
+        (buffer-string))))
 
   (defun es-lib-make-readme ()
     (interactive)
-    (let ((index (es-lib-index)))
+    (let ((index (es-lib-report)))
       (save-excursion
         (save-window-excursion
           (find-file (mmake-path "site-lisp/my-scripts/es-lib/README.md"))
@@ -131,7 +119,6 @@ A collecton of emacs utilities. Here are some highlights:
   A refactoring tool, with help of which this library was assembled
 
 ")
-          ;; Could also insert (documentation)
           (insert (format "## Index:
 _Auto-generated before each commit. Total items in the library: %s_
 "
