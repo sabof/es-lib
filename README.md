@@ -20,11 +20,11 @@ A collecton of emacs utilities. Here are some highlights:
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
-## Index:
+# Index:
 
 _Auto-generated before each commit. Total items in the library: 99_
 
-### Table of contents:
+#### Table of contents:
 
 * [es-lib-aa-indent](#es-lib-aa-indent)
 * [es-lib-core](#es-lib-core)
@@ -36,7 +36,7 @@ _Auto-generated before each commit. Total items in the library: 99_
 
 
 
-### es-lib-aa-indent
+## es-lib-aa-indent
 
 
 #### Defvars:
@@ -189,7 +189,7 @@ First key stroke tracking, cursor correction
 ```
 
 
-### es-lib-core
+## es-lib-core
 
 
 #### Macros:
@@ -384,7 +384,7 @@ In all frames.
 ```
 
 
-### es-lib-duplicate
+## es-lib-duplicate
 
 
 #### Commands:
@@ -403,7 +403,7 @@ Duplicate the active region.
 ```
 
 
-### es-lib-lexical
+## es-lib-lexical
 
 
 #### Commands:
@@ -448,7 +448,7 @@ Create a function with FUNC's arguments reversed.
 ```
 
 
-### es-lib-move-text
+## es-lib-move-text
 
 
 #### Commands:
@@ -478,10 +478,7 @@ Move region or the current line up.
 ```
 
 
-#### Non-interactive:
-
-
-### es-lib-number-at-point
+## es-lib-number-at-point
 
 
 #### Commands:
@@ -506,7 +503,7 @@ line.
 
 * es-number-at-point
 
-### es-lib-total-line
+## es-lib-total-line
 
 
 #### Commands:

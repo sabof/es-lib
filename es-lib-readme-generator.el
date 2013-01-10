@@ -72,27 +72,34 @@
 (let ((total-items 0))
   (defun es-feature-report (feature)
     (es-reload-feature feature)
-    (let ((analyzed (es-analyze-feature-loadhist feature)))
+    (let (( analyzed
+            (mapcar (lambda (thing)
+                      (if (consp thing)
+                          (cl-remove-if
+                           (apply-partially 'search "--")
+                           thing
+                           :key 'symbol-name)
+                          thing))
+                    (es-analyze-feature-loadhist feature))))
       (with-temp-buffer
-        (insert "\n### " (symbol-name feature) "\n\n")
+        (insert "\n## " (symbol-name feature) "\n\n")
         (dolist (type '(:defvars :macros :commands :defuns-ni))
           (unless (zerop (length (getf analyzed type)))
             (insert "\n#### " (es--type-name type) ":\n\n")
             (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
-              (unless (search "--" (symbol-name item))
-                (insert "* " (symbol-name item) "\n")
-                (cond ( (and (eq type :defvars)
-                             (apropos-documentation-property
-                              item 'variable-documentation t))
-                        (insert "\n```\n"
-                                (apropos-documentation-property
-                                 item 'variable-documentation t)
-                                "\n```\n\n"))
-                      ( (documentation item)
-                        (insert "\n```\n"
-                                (documentation item)
-                                "\n```\n\n")))
-                (incf total-items)))))
+              (insert "* " (symbol-name item) "\n")
+              (cond ( (and (eq type :defvars)
+                           (apropos-documentation-property
+                            item 'variable-documentation t))
+                      (insert "\n```\n"
+                              (apropos-documentation-property
+                               item 'variable-documentation t)
+                              "\n```\n\n"))
+                    ( (documentation item)
+                      (insert "\n```\n"
+                              (documentation item)
+                              "\n```\n\n")))
+              (incf total-items))))
         (buffer-string))))
 
   (defun es-lib-report ()
@@ -132,11 +139,11 @@ A collecton of emacs utilities. Here are some highlights:
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 
-## Index:
+# Index:
 
 _Auto-generated before each commit. Total items in the library: %s_
 
-### Table of contents:
+#### Table of contents:
 %s
 %s"
                           total-items
