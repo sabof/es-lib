@@ -72,7 +72,7 @@ you can add
 (set (make-local-variable
       'es-aai-after-change-indentation) t)
 
-if the mode indents pretty in all but a few cases, you can change the
+if the mode indents well in all but a few cases, you can change the
 `es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
 
 (set (make-local-variable
