@@ -11,6 +11,8 @@ A collecton of emacs utilities. Here are some highlights:
   Functions for comfortably moving with folded lines
 * **es-lib-number-at-point:**
   Functions for manipulating the number at point.
+* **es-lib-aa-indent:**
+  Automatic automatic indentation. Code gets indented as you type.
 
 #### Functions:
 * **es-ack-replace-symbol:**
