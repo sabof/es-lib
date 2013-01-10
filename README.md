@@ -20,7 +20,7 @@ A collecton of emacs utilities. Here are some highlights:
 * **es-ack-replace-symbol:**
   A refactoring tool, with help of which this library was assembled
 * **es-ido-like-helm:**
-  Choose from a concatenated list of buffers and open files. I have it bound to `<menu>`.
+  Choose from a concatenated list of buffers and recent files. I have it bound to `<menu>`.
 
 # Index:
 
@@ -46,13 +46,47 @@ _Auto-generated before each commit. Total items in the library: 99_
 * es-aa-indent-mode
 
 ```
-(not documented)
+Automatic automatic indentation.
+Works pretty well for lisp out of the box.
+Other modes might need some tweaking to set up:
+If you trust the mode's automatic indentation completely, you can add to it's
+init hook:
+
+(set (make-local-variable 'es-aai-indent-function)
+     'es-aai-indent-defun)
+
+or
+
+(set (make-local-variable 'es-aai-indent-function)
+     'es-aai-indent-forward)
+
+depending on whether the language has small and clearly
+identifiable functions, that `beginning-of-defun' and
+`end-of-defun' can find.
+
+If on the other hand you don't trust the mode at all, but like
+the cursor correction and delete-char behaviour,
+
+you can add
+
+(set (make-local-variable
+      'es-aai-after-change-indentation) t)
+
+if the mode indents pretty in all but a few cases, you can change the
+`es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
+
+(set (make-local-variable
+      'es-aai-indentable-line-p-function)
+     (lambda ()
+       (not (or (es-line-matches-p "EOD")
+                (es-line-matches-p "EOT")))))
 ```
 
 * es-aai-after-change-indentation
 
 ```
 Whether to reindent after every change.
+Useful when you want to keep the keymap and cursor repositioning.
 ```
 
 * es-aai-indent-function
@@ -77,6 +111,7 @@ For mode-specifc cusomizations.
 
 ```
 Non-nil if Es-aai mode is enabled.
+Use the command `es-aai-mode' to change this variable.
 ```
 
 * es-aai-mode-map

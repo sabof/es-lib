@@ -11,6 +11,12 @@
       (unload-feature feature t)))
   (require feature))
 
+(defun es-var-documentation (sym)
+  (condition-case ()
+      (documentation-property
+       sym 'variable-documentation t)
+    (error nil)))
+
 (defun es-analyze-feature-loadhist (feature)
   (let* (( all-syms (feature-symbols feature))
          ( funs-raw (mapcar 'cdr
@@ -89,11 +95,9 @@
             (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
               (insert "* " (symbol-name item) "\n")
               (cond ( (and (eq type :defvars)
-                           (apropos-documentation-property
-                            item 'variable-documentation t))
+                           (es-var-documentation item))
                       (insert "\n```\n"
-                              (apropos-documentation-property
-                               item 'variable-documentation t)
+                              (es-var-documentation item)
                               "\n```\n\n"))
                     ( (documentation item)
                       (insert "\n```\n"

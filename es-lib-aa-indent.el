@@ -46,8 +46,7 @@ Otherwise call `es-aai-indent-forward'."
         (save-excursion
           (setq line-end-distance)
           ;; So you don't go to the previous defun, when already at the
-          ;; beginnning. Works, given this mode cursor-correcting behaviour, and
-          ;; assuming that defuns always start at first collumn.
+          ;; beginnning. Not the perfect solution
           (unless (zerop (current-column))
             (beginning-of-defun))
           (setq init-pos (point))
