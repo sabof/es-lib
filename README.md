@@ -13,7 +13,7 @@ A collecton of emacs utilities. Here are some highlights:
   Functions for manipulating the number at point.
 * **es-lib-aa-indent:**
   Automatic automatic indentation. Code gets indented as you type. See
-  es-aai-mode docstring for details.
+  es-aa-indent-mode docstring for details.
 
 #### Functions:
 
@@ -24,7 +24,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 99_
+_Auto-generated before each commit. Total items in the library: 97_
 
 #### Table of contents:
 
@@ -107,13 +107,6 @@ Maximum number of lines for after-change indentation.
 For mode-specifc cusomizations.
 ```
 
-* es-aai-mode
-
-```
-Non-nil if Es-aai mode is enabled.
-Use the command `es-aai-mode' to change this variable.
-```
-
 * es-aai-mode-map
 
 ```
@@ -136,45 +129,6 @@ Like `delete-char', but deletes indentation, if point is at it, or before it.
 ```
 
 * es-aai-indented-yank
-* es-aai-mode
-
-```
-Automatic automatic indentation.
-Works pretty well for lisp out of the box.
-Other modes might need some tweaking to set up:
-If you trust the mode's automatic indentation completely, you can add to it's
-init hook:
-
-(set (make-local-variable 'es-aai-indent-function)
-     'es-aai-indent-defun)
-
-or
-
-(set (make-local-variable 'es-aai-indent-function)
-     'es-aai-indent-forward)
-
-depending on whether the language has small and clearly
-identifiable functions, that `beginning-of-defun' and
-`end-of-defun' can find.
-
-If on the other hand you don't trust the mode at all, but like
-the cursor correction and delete-char behaviour,
-
-you can add
-
-(set (make-local-variable
-      'es-aai-after-change-indentation) t)
-
-if the mode indents pretty in all but a few cases, you can change the
-`es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
-
-(set (make-local-variable
-      'es-aai-indentable-line-p-function)
-     (lambda ()
-       (not (or (es-line-matches-p "EOD")
-                (es-line-matches-p "EOT")))))
-```
-
 * es-aai-mouse-yank
 * es-aai-mouse-yank-dont-indent
 * es-aai-newline-and-indent

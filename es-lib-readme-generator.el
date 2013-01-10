@@ -12,10 +12,9 @@
   (require feature))
 
 (defun es-var-documentation (sym)
-  (condition-case ()
-      (documentation-property
-       sym 'variable-documentation t)
-    (error nil)))
+  (ignore-errors
+    (documentation-property
+     sym 'variable-documentation t)))
 
 (defun es-analyze-feature-loadhist (feature)
   (let* (( all-syms (feature-symbols feature))
@@ -82,7 +81,9 @@
             (mapcar (lambda (thing)
                       (if (consp thing)
                           (cl-remove-if
-                           (apply-partially 'search "--")
+                           (lambda (sym-nam)
+                             (or (equal "es-aai-mode" sym-nam)
+                                 (search "--" sym-nam)))
                            thing
                            :key 'symbol-name)
                           thing))
@@ -136,7 +137,7 @@ A collecton of emacs utilities. Here are some highlights:
   Functions for manipulating the number at point.
 * **es-lib-aa-indent:**
   Automatic automatic indentation. Code gets indented as you type. See
-  es-aai-mode docstring for details.
+  es-aa-indent-mode docstring for details.
 
 #### Functions:
 
