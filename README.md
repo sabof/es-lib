@@ -24,7 +24,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 103_
+_Auto-generated before each commit. Total items in the library: 98_
 
 #### Table of contents:
 
@@ -190,21 +190,6 @@ Correct the cursor, and possibly indent.
 
 ## es-lib-core-functions
 
-
-#### Macros:
-
-* es-back-pop
-* es-define-buffer-local-vars
-
-```
-Syntax example:
-(es-define-buffer-local-vars
- mvi-current-image-file nil)
-```
-
-* es-neither
-* es-silence-messages
-* es-while-point-moving
 
 #### Commands:
 
