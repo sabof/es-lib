@@ -45,9 +45,13 @@ Otherwise call `es-aai-indent-forward'."
     (condition-case nil
         (save-excursion
           (setq line-end-distance)
-          (beginning-of-defun)
+          ;; So you don't go to the previous defun, when already at the
+          ;; beginnning. Works, given this mode cursor-correcting behaviour, and
+          ;; assuming that defuns always start at first collumn.
+          (unless (zerop (current-column))
+            (beginning-of-defun))
           (setq init-pos (point))
-          (forward-sexp)
+          (end-of-defun)
           (when (> (1+ (- (line-number-at-pos)
                           (line-number-at-pos init-pos)))
                    es-aai-indent-limit)
@@ -276,7 +280,8 @@ or
      'es-aai-indent-forward\)
 
 depending on whether the language has small and clearly
-identifiable functions.
+identifiable functions, that `beginning-of-defun' and
+`end-of-defun' can find.
 
 If on the other hand you don't trust the mode at all, but like
 the cursor correction and delete-char behaviour,
@@ -293,9 +298,7 @@ if the mode indents pretty in all but a few cases, you can change the
       'es-aai-indentable-line-p-function\)
      \(lambda \(\)
        \(not \(or \(es-line-matches-p \"EOD\"\)
-                \(es-line-matches-p \"EOT\"\)\)\)\)\)
-
-"
+                \(es-line-matches-p \"EOT\"\)\)\)\)\)"
   nil " aai" (make-sparse-keymap)
   (if es-aai-mode
       (es-aai--init)))
