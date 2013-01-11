@@ -46,11 +46,8 @@ Otherwise call `es-aai-indent-forward'."
         line-end-distance)
     (condition-case nil
         (save-excursion
-          (setq line-end-distance)
-          ;; So you don't go to the previous defun, when already at the
-          ;; beginnning. Not the perfect solution
-          (unless (zerop (current-column))
-            (beginning-of-defun))
+          (end-of-defun)
+          (beginning-of-defun)
           (setq init-pos (point))
           (end-of-defun)
           (when (> (1+ (- (line-number-at-pos)

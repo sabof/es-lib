@@ -208,6 +208,7 @@ If the line is empty, insert at the end of next line."
     (mouse-set-point event)
     (es-mark-symbol-at-point)
     (delete-region (point) (mark))
+    (deactivate-mark)
     (yank)))
 
 (defun es-c-expand-region ()
