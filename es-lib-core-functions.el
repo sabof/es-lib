@@ -211,8 +211,13 @@ If the line is empty, insert at the end of next line."
     (deactivate-mark)
     (yank)))
 
+(defun es-next-match-pos (regex)
+  (save-excursion
+    (when (re-search-forward regex nil t)
+      (point))))
+
 (defun es-c-expand-region ()
-  "A simple version of expand-region for c-like languages.
+  "A simple\(?\) version of expand-region for c-like languages.
 Marks the symbol on first call, then marks the statement."
   (interactive)
   (flet (( post-scriptum ()
@@ -232,13 +237,26 @@ Marks the symbol on first call, then marks the statement."
              (forward-char))
            (post-scriptum))
          ( mark-colon-internal ()
-           (back-to-indentation)
-           (set-mark (point))
-           (re-search-forward ";")
-           (when (equal (char-after (point))
-                        (aref ";" 0))
-             (forward-char))
-           (post-scriptum))
+           (let (next-opening-bracket next-colon)
+             (back-to-indentation)
+             (set-mark (point))
+             (setq next-opening-bracket (es-next-match-pos "{")
+                   next-colon (es-next-match-pos ";"))
+             (cond ( (and next-opening-bracket next-colon)
+                     (if (< next-opening-bracket next-colon)
+                         (progn (goto-char next-opening-bracket)
+                                (backward-char)
+                                (forward-sexp))
+                         (goto-char next-colon)))
+                   ( next-opening-bracket
+                     (progn (goto-char next-opening-bracket)
+                            (backward-char)
+                            (forward-sexp)))
+                   ( t (goto-char next-colon)))
+             (when (equal (char-after (point))
+                          (aref ";" 0))
+               (forward-char))
+             (post-scriptum)))
          ( select-line-internal ()
            (back-to-indentation)
            (set-mark (point))
@@ -256,9 +274,8 @@ Marks the symbol on first call, then marks the statement."
           ( (member (char-to-string (char-before (line-end-position)))
                     (list "{" "(" "["))
             (mark-statement-internal))
-          ( (equal (char-before
-                    (line-end-position))
-                   ?: )
+          ( (member (char-before (es-visible-end-of-line))
+                    '( ?: ?, ) )
             (mark-colon-internal))
           ( t (select-line-internal)))))
 

@@ -42,7 +42,7 @@
 (defun es-goto-previous-non-blank-line ()
   (save-match-data
     (beginning-of-line)
-    (re-search-backward "[^ \n\t]")
+    (re-search-backward "[^ \n\t]" nil t)
     (beginning-of-line)))
 
 (defun es-current-character-indentation ()
@@ -82,10 +82,10 @@
     (line-end-position))))
 
 (defun es-indentation-end-pos (&optional position)
-
   (save-excursion
     (when position (goto-char position))
-    (+ (current-indentation) (line-beginning-position))))
+    (+ (es-current-character-indentation)
+       (line-beginning-position))))
 
 (defun es-line-empty-p ()
   (es-line-matches-p "^[ 	]*$"))

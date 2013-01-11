@@ -117,8 +117,7 @@ Otherwise call `es-aai-indent-forward'."
   (interactive)
   (cond ( (region-active-p)
           (delete-region (point) (mark)))
-        ( (and (not (bound-and-true-p autopair-mode))
-               (es-point-between-pairs-p))
+        ( (es-point-between-pairs-p)
           (delete-char 1)
           (delete-char -1))
         ( (<= (current-column)
@@ -257,6 +256,7 @@ Otherwise call `es-aai-indent-forward'."
     [remap delete-char] 'es-aai-delete-char
     [remap forward-delete] 'es-aai-delete-char
     [remap backward-delete-char-untabify] 'es-aai-backspace
+    [remap autopair-backspace] 'es-aai-backspace
     [remap backward-delete-char] 'es-aai-backspace
     )
   (es-aai--minor-mode-setup)

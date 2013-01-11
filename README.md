@@ -23,7 +23,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 100_
+_Auto-generated before each commit. Total items in the library: 101_
 
 #### Table of contents:
 
@@ -213,7 +213,7 @@ files.
 * es-c-expand-region
 
 ```
-A simple version of expand-region for c-like languages.
+A simple(?) version of expand-region for c-like languages.
 Marks the symbol on first call, then marks the statement.
 ```
 
@@ -314,6 +314,7 @@ Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST.
 ```
 
 * es-mode-keymap
+* es-next-match-pos
 * es-next-printable-character-pos
 * es-pop-to-buffer-vertically
 * es-random-member
