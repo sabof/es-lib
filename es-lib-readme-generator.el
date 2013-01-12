@@ -115,8 +115,6 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 #### Packages:
 
-* **es-lib-move-text:**
-  Functions for shifting current line or region in four directions
 * **es-lib-duplicate:**
   Functions duplicating the current region
 * **es-lib-total-line:**
