@@ -1,4 +1,4 @@
-(require 'es-css-mode)
+(require 'es-lib-css-mode)
 
 (defun es-scss-comment-line-p ()
   (interactive)
@@ -23,4 +23,4 @@
   (set (make-local-variable 'es-css-comment-line-p-function)
        'es-scss-comment-line-p))
 
-(provide 'es-scss-mode)
+(provide 'es-lib-scss-mode)

@@ -29,6 +29,8 @@
 (require 'es-lib-core-functions)
 (require 'es-lib-text-navigate)
 (require 'es-lib-lexical)
+(require 'es-lib-css-mode)
+(require 'es-lib-scss-mode)
 (require 'es-lib-duplicate)
 (require 'es-lib-total-line)
 (require 'es-lib-move-text)

@@ -190,4 +190,4 @@
   (set (make-local-variable 'es-aai-indent-function)
        'es-aai-indent-defun) )
 
-(provide 'es-css-mode)
+(provide 'es-lib-css-mode)
