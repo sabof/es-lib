@@ -23,17 +23,19 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 101_
+_Auto-generated before each commit. Total items in the library: 124_
 
 #### Table of contents:
 
 * [es-lib-aa-indent](#es-lib-aa-indent)
 * [es-lib-core-functions](#es-lib-core-functions)
 * [es-lib-core-macros](#es-lib-core-macros)
+* [es-lib-css-mode](#es-lib-css-mode)
 * [es-lib-duplicate](#es-lib-duplicate)
 * [es-lib-lexical](#es-lib-lexical)
 * [es-lib-move-text](#es-lib-move-text)
 * [es-lib-number-at-point](#es-lib-number-at-point)
+* [es-lib-scss-mode](#es-lib-scss-mode)
 * [es-lib-text-navigate](#es-lib-text-navigate)
 * [es-lib-total-line](#es-lib-total-line)
 
@@ -45,44 +47,6 @@ _Auto-generated before each commit. Total items in the library: 101_
 #### Defvars:
 
 * es-aa-indent-mode
-
-```
-Automatic automatic indentation.
-Works pretty well for lisp out of the box.
-Other modes might need some tweaking to set up:
-If you trust the mode's automatic indentation completely, you can add to it's
-init hook:
-
-(set (make-local-variable 'es-aai-indent-function)
-     'es-aai-indent-defun)
-
-or
-
-(set (make-local-variable 'es-aai-indent-function)
-     'es-aai-indent-forward)
-
-depending on whether the language has small and clearly
-identifiable functions, that `beginning-of-defun' and
-`end-of-defun' can find.
-
-If on the other hand you don't trust the mode at all, but like
-the cursor correction and delete-char behaviour,
-
-you can add
-
-(set (make-local-variable
-      'es-aai-after-change-indentation) nil)
-
-if the mode indents well in all but a few cases, you can change the
-`es-aai-indentable-line-p-function'. This is what I have in my php mode setup:
-
-(set (make-local-variable
-      'es-aai-indentable-line-p-function)
-     (lambda ()
-       (not (or (es-line-matches-p "EOD")
-                (es-line-matches-p "EOT")))))
-```
-
 * es-aai-after-change-indentation
 
 ```
@@ -371,6 +335,87 @@ Syntax example:
 * es-silence-messages
 * es-while-point-moving
 
+## es-lib-css-mode
+
+
+#### Defvars:
+
+* es-css-comment-line-p-function
+
+```
+Should return 1 if at the beginning of a comment, t if inside
+```
+
+* es-css-debug
+* es-css-mode-abbrev-table
+
+```
+Abbrev table for `es-css-mode'.
+```
+
+* es-css-mode-abbrev-table
+
+```
+Abbrev table for `es-css-mode'.
+```
+
+* es-css-mode-map
+
+```
+Keymap for `es-css-mode'.
+```
+
+* es-css-mode-syntax-table
+
+```
+Syntax table for `es-css-mode'.
+```
+
+
+#### Commands:
+
+* es-css-comment-line-p
+* es-css-end-of-defun
+
+```
+
+
+(fn &optional (ARG 1))
+```
+
+* es-css-indent-line
+* es-css-mode
+
+```
+Mode for modern CSS
+
+In addition to any hooks its parent mode `css-mode' might have run,
+this mode runs the hook `es-css-mode-hook', as the final step
+during initialization.
+
+key             binding
+---             -------
+
+
+```
+
+
+#### Non-interactive:
+
+* es-css-beginning-of-defun
+
+```
+
+
+(fn &optional (ARG 1))
+```
+
+* es-css-calculate-indent
+* es-css-goto-prev-struct-line
+* es-css-indent-debug
+* es-css-inside-block
+* es-css-set-fl-keywords
+
 ## es-lib-duplicate
 
 
@@ -489,6 +534,61 @@ line.
 #### Non-interactive:
 
 * es-number-at-point
+
+## es-lib-scss-mode
+
+
+#### Defvars:
+
+* es-scss-mode-abbrev-table
+
+```
+Abbrev table for `es-scss-mode'.
+```
+
+* es-scss-mode-abbrev-table
+
+```
+Abbrev table for `es-scss-mode'.
+```
+
+* es-scss-mode-map
+
+```
+Keymap for `es-scss-mode'.
+```
+
+* es-scss-mode-syntax-table
+
+```
+Syntax table for `es-scss-mode'.
+```
+
+* es-scss-mode-syntax-table
+
+```
+Syntax table for `es-scss-mode'.
+```
+
+
+#### Commands:
+
+* es-scss-comment-line-p
+* es-scss-mode
+
+```
+Mode for scss
+
+In addition to any hooks its parent mode `es-css-mode' might have run,
+this mode runs the hook `es-scss-mode-hook', as the final step
+during initialization.
+
+key             binding
+---             -------
+
+
+```
+
 
 ## es-lib-text-navigate
 

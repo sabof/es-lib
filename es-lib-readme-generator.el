@@ -83,11 +83,11 @@
             (insert "\n#### " (es--type-name type) ":\n\n")
             (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
               (insert "* " (symbol-name item) "\n")
-              (cond ( (and (eq type :defvars)
-                           (es-var-documentation item))
-                      (insert "\n```\n"
-                              (es-var-documentation item)
-                              "\n```\n\n"))
+              (cond ( (eq type :defvars)
+                      (when (es-var-documentation item)
+                        (insert "\n```\n"
+                                (es-var-documentation item)
+                                "\n```\n\n")))
                     ( (documentation item)
                       (insert "\n```\n"
                               (documentation item)
