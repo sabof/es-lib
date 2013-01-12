@@ -142,7 +142,7 @@
 
 ;;;###autoload
 (define-derived-mode es-css-mode css-mode
-  "ES CSS Mode " "Mode for modern css"
+  "ES CSS Mode " "Mode for modern CSS"
   (set (make-local-variable 'indent-line-function)
        'es-css-indent-line)
   (set (make-local-variable 'beginning-of-defun-function)
