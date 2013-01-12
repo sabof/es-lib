@@ -34,6 +34,7 @@
                                (- (length result-string)
                                   (length num-string))))))))))
 
+;;;###autoload
 (defun es-increase-number-at-point ()
   "Increases the digit at point.
 The increment some power of 10, depending on the positon of the cursor. If there
@@ -43,6 +44,7 @@ line."
   (unless (es-toggle-true-false-maybe)
     (es--change-number-at-point)))
 
+;;;###autoload
 (defun es-decrease-number-at-point ()
   "See documentation for `es-increase-number-at-point'."
   (interactive)

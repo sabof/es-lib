@@ -87,6 +87,7 @@
         (while (search-forward original nil t)
           (replace-match replacement t nil))))))
 
+;;;###autoload
 (defun es-find-function-bound-to (key-sequence)
   (interactive "kFind function bound to: ")
   (let ((symbol (key-binding key-sequence)))
@@ -124,6 +125,7 @@ If the line is empty, insert at the end of next line."
        (eq major-mode mode)))
    (buffer-list)))
 
+;;;###autoload
 (defun es-push-line ()
   "beginning-of-line + open line."
   (interactive)
@@ -150,6 +152,7 @@ If the line is empty, insert at the end of next line."
             (when (fboundp 'es-aai-indent-line-maybe)
               (es-aai-indent-line-maybe)))))
 
+;;;###autoload
 (defun es-jump-line ()
   "end-of-line + newline."
   (interactive)
@@ -160,6 +163,7 @@ If the line is empty, insert at the end of next line."
        (key-binding (kbd "RET"))
        'newline)))
 
+;;;###autoload
 (defun es-new-empty-buffer ()
   (interactive)
   (switch-to-buffer (generate-new-buffer "untitled"))
@@ -177,6 +181,7 @@ If the line is empty, insert at the end of next line."
 (put 'es-define-keys 'common-lisp-indent-function
      '(4 &body))
 
+;;;###autoload
 (defun es-highlighter ()
   "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active."
   (interactive)
@@ -202,6 +207,7 @@ If the line is empty, insert at the end of next line."
               (hi-lock-set-pattern phrase color))))
       (highlight-symbol-at-point)))
 
+;;;###autoload
 (defun es-mouse-yank-replace-symbol (event)
   (interactive "e")
   (save-excursion
@@ -216,6 +222,7 @@ If the line is empty, insert at the end of next line."
     (when (re-search-forward regex nil t)
       (point))))
 
+;;;###autoload
 (defun es-c-expand-region ()
   "A simple\(?\) version of expand-region for c-like languages.
 Marks the symbol on first call, then marks the statement."
@@ -279,6 +286,7 @@ Marks the symbol on first call, then marks the statement."
             (mark-colon-internal))
           ( t (select-line-internal)))))
 
+;;;###autoload
 (defun es-comment-dwim ()
   (interactive)
   (cond ( (region-active-p)
@@ -303,6 +311,7 @@ Marks the symbol on first call, then marks the statement."
              (line-end-position))))
   (indent-according-to-mode))
 
+;;;###autoload
 (defun* es-ido-like-helm ()
   "Choose from a concatenated list of buffers and recent files."
   (interactive)
@@ -356,6 +365,7 @@ The \"originals\" won't be included."
       (setq clone (remove* (pop singles) clone :test 'equal :count 1)))
     clone))
 
+;;;###autoload
 (defun es-delete-duplicate-lines (&optional beg end)
   (interactive)
   (setq beg (or beg
@@ -390,6 +400,7 @@ The \"originals\" won't be included."
                 (not (buffer-process buf))))
          (buffer-list))))
 
+;;;###autoload
 (defun* es-manage-unsaved-buffers()
   "Similar to what happends when emacs is about to quit."
   (interactive)
@@ -413,6 +424,7 @@ The \"originals\" won't be included."
                    (return-from es-manage-unsaved-buffers))))
       (message "Done"))))
 
+;;;###autoload
 (defun es-query-replace-symbol-at-point ()
   (interactive)
   (let* (( original
@@ -468,6 +480,7 @@ The \"originals\" won't be included."
               (replace "t"))
             ( t nil)))))
 
+;;;###autoload
 (defun* es-ack-replace-symbol
     (from-symbol-or-string
      to-symbol-or-string
@@ -543,6 +556,7 @@ files."
                         (quit-window)))
                     (funcall (or ,finish-func 'ignore))))))))
 
+;;;###autoload
 (defun es-ack-pin-folder (folder)
   "Set ack root directory for one buffer only.
 Ack won't prompt for a directory name in that buffer."

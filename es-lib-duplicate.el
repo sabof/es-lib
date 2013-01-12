@@ -32,6 +32,7 @@
     (setq deactivate-mark nil
           cua--explicit-region-start nil)))
 
+;;;###autoload
 (defun es-duplicate-line-or-region ()
   (interactive)
   (if (region-active-p)
