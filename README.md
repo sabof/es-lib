@@ -23,7 +23,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 81_
+_Auto-generated before each commit. Total items in the library: 77_
 
 #### Table of contents:
 
@@ -31,7 +31,6 @@ _Auto-generated before each commit. Total items in the library: 81_
 * [es-lib-core-macros](#es-lib-core-macros)
 * [es-lib-duplicate](#es-lib-duplicate)
 * [es-lib-lexical](#es-lib-lexical)
-* [es-lib-move-text](#es-lib-move-text)
 * [es-lib-number-at-point](#es-lib-number-at-point)
 * [es-lib-text-navigate](#es-lib-text-navigate)
 * [es-lib-total-line](#es-lib-total-line)
@@ -283,36 +282,6 @@ Same as clojure's (constantly).
 
 ```
 Create a function with FUNC's arguments reversed.
-```
-
-
-## es-lib-move-text
-
-
-#### Commands:
-
-* es-move-text-down
-
-```
-Move region or the current line down.
-```
-
-* es-move-text-left
-
-```
-Move region or the current line left.
-```
-
-* es-move-text-right
-
-```
-Move region or the current line right.
-```
-
-* es-move-text-up
-
-```
-Move region or the current line up.
 ```
 
 
