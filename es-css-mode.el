@@ -2,7 +2,8 @@
 (require 'flymake)
 
 ;; For es-sass-mode
-(defvar es-css-comment-line-p-function 'es-css-comment-line-p)
+(defvar es-css-comment-line-p-function 'es-css-comment-line-p
+  "Should return 1 if at the beginning of a comment, t if inside")
 
 (defun es-css-comment-line-p ()
   (interactive)
@@ -106,6 +107,43 @@
                                '( ?\} ?\) ) )
                        1 0))
                 css-indent-offset))))))
+
+(defun es-css-set-fl-keywords ()
+  (setq css-font-lock-keywords
+        `(("!\\s-*important" . font-lock-builtin-face)
+          ;; Atrules keywords.  IDs not in css-at-ids are valid (ignored).
+          ;; In fact the regexp should probably be
+          ;; (,(concat "\\(@" css-ident-re "\\)\\([ \t\n][^;{]*\\)[;{]")
+          ;;  (1 font-lock-builtin-face))
+          ;; Since "An at-rule consists of everything up to and including the next
+          ;; semicolon (;) or the next block, whichever comes first."
+          (,(concat "@" css-ident-re) . font-lock-builtin-face)
+          ;; Selectors.
+          ;; FIXME: attribute selectors don't work well because they may contain
+          ;; strings which have already been highlighted as f-l-string-face and
+          ;; thus prevent this highlighting from being applied (actually now that
+          ;; I use `append' this should work better).  But really the part of hte
+          ;; selector between [...] should simply not be highlighted.
+          (,(concat "^\\([ \t]*[^@:{}\n][^:{}]+\\(?::" (regexp-opt css-pseudo-ids t)
+                    "\\(?:([^)]+)\\)?[^:{\n]*\\)*\\)\\(?:\n[ \t]*\\)*{")
+            (1 'css-selector append))
+          ;; In the above rule, we allow the open-brace to be on some subsequent
+          ;; line.  This will only work if we properly mark the intervening text
+          ;; as being part of a multiline element (and even then, this only
+          ;; ensures proper refontification, but not proper discovery).
+          ("^[ \t]*{" (0 (save-excursion
+                           (goto-char (match-beginning 0))
+                           (skip-chars-backward " \n\t")
+                           (put-text-property (point) (match-end 0)
+                                              'font-lock-multiline t)
+                           ;; No face.
+                           nil)))
+          ;; Properties.  Again, we don't limit ourselves to css-property-ids.
+          (,(concat "\\(?:[{;]\\|^\\)[ \t]*\\("
+                    "\\(?:\\(" css-proprietary-nmstart-re "\\)\\|"
+                    css-nmstart-re "\\)" css-nmchar-re "*"
+                    "\\)\\s-*:")
+            (1 (if (match-end 2) 'css-proprietary-property 'css-property))))))
 
 (defun* es-css-indent-line ()
   (interactive)
