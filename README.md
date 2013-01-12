@@ -1,5 +1,5 @@
 #es-lib
-A collecton of emacs utilities. Here are some highlights:
+A collecton of emacs utilities, and basis for several of my packages. Here are some highlights:
 
 #### Packages:
 
@@ -11,8 +11,6 @@ A collecton of emacs utilities. Here are some highlights:
   Functions for comfortably moving with folded lines
 * **es-lib-number-at-point:**
   Functions for manipulating the number at point.
-* **es-lib-aa-indent:**
-  Automatic automatic indentation. Code gets indented as you type.
 
 #### Functions:
 
