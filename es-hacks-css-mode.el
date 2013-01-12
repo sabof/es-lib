@@ -4,13 +4,23 @@
   (let (( ppss (syntax-ppss)))
     (cond ( (save-excursion
               (back-to-indentation)
-              (looking-at "/\\*"))
+              (eq (nth 8 (syntax-ppss))
+                  (point)))
             1 )
           ( (nth 4 (syntax-ppss))
             t))))
 
+(defun es-css-comment-line-p ()
+  (interactive)
+  (cond ( (save-excursion
+            (back-to-indentation)
+            (looking-at "/\\*"))
+          1 )
+        ( (nth 4 (syntax-ppss))
+          t)))
+
 (defun es-css-goto-prev-struct-line ()
-  (while (and (forward-line -1)
+  (while (and (zerop (forward-line -1))
               (es-css-comment-line-p))))
 
 (defvar es-css-debug t)
@@ -20,11 +30,13 @@
   (with-syntax-table css-navigation-syntax-table
     (let* (psl-indent
            psl-last-char
+           psl-first-char
            ( psl
              (save-excursion
                (es-css-goto-prev-struct-line)
                (setq psl-indent (current-indentation))
                (setq psl-last-char (char-before (es-visible-end-of-line)))
+               (setq psl-first-char (char-after (es-indentation-end-pos)))
                (buffer-substring
                 (line-beginning-position)
                 (line-end-position))))
@@ -37,13 +49,13 @@
            previous-comment-indent
            previous-line-was-comment
            this-line-comment-type
-          pos)
-     (cond ( ;; If "outside" always indent to 0
-            (zerop (nth 0 ppss)) 0)
-           ( ;; If is inside a comment
-            ( eq this-line-comment-type t)
-            (save-excursion
-              (nth 4 ppss)
+           pos)
+      (cond ( ;; If "outside" always indent to 0
+             (zerop (nth 0 ppss)) 0)
+            ( ;; If is inside a comment
+             ( eq this-line-comment-type t)
+             (save-excursion
+               (nth 4 ppss)
               (setq pos (point))
               (forward-line -1)
               (skip-chars-forward " \t")
@@ -59,6 +71,8 @@
                   (current-column))))
            ( ;; End of colon block
             (and (not psl-has-colon)
+                 ;; After sass @include
+                 (not (equal psl-first-char ?@ ))
                  (equal psl-last-char ?\;)
                  (zerop psl-open-brackets)
                  (zerop psl-closing-brackets)
