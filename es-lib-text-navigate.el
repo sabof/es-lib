@@ -15,6 +15,7 @@
                 (equal (char-to-string (char-after))
                        (cdr character-pair)))
            (setq result t)))
+     ;; Should query the syntax table for these
      '(("\"" . "\"")
        ("\'" . "\'")
        ("{" . "}")

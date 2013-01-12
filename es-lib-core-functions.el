@@ -638,4 +638,28 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
     (documentation-property
      sym 'variable-documentation t)))
 
+(defun es-color-list-to-hex (color-list)
+  (apply 'format "#%02X%02X%02X" color-list))
+
+(defun es-color-normalize-hex (hex-string)
+  (if (string-match-p "^#" hex-string)
+      (upcase
+       (if (= (length hex-string) 4)
+           (apply 'concat "#"
+                  (mapcar
+                   (lambda (pair)
+                     (make-string
+                      2 (string-to-char
+                         (substring
+                          hex-string (car pair) (cdr pair)))))
+                   '((1 . 2) (2 . 3) (3 . 4))))
+           hex-string))
+      hex-string))
+
+(defun es-color-hex-to-list (hex-color)
+  (let ((hex-color (es-color-normalize-hex hex-color)))
+    (list (string-to-int (substring hex-color 1 3) 16)
+          (string-to-int (substring hex-color 3 5) 16)
+          (string-to-int (substring hex-color 5 7) 16))))
+
 (provide 'es-lib-core-functions)

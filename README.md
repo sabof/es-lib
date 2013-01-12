@@ -23,7 +23,7 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 77_
+_Auto-generated before each commit. Total items in the library: 80_
 
 #### Table of contents:
 
@@ -128,6 +128,9 @@ If the line is empty, insert at the end of next line.
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
+* es-color-hex-to-list
+* es-color-list-to-hex
+* es-color-normalize-hex
 * es-define-keys
 
 ```
