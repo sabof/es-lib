@@ -64,7 +64,8 @@ Otherwise call `es-aai-indent-forward'."
   (interactive)
   (flet ((message (&rest ignore)))
     (when (region-active-p)
-      (delete-region (point) (mark)))
+      (delete-region (point) (mark))
+      (deactivate-mark))
     (let ((starting-point (point))
           end-distance
           line)
@@ -258,7 +259,7 @@ Otherwise call `es-aai-indent-forward'."
     [remap backward-delete-char-untabify] 'es-aai-backspace
     [remap autopair-backspace] 'es-aai-backspace
     [remap backward-delete-char] 'es-aai-backspace
-    )
+    [remap delete-backward-char] 'es-aai-backspace)
   (es-aai--minor-mode-setup)
   (es-aai--major-mode-setup))
 
