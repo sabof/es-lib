@@ -33,7 +33,6 @@
 (require 'es-lib-duplicate)
 (require 'es-lib-total-line)
 (require 'es-lib-number-at-point)
-(require 'es-lib-aa-indent)
 
 (provide 'es-lib)
 

@@ -23,11 +23,10 @@ A collecton of emacs utilities. Here are some highlights:
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 101_
+_Auto-generated before each commit. Total items in the library: 81_
 
 #### Table of contents:
 
-* [es-lib-aa-indent](#es-lib-aa-indent)
 * [es-lib-core-functions](#es-lib-core-functions)
 * [es-lib-core-macros](#es-lib-core-macros)
 * [es-lib-duplicate](#es-lib-duplicate)
@@ -37,116 +36,6 @@ _Auto-generated before each commit. Total items in the library: 101_
 * [es-lib-text-navigate](#es-lib-text-navigate)
 * [es-lib-total-line](#es-lib-total-line)
 
-
-
-## es-lib-aa-indent
-
-
-#### Defvars:
-
-* es-aa-indent-mode
-* es-aai-after-change-indentation
-
-```
-Whether to reindent after every change.
-Useful when you want to keep the keymap and cursor repositioning.
-```
-
-* es-aai-indent-function
-
-```
-Function to call after ever change, when
-```
-
-* es-aai-indent-limit
-
-```
-Maximum number of lines for after-change indentation.
-```
-
-* es-aai-indentable-line-p-function
-
-```
-For mode-specifc cusomizations.
-```
-
-* es-aai-indented-yank-limit
-
-```
-Maximum number of character to indent for `es-aai-indented-yank'
-```
-
-* es-aai-mode-map
-
-```
-Keymap for `es-aai-mode'.
-```
-
-
-#### Commands:
-
-* es-aai-backspace
-
-```
-Like `backward-delete-char', but removes the resulting gap when point is at EOL.
-```
-
-* es-aai-delete-char
-
-```
-Like `delete-char', but deletes indentation, if point is at it, or before it.
-```
-
-* es-aai-indented-yank
-* es-aai-mouse-yank
-* es-aai-mouse-yank-dont-indent
-* es-aai-newline-and-indent
-* es-aai-open-line
-
-```
-Open line, and indent the following.
-```
-
-
-#### Non-interactive:
-
-* es-aai-before-change-function
-
-```
-Change tracking.
-```
-
-* es-aai-correct-position-this
-
-```
-Go back to indentation if point is before indentation.
-```
-
-* es-aai-indent-defun
-
-```
-Indent current defun, if it is smaller than `es-aai-indent-limit'.
-Otherwise call `es-aai-indent-forward'.
-```
-
-* es-aai-indent-forward
-
-```
-Indent current line, and (1- `es-aai-indent-limit') lines afterwards.
-```
-
-* es-aai-indent-line-maybe
-
-```
-(indent-according-to-mode) when `es-aai-indentable-line-p-function' returns non-nil.
-All indentation happends through this function.
-```
-
-* es-aai-post-command-hook
-
-```
-Correct the cursor, and possibly indent.
-```
 
 
 ## es-lib-core-functions
