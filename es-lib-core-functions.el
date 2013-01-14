@@ -676,4 +676,10 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
           (string-to-int (substring hex-color 3 5) 16)
           (string-to-int (substring hex-color 5 7) 16))))
 
+(defun es-color-emacs-color-to-hex (color)
+  (let ((color-values (color-values color)))
+    (apply 'format "#%02x%02x%02x"
+           (mapcar (lambda (c) (lsh c -8))
+                   color-values))))
+
 (provide 'es-lib-core-functions)

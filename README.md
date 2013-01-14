@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 80_
+_Auto-generated before each commit. Total items in the library: 81_
 
 #### Table of contents:
 
@@ -124,6 +124,7 @@ If the line is empty, insert at the end of next line.
 * es-buffer-name-list
 * es-buffers-where-local-variable-is
 * es-buffers-with-mode
+* es-color-emacs-color-to-hex
 * es-color-hex-to-list
 * es-color-list-to-hex
 * es-color-normalize-hex

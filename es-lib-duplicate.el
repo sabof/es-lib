@@ -25,7 +25,9 @@
     (insert copy-store)
     (setq er-pos (- (line-end-position) (point)))
     (unless (or (eq major-mode 'haskell-mode)
-                (eq indent-line-function 'insert-tab))
+                (memq indent-line-function
+                      '(insert-tab
+                        indent-relative)))
       (indent-region b-pos (point)))
     (goto-char (- (line-end-position) er-pos))
     (activate-mark)
