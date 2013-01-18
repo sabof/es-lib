@@ -53,14 +53,11 @@
     (- (point) (line-beginning-position))))
 
 (defun es-visible-end-of-line ()
-  (save-match-data
-    (save-excursion
-      (end-of-line)
-      (if (re-search-backward
-           "[^ \t]" (line-beginning-position) t)
-          (progn (forward-char)
-                 (point))
-          (line-beginning-position)))))
+  (save-excursion
+    (end-of-line)
+    (skip-syntax-backward
+     " " (line-beginning-position))
+    (point)))
 
 (defun es-line-folded-p ()
   "Check whether the line contains a multiline folding."
@@ -85,8 +82,8 @@
 (defun es-indentation-end-pos (&optional position)
   (save-excursion
     (when position (goto-char position))
-    (+ (es-current-character-indentation)
-       (line-beginning-position))))
+    (back-to-indentation)
+    (point)))
 
 (defun es-line-empty-p ()
   (es-line-matches-p "^[ 	]*$"))
