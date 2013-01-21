@@ -19,10 +19,11 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 81_
+_Auto-generated before each commit. Total items in the library: 84_
 
 #### Table of contents:
 
+* [es-lib-buffer-local-set-key](#es-lib-buffer-local-set-key)
 * [es-lib-core-functions](#es-lib-core-functions)
 * [es-lib-core-macros](#es-lib-core-macros)
 * [es-lib-duplicate](#es-lib-duplicate)
@@ -31,6 +32,25 @@ _Auto-generated before each commit. Total items in the library: 81_
 * [es-lib-text-navigate](#es-lib-text-navigate)
 * [es-lib-total-line](#es-lib-total-line)
 
+
+
+## es-lib-buffer-local-set-key
+
+
+#### Defvars:
+
+* es-buffer-local-mode
+
+#### Non-interactive:
+
+* es-buffer-local-set-key
+* es-buffer-local-set-keys
+
+```
+
+
+(fn &rest BINDINGS)
+```
 
 
 ## es-lib-core-functions
