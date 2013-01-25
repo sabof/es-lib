@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 84_
+_Auto-generated before each commit. Total items in the library: 87_
 
 #### Table of contents:
 
@@ -148,6 +148,7 @@ If the line is empty, insert at the end of next line.
 * es-color-hex-to-list
 * es-color-list-to-hex
 * es-color-normalize-hex
+* es-color-random-hex
 * es-define-keys
 
 ```
@@ -160,6 +161,7 @@ Syntax example:
 (fn KEYMAP &rest BINDINGS)
 ```
 
+* es-disable-buffer-scrolling
 * es-disable-keys
 * es-find-duplicates
 
@@ -229,6 +231,7 @@ In all frames.
 #### Macros:
 
 * es-back-pop
+* es-back-push
 * es-define-buffer-local-vars
 
 ```

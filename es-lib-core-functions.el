@@ -682,4 +682,24 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
            (mapcar (lambda (c) (lsh c -8))
                    color-values))))
 
+(defun es-color-random-hex ()
+  (es-color-list-to-hex (mapcar 'random (make-list 3 255))))
+
+(defun es-disable-buffer-scrolling ()
+  (es-buffer-local-set-keys
+    [remap smooth-scroll-up] 'ignore
+    [remap smooth-scroll-down] 'ignore
+    [remap cua-scroll-up] 'ignore
+    [remap cua-scroll-down] 'ignore
+    [remap scroll-up-command] 'ignore
+    [remap scroll-down-command] 'ignore
+    (kbd "<down-mouse-1>") 'ignore
+    (kbd "<drag-mouse-1>") 'ignore
+    (kbd "<mouse-5>") 'ignore
+    (kbd "<mouse-4>") 'ignore
+    (kbd "<next>") 'ignore
+    (kbd "<prior>") 'ignore)
+  (add-hook 'post-command-hook (lambda () (set-window-start (selected-window) (point-min)))
+            t t))
+
 (provide 'es-lib-core-functions)

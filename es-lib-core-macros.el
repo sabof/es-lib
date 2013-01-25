@@ -30,4 +30,7 @@
        (setq ,symbol (butlast ,symbol))
        ,result)))
 
+(defmacro es-back-push (what where)
+  `(setq ,where (append ,where (list ,what))))
+
 (provide 'es-lib-core-macros)
