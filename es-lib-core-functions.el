@@ -182,30 +182,32 @@ If the line is empty, insert at the end of next line."
      '(4 &body))
 
 ;;;###autoload
-(defun es-highlighter ()
-  "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active."
+(defun* es-highlighter ()
+  "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the \
+region is active."
   (interactive)
-  (require 'highlight-symbol)
   (require 'hi-lock)
-  (if (region-active-p)
-      (let* ((phrase (regexp-quote (buffer-substring (point) (mark))))
-             ;; hi-lock-interactive-patterns format:
-             ;; (regexp (0 'face t))
-             (pattern (find-if (lambda (element)
-                                 (equal (first element) phrase))
-                               hi-lock-interactive-patterns)))
-        (if pattern
-            (hi-lock-unface-buffer phrase)
-            (let ((color (nth highlight-symbol-color-index
-                              highlight-symbol-colors)))
-              (if color ;; wrap
-                  (incf highlight-symbol-color-index)
-                  (setq highlight-symbol-color-index 1
-                        color (car highlight-symbol-colors)))
-              (setq color `((background-color . ,color)
-                            (foreground-color . "black")))
-              (hi-lock-set-pattern phrase color))))
-      (highlight-symbol-at-point)))
+  (let* ((phrase (if (region-active-p)
+                     (regexp-quote (buffer-substring (point) (mark)))
+                     (concat "\\_<"
+                             (symbol-name
+                              (or (symbol-at-point)
+                                  (return-from es-highlighter)))
+                             "\\_>")))
+         (pattern (find-if (lambda (element)
+                             (equal (first element) phrase))
+                           hi-lock-interactive-patterns)))
+    (if pattern
+        (hi-lock-unface-buffer phrase)
+        (let ((color (nth highlight-symbol-color-index
+                          highlight-symbol-colors)))
+          (if color ;; wrap
+              (incf highlight-symbol-color-index)
+              (setq highlight-symbol-color-index 1
+                    color (car highlight-symbol-colors)))
+          (setq color `((background-color . ,color)
+                        (foreground-color . "black")))
+          (hi-lock-set-pattern phrase color)))))
 
 ;;;###autoload
 (defun es-mouse-yank-replace-symbol (event)
