@@ -1,3 +1,6 @@
+(eval-when-compile
+  (require 'cl))
+
 (defvar es-buffer-local-mode nil)
 (make-variable-buffer-local 'es-buffer-local-mode)
 
