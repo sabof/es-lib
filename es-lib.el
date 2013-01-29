@@ -35,5 +35,4 @@
 (require 'es-lib-number-at-point)
 
 (provide 'es-lib)
-
 ;;; es-lib.el ends here

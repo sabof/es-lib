@@ -1,3 +1,34 @@
+;;; es-lib-core-functions.el --- Random functions
+;;; Version: 0.1
+;;; Author: sabof
+;;; URL: https://github.com/sabof/es-lib
+
+;;; Commentary:
+
+;; The project is hosted at https://github.com/sabof/es-lib
+;; The latest version, and all the relevant information can be found there.
+
+;;; License:
+
+;; This file is NOT part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program ; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Code:
+
 (require 'cl)
 
 (defun es-disable-keys (map &rest keylist)
@@ -20,9 +51,9 @@
              (mapcar 'buffer-name (buffer-list))))
 
 (defun es-unsaved-buffer-list ()
-  (save-window-excursion
+  (save-excursion
     (loop for buf in (buffer-list)
-          when (progn (switch-to-buffer buf)
+          when (progn (set-buffer buf)
                       (and buffer-file-name
                            (buffer-modified-p)))
           collect (buffer-name buf))))
@@ -705,3 +736,4 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
             t t))
 
 (provide 'es-lib-core-functions)
+;; es-lib-core-functions.el ends here

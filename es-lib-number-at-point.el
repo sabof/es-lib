@@ -1,3 +1,35 @@
+;;; es-lib-number-at-point.el --- Manipulate numbers at point
+;;; Version: 0.1
+;;; Author: sabof
+;;; URL: https://github.com/sabof/es-lib
+
+;;; Commentary:
+
+;; The project is hosted at https://github.com/sabof/es-lib
+;; The latest version, and all the relevant information can be found there.
+
+;;; License:
+
+;; This file is NOT part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program ; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
+;;; Code:
+(require 'cl)
+
 (defun es-number-at-point ()
   (when (looking-at "[[:digit:]-]+")
     (save-excursion
@@ -52,3 +84,4 @@ line."
     (es--change-number-at-point t)))
 
 (provide 'es-lib-number-at-point)
+;; es-lib-number-at-point.el ends here

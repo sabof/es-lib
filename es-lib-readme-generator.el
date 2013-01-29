@@ -1,5 +1,4 @@
-;;; -*- lexical-binding: t -*-
-;; For internal use, and to satisfy curiosity.
+;;; es-lib-readme-generator.el --- For internal use, and to satisfy curiosity. -*- lexical-binding: t -*-
 
 (require 'loadhist)
 (require 'apropos)
@@ -142,3 +141,4 @@ _Auto-generated before each commit. Total items in the library: %s_
           (save-buffer))))))
 
 (provide 'es-lib-readme-generator)
+;; es-lib-readme-generator.el ends here
