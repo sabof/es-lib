@@ -379,7 +379,9 @@ Marks the symbol on first call, then marks the statement."
             :from-end t))
          ( junk-less
            (remove-if
-            (es-back-curry 'member (list (buffer-name) "Map_Sym.txt"))
+            (lambda (item)
+              (member item (list (buffer-name)
+                                 "Map_Sym.txt")))
             no-duplicates))
          ( mode-filter
            (or (and (not this-mode-only)
