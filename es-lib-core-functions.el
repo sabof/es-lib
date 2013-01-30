@@ -345,9 +345,9 @@ Marks the symbol on first call, then marks the statement."
   (indent-according-to-mode))
 
 ;;;###autoload
-(defun* es-ido-like-helm ()
+(defun* es-ido-like-helm (&optional this-mode-only)
   "Choose from a concatenated list of buffers and recent files."
-  (interactive)
+  (interactive "P")
   (require 'recentf)
   (when (window-dedicated-p)
     (message "This is a dedicated window")
@@ -381,9 +381,26 @@ Marks the symbol on first call, then marks the statement."
            (remove-if
             (es-back-curry 'member (list (buffer-name) "Map_Sym.txt"))
             no-duplicates))
+         ( mode-filter
+           (or (and (not this-mode-only)
+                    junk-less)
+               (let (( extension
+                       (file-name-extension
+                        (or (buffer-file-name)
+                            ""))))
+                 (remove-if-not
+                  (lambda (maybe-cons)
+                    (if (consp maybe-cons)
+                        (when extension
+                          (equal (file-name-extension
+                                  (cdr maybe-cons))
+                                 extension))
+                        (eq (es-buffer-mode maybe-cons)
+                            major-mode)))
+                  junk-less))))
          ( file
            (es-ido-completing-read-alist
-            "Choose existing: " junk-less nil t)))
+            "Choose existing: " mode-filter nil t)))
     (when file
       (if (member file buffer-list)
           (switch-to-buffer file)
