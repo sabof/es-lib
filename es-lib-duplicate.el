@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defun es-duplicate-line ()
   "Duplicate current line."
   (interactive)

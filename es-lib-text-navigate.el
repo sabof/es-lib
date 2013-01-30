@@ -29,6 +29,7 @@
 
 ;;; Code:
 
+(require 'cl)
 (defun es-point-between-pairs-p ()
   (let ((result nil))
     (mapcar*

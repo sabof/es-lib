@@ -28,6 +28,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Code:
+(require 'cl)
 
 (defmacro es-silence-messages (&rest body)
   `(flet ((message (&rest ignore)))

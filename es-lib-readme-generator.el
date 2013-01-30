@@ -1,5 +1,6 @@
 ;;; es-lib-readme-generator.el --- For internal use, and to satisfy curiosity. -*- lexical-binding: t -*-
 
+(require 'cl)
 (require 'loadhist)
 (require 'apropos)
 

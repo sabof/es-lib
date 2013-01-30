@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defun es-back-curry (func &rest more-args)
   "Like (apply-partially), but adds arguments to the end."
   (lambda (&rest args)
