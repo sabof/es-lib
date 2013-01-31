@@ -754,5 +754,31 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
   (add-hook 'post-command-hook (lambda () (set-window-start (selected-window) (point-min)))
             t t))
 
+(defun es-figlet-fonts ()
+  (cddr (directory-files "/usr/share/figlet")))
+
+(defvar es-figlet-font-history nil)
+(defvar es-figlet-phrase-history nil)
+
+(defun es-figlet-insert (words &optional font additional-opts)
+  "Insert a figlet-formatted phrase at point:
+ _____ _       _      _
+|  ___(_) __ _| | ___| |_
+| |_  | |/ _` | |/ _ \ __|
+|  _| | | (_| | |  __/ |_
+|_|   |_|\__, |_|\___|\__|
+         |___/"
+  (interactive
+   (list
+    (read-string "Phrase: " nil 'es-figlet-phrase-history)
+    (completing-read "Font: " (es-figlet-fonts)
+                     nil t nil 'es-figlet-font-history)))
+  (insert (shell-command-to-string
+           (format "figlet %s %s"
+                   (if (and font (not (equal font "")))
+                       (concat "-f " font)
+                       "")
+                   words))))
+
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here

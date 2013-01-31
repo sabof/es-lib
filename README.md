@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 87_
+_Auto-generated before each commit. Total items in the library: 91_
 
 #### Table of contents:
 
@@ -56,6 +56,11 @@ _Auto-generated before each commit. Total items in the library: 87_
 ## es-lib-core-functions
 
 
+#### Defvars:
+
+* es-figlet-font-history
+* es-figlet-phrase-history
+
 #### Commands:
 
 * es-ack-pin-folder
@@ -85,6 +90,18 @@ Marks the symbol on first call, then marks the statement.
 
 * es-comment-dwim
 * es-delete-duplicate-lines
+* es-figlet-insert
+
+```
+Insert a figlet-formatted phrase at point:
+ _____ _       _      _
+|  ___(_) __ _| | ___| |_
+| |_  | |/ _` | |/ _ __|
+|  _| | | (_| | |  __/ |_
+|_|   |_|__, |_|___|__|
+         |___/
+```
+
 * es-find-function-bound-to
 * es-fixup-whitespace
 
@@ -163,6 +180,7 @@ Syntax example:
 
 * es-disable-buffer-scrolling
 * es-disable-keys
+* es-figlet-fonts
 * es-find-duplicates
 
 ```
