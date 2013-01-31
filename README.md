@@ -96,9 +96,9 @@ Marks the symbol on first call, then marks the statement.
 Insert a figlet-formatted phrase at point:
  _____ _       _      _
 |  ___(_) __ _| | ___| |_
-| |_  | |/ _` | |/ _ __|
+| |_  | |/ _` | |/ _ \ __|
 |  _| | | (_| | |  __/ |_
-|_|   |_|__, |_|___|__|
+|_|   |_|\__, |_|\___|\__|
          |___/
 ```
 

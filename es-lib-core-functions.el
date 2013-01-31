@@ -764,9 +764,9 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
   "Insert a figlet-formatted phrase at point:
  _____ _       _      _
 |  ___(_) __ _| | ___| |_
-| |_  | |/ _` | |/ _ \ __|
+| |_  | |/ _` | |/ _ \\ __|
 |  _| | | (_| | |  __/ |_
-|_|   |_|\__, |_|\___|\__|
+|_|   |_|\\__, |_|\\___|\\__|
          |___/"
   (interactive
    (list
