@@ -621,13 +621,14 @@ Ack won't prompt for a directory name in that buffer."
         'ack-and-a-half-prompt-for-directory) nil)
   (message "Ack directory set to: %s" folder))
 
-(defun es-windows-with-buffer (buffer)
+(defun es-windows-with-buffer (buffer-or-name)
   "In all frames."
-  (remove-if-not
-   (lambda (window)
-     (eq (window-buffer window) buffer))
-   (loop for frame in (frame-list)
-         append (window-list frame))))
+  (let ((buffer (window-normalize-buffer buffer-or-name)))
+    (remove-if-not
+     (lambda (window)
+       (eq (window-buffer window) buffer))
+     (loop for frame in (frame-list)
+           append (window-list frame)))))
 
 (defun es-random-member (list)
   (nth (random (length list)) list))
@@ -774,11 +775,12 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
     (completing-read "Font: " (es-figlet-fonts)
                      nil t nil 'es-figlet-font-history)))
   (insert (shell-command-to-string
-           (format "figlet %s %s"
+           (format "figlet %s %s %s"
+                   (or additional-opts "")
                    (if (and font (not (equal font "")))
                        (concat "-f " font)
                        "")
-                   words))))
+                   (shell-quote-argument words)))))
 
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here
