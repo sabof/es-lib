@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'es-lib-core-macros)
 
 (defvar es-buffer-local-mode nil)
 (make-variable-buffer-local 'es-buffer-local-mode)

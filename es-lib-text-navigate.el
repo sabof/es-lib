@@ -30,6 +30,8 @@
 ;;; Code:
 
 (require 'cl)
+(require 'es-lib-core-macros)
+
 (defun es-point-between-pairs-p ()
   (let ((result nil))
     (mapcar*

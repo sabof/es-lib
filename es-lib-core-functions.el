@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'es-lib-core-macros)
 
 (defun es-disable-keys (map &rest keylist)
   (dolist (key keylist)

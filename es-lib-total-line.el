@@ -26,6 +26,8 @@
 ;;; Code:
 
 (require 'cl)
+(require 'es-lib-core-macros)
+
 (defun es-total-line-end-position (&optional pos)
   "Kind of like \(max \(end-of-line\) \(end-of-visual-line\)\)."
   (save-excursion

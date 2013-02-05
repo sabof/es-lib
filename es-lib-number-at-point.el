@@ -29,6 +29,7 @@
 
 ;;; Code:
 (require 'cl)
+(require 'es-lib-core-macros)
 
 (defun es-number-at-point ()
   (when (looking-at "[[:digit:]-]+")

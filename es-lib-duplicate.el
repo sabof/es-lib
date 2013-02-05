@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'es-lib-core-macros)
 
 (defun es-duplicate-line ()
   "Duplicate current line."
