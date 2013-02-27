@@ -639,7 +639,7 @@ Ack won't prompt for a directory name in that buffer."
         (split-width-threshold 0))
     (pop-to-buffer buf)))
 
-(defun es-fixup-whitespace (&optional before after)
+(defun* es-fixup-whitespace (&optional before after)
   "Fixup white space between objects around point.
 Leave one space or none, according to the context.
 
@@ -677,6 +677,9 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                           (and (in-string-p) (sp-member ?\'))
                           (member (second SPairRaw) '(?\n  ?\)   ?\(   ?,   ?:   nil)))
                   (return-from insert-space-b nil)))
+              (when (eq major-mode 'js-mode)
+                (when (equal (second SPairRaw) ?. )
+                  (return-from es-fixup-whitespace t)))
               ;; Lisp Family
               (when (memq major-mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode))
                 (when (or (equal SPairRaw '(  ?'  ?\(  )))
@@ -732,9 +735,11 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
 
 (defun es-color-emacs-color-to-hex (color)
   (let ((color-values (color-values color)))
-    (apply 'format "#%02x%02x%02x"
-           (mapcar (lambda (c) (lsh c -8))
-                   color-values))))
+    (if color-values
+        (apply 'format "#%02x%02x%02x"
+               (mapcar (lambda (c) (lsh c -8))
+                       color-values))
+        "#888888")))
 
 (defun es-color-random-hex ()
   (es-color-list-to-hex (mapcar 'random (make-list 3 255))))

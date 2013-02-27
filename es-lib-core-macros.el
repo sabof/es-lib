@@ -65,5 +65,25 @@
 (defmacro es-back-push (what where)
   `(setq ,where (append ,where (list ,what))))
 
+(defmacro* es-preserve-functions ((&rest funcs) &rest body)
+  (let ((list-sym (gensym))
+        (list
+         (mapcar
+          (lambda (func)
+            `(,func . ,(symbol-function func)))
+          funcs)))
+    `(let ((,list-sym (quote ,list))
+           (result
+            (progn
+              ,@body
+              )))
+       (mapcar
+        (lambda (func)
+          (fset (car func) (cdr func)))
+        ,list-sym)
+       )))
+(put 'es-preserve-functions 'common-lisp-indent-function
+     '(2 2 &body))
+
 (provide 'es-lib-core-macros)
 ;; es-lib-core-macros.el ends here

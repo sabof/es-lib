@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 91_
+_Auto-generated before each commit. Total items in the library: 92_
 
 #### Table of contents:
 
@@ -259,6 +259,14 @@ Syntax example:
 ```
 
 * es-neither
+* es-preserve-functions
+
+```
+
+
+(fn (&rest FUNCS) &rest BODY)
+```
+
 * es-silence-messages
 * es-while-point-moving
 
