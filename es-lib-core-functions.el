@@ -788,5 +788,12 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                        "")
                    (shell-quote-argument words)))))
 
+(defun es-mouse-copy-symbol (event)
+  (interactive "e")
+  (save-excursion
+    (mouse-set-point event)
+    (when (thing-at-point 'symbol)
+      (kill-new (thing-at-point 'symbol)))))
+
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here

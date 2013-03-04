@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 92_
+_Auto-generated before each commit. Total items in the library: 93_
 
 #### Table of contents:
 
@@ -138,6 +138,7 @@ end-of-line + newline.
 Similar to what happends when emacs is about to quit.
 ```
 
+* es-mouse-copy-symbol
 * es-mouse-yank-replace-symbol
 * es-new-empty-buffer
 * es-push-line
@@ -262,7 +263,17 @@ Syntax example:
 * es-preserve-functions
 
 ```
+A helper for loading packages.
+Example of usage:
 
+(es-preserve-functions
+  (default-function-i-like1
+    default-function-i-like2)
+(require 'some-package-that-redefines-them-at-top-level)
+)
+
+This is a hack, and in no way it excuses package-authors who do that.
+They should provide initialization functions that execute the redefinitions.
 
 (fn (&rest FUNCS) &rest BODY)
 ```

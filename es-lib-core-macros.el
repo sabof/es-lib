@@ -66,6 +66,17 @@
   `(setq ,where (append ,where (list ,what))))
 
 (defmacro* es-preserve-functions ((&rest funcs) &rest body)
+  "A helper for loading packages.
+Example of usage:
+
+\(es-preserve-functions
+  \(default-function-i-like1
+    default-function-i-like2\)
+\(require 'some-package-that-redefines-them-at-top-level\)
+\)
+
+This is a hack, and in no way it excuses package-authors who do that.
+They should provide initialization functions that execute the redefinitions."
   (let ((list-sym (gensym))
         (list
          (mapcar
