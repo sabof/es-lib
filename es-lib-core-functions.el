@@ -33,7 +33,7 @@
 (require 'es-lib-core-macros)
 
 (defun es-disable-keys (map &rest keylist)
-  (dolist (key keylist)
+  (cl-dolist (key keylist)
     (define-key map key nil)))
 (put 'es-disable-keys 'common-lisp-indent-function
      '(4 &body))
@@ -450,7 +450,7 @@ The \"originals\" won't be included."
         (remove-if-not
          (lambda (buf)
            (and (eq (es-buffer-mode buf) 'shell-mode)
-                (not (buffer-process buf))))
+                (not (get-buffer-process buf))))
          (buffer-list))))
 
 ;;;###autoload
@@ -464,7 +464,7 @@ The \"originals\" won't be included."
               (case (read-char
                      "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
                 ( ?!
-                  (dolist (buf (es-unsaved-buffer-list))
+                  (cl-dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
                       (save-buffer)))
                   (return-from es-manage-unsaved-buffers))
@@ -581,7 +581,7 @@ files."
          (y-or-n-p "Save current buffer? ")
          (save-buffer))
     (ack-and-a-half from-symbol-or-string nil directory)
-    (dolist (window (window-list))
+    (cl-dolist (window (window-list))
       (when (eq (es-buffer-mode
                  (window-buffer window))
                 'ack-and-a-half-mode)

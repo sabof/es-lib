@@ -49,14 +49,16 @@
 (defun es-total-forward-line (arg)
   (cond
     ( (plusp arg)
-      (dotimes (ignore arg)
-        (goto-char (es-total-line-end-position))
-        (forward-char)))
+      (cl-dotimes (ignore arg)
+        (unless (eobp)
+          (goto-char (es-total-line-end-position))
+          (forward-char))))
     ( t
       (goto-char (es-total-line-beginning-position))
-      (dotimes (ignore (* -1 arg))
-        (backward-char)
-        (goto-char (es-total-line-beginning-position))
+      (cl-dotimes (ignore (* -1 arg))
+        (unless (bobp)
+          (backward-char)
+          (goto-char (es-total-line-beginning-position)))
         ))))
 
 (defun es-total-line-end ()

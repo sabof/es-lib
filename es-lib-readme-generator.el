@@ -44,7 +44,7 @@
 (defun es-lib-features ()
   (let ((libs (mapcar (es-comp 'intern 'file-name-base)
                       (directory-files
-                       (mmake-path "site-lisp/my-scripts/es-lib")
+                       (es-emacs-path "site-lisp/my-scripts/es-lib")
                        nil "^es-"))))
     (remove-if (lambda (featch)
                  (memq featch
@@ -55,7 +55,7 @@
 (defun es-toc (features)
   (with-temp-buffer
     (insert "\n")
-    (dolist (feature features)
+    (cl-dolist (feature features)
       (insert
        (format "* [%s](#%s)\n"
                feature feature)))
@@ -78,10 +78,10 @@
                     (es-analyze-feature-loadhist feature))))
       (with-temp-buffer
         (insert "\n## " (symbol-name feature) "\n\n")
-        (dolist (type '(:defvars :macros :commands :defuns-ni))
+        (cl-dolist (type '(:defvars :macros :commands :defuns-ni))
           (unless (zerop (length (getf analyzed type)))
             (insert "\n#### " (es--type-name type) ":\n\n")
-            (dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
+            (cl-dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
               (insert "* " (symbol-name item) "\n")
               (cond ( (eq type :defvars)
                       (when (es-var-documentation item)
@@ -99,7 +99,7 @@
     (let* (( libs (es-lib-features)))
       (setq total-items 0)
       (with-temp-buffer
-        (dolist (feature libs)
+        (cl-dolist (feature libs)
           (insert (es-feature-report feature)))
         (buffer-string))))
 
@@ -108,7 +108,7 @@
     (let ((index (es-lib-report)))
       (save-excursion
         (save-window-excursion
-          (find-file (mmake-path "site-lisp/my-scripts/es-lib/README.md"))
+          (find-file (es-emacs-path "site-lisp/my-scripts/es-lib/README.md"))
           (erase-buffer)
           (insert (format "#es-lib
 A collecton of emacs utilities, and basis for several of my packages. Here are some highlights:

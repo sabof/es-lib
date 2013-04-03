@@ -31,7 +31,8 @@
 (require 'cl)
 
 (defmacro es-silence-messages (&rest body)
-  `(flet ((message (&rest ignore)))
+  `(cl-letf (( (symbol-function 'message)
+               (symbol-function 'ignore)))
      ,@body))
 
 (defmacro es-while-point-moving (&rest rest)
@@ -65,7 +66,7 @@
 (defmacro es-back-push (what where)
   `(setq ,where (append ,where (list ,what))))
 
-(defmacro* es-preserve-functions ((&rest funcs) &rest body)
+(cl-defmacro es-preserve-functions ((&rest funcs) &rest body)
   "A helper for loading packages.
 Example of usage:
 
