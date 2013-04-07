@@ -385,8 +385,7 @@ Marks the symbol on first call, then marks the statement."
                                  "Map_Sym.txt")))
             no-duplicates))
          ( mode-filter
-           (or (and (not this-mode-only)
-                    junk-less)
+           (if this-mode-only
                (let (( extension
                        (file-name-extension
                         (or (buffer-file-name)
@@ -400,7 +399,8 @@ Marks the symbol on first call, then marks the statement."
                                  extension))
                         (eq (es-buffer-mode maybe-cons)
                             major-mode)))
-                  junk-less))))
+                  junk-less))
+               junk-less))
          ( file
            (es-ido-completing-read-alist
             "Choose existing: " mode-filter nil t)))
