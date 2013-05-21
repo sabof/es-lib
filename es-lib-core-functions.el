@@ -143,8 +143,8 @@ If the line is empty, insert at the end of next line."
 (defun es-add-semicolon-at-eol ()
   (interactive)
   (es-add-at-eol ";")
-  (when (fboundp 'es-aai-indent-line-maybe)
-    (es-aai-indent-line-maybe)))
+  (when (fboundp 'aai-indent-line-maybe)
+    (aai-indent-line-maybe)))
 
 (defun es-add-comma-at-eol ()
   (interactive)
@@ -181,8 +181,8 @@ If the line is empty, insert at the end of next line."
         ( t (beginning-of-line)
             (newline)
             (backward-char)
-            (when (fboundp 'es-aai-indent-line-maybe)
-              (es-aai-indent-line-maybe)))))
+            (when (fboundp 'aai-indent-line-maybe)
+              (aai-indent-line-maybe)))))
 
 ;;;###autoload
 (defun es-jump-line ()
@@ -412,10 +412,10 @@ Marks the symbol on first call, then marks the statement."
 (defun es-find-duplicates (list)
   "Multiple duplicates will be listed muliple times.
 The \"originals\" won't be included."
-  (let ((singles (remove-duplicates list :test 'equal))
-        (clone (copy-list list)))
+  (let ((singles (cl-remove-duplicates list :test 'equal))
+        (clone (cl-copy-list list)))
     (while singles
-      (setq clone (remove* (pop singles) clone :test 'equal :count 1)))
+      (setq clone (cl-remove (pop singles) clone :test 'equal :count 1)))
     clone))
 
 ;;;###autoload
@@ -729,9 +729,9 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
 
 (defun es-color-hex-to-list (hex-color)
   (let ((hex-color (es-color-normalize-hex hex-color)))
-    (list (string-to-int (substring hex-color 1 3) 16)
-          (string-to-int (substring hex-color 3 5) 16)
-          (string-to-int (substring hex-color 5 7) 16))))
+    (list (string-to-number (substring hex-color 1 3) 16)
+          (string-to-number (substring hex-color 3 5) 16)
+          (string-to-number (substring hex-color 5 7) 16))))
 
 (defun es-color-emacs-color-to-hex (color)
   (let ((color-values (color-values color)))

@@ -78,22 +78,16 @@ Example of usage:
 
 This is a hack, and in no way it excuses package-authors who do that.
 They should provide initialization functions that execute the redefinitions."
-  (let ((list-sym (gensym))
-        (list
-         (mapcar
-          (lambda (func)
-            `(,func . ,(symbol-function func)))
-          funcs)))
-    `(let ((,list-sym (quote ,list))
-           (result
-            (progn
-              ,@body
-              )))
+  (let (( list-sym (gensym))
+        ( list (mapcar (lambda (func)
+                         `(,func . ,(symbol-function func)))
+                       funcs)))
+    `(let (( ,list-sym (quote ,list))
+           ( result (progn ,@body)))
        (mapcar
         (lambda (func)
           (fset (car func) (cdr func)))
-        ,list-sym)
-       )))
+        ,list-sym))))
 (put 'es-preserve-functions 'common-lisp-indent-function
      '(2 2 &body))
 

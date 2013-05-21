@@ -70,7 +70,7 @@
                       (if (consp thing)
                           (cl-remove-if
                            (lambda (sym-nam)
-                             (or (equal "es-aai-mode" sym-nam)
+                             (or (equal "aai-mode" sym-nam)
                                  (search "--" sym-nam)))
                            thing
                            :key 'symbol-name)
