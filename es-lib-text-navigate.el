@@ -29,12 +29,12 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-point-between-pairs-p ()
   (let ((result nil))
-    (mapcar*
+    (cl-mapcar
      (lambda (character-pair)
        (if (and (characterp (char-before))
                 (characterp (char-after))
@@ -95,7 +95,7 @@
                     (es-total-line-end-position)))))
 
 (defun es-set-region (point mark)
-  (push-mark mark)
+  (set-mark mark)
   (goto-char point)
   (activate-mark)
   (setq deactivate-mark nil))
@@ -114,10 +114,15 @@
     (point)))
 
 (defun es-line-empty-p ()
-  (es-line-matches-p "^[ 	]*$"))
+  (es-line-matches-p "^[ \t]*$"))
 
 (defun es-line-visible-p ()
   (not (es-line-empty-p)))
+
+(defun es-goto-line-prog (line-num)
+  "Like goto-line, but simplified for programmatic use."
+  (goto-char (point-min))
+  (forward-line (1- line-num)))
 
 (provide 'es-lib-text-navigate)
 ;; es-lib-text-navigate.el ends here

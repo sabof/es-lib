@@ -28,7 +28,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Code:
-(require 'cl)
+(require 'cl-lib)
 
 (defmacro es-silence-messages (&rest body)
   `(cl-letf (( (symbol-function 'message)
@@ -36,7 +36,7 @@
      ,@body))
 
 (defmacro es-while-point-moving (&rest rest)
-  (let ((old-point (gensym)))
+  (let ((old-point (cl-gensym)))
     `(let (,old-point)
        (while (not (equal (point) ,old-point))
          (setq ,old-point (point))
@@ -58,7 +58,7 @@
     (cons 'progn (nreverse result))))
 
 (defmacro es-back-pop (symbol)
-  (let ( (result (gensym)))
+  (let ( (result (cl-gensym)))
     `(let ( (,result (first (last ,symbol))))
        (setq ,symbol (butlast ,symbol))
        ,result)))
@@ -78,7 +78,7 @@ Example of usage:
 
 This is a hack, and in no way it excuses package-authors who do that.
 They should provide initialization functions that execute the redefinitions."
-  (let (( list-sym (gensym))
+  (let (( list-sym (cl-gensym))
         ( list (mapcar (lambda (func)
                          `(,func . ,(symbol-function func)))
                        funcs)))

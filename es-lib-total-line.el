@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-total-line-end-position (&optional pos)

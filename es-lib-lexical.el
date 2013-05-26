@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-back-curry (func &rest more-args)

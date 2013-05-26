@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-disable-keys (map &rest keylist)
@@ -46,10 +46,10 @@
     (kill-buffer)))
 
 (defun es-buffer-name-list ()
-  (remove-if (lambda (name)
-               (some (es-back-curry 'string-match-p name)
-                     (list "^ " "^tags$" "^TAGS$")))
-             (mapcar 'buffer-name (buffer-list))))
+  (cl-remove-if (lambda (name)
+                  (cl-some (es-back-curry 'string-match-p name)
+                           (list "^ " "^tags$" "^TAGS$")))
+                (mapcar 'buffer-name (buffer-list))))
 
 (defun es-unsaved-buffer-list ()
   (save-excursion
@@ -67,7 +67,7 @@
   (let (( selection (apply 'ido-completing-read prompt
                            (mapcar 'car alist) rest)))
     (when selection
-      (cdr (find selection alist :key 'car :test 'equal)))))
+      (cdr (cl-find selection alist :key 'car :test 'equal)))))
 
 (defun es-buffer-mode (buffer-or-name)
   (with-current-buffer (get-buffer buffer-or-name)
@@ -81,11 +81,11 @@
           buffer-list))
 
 (defun es-buffers-where-local-variable-is (var-sym value)
-  (remove-if-not (lambda (buf)
-                   (with-current-buffer buf
-                     (equal (symbol-value var-sym)
-                            value)))
-                 (buffer-list)))
+  (cl-remove-if-not (lambda (buf)
+                      (with-current-buffer buf
+                        (equal (symbol-value var-sym)
+                               value)))
+                    (buffer-list)))
 
 (defun es-string-begins-with-p (string beginning)
   "Return t if STRING begins with BEGINNING."
@@ -143,7 +143,8 @@ If the line is empty, insert at the end of next line."
 (defun es-add-semicolon-at-eol ()
   (interactive)
   (es-add-at-eol ";")
-  (when (fboundp 'aai-indent-line-maybe)
+  (when (and (bound-and-true-p aai-mode)
+             (fboundp 'aai-indent-line-maybe))
     (aai-indent-line-maybe)))
 
 (defun es-add-comma-at-eol ()
@@ -151,7 +152,7 @@ If the line is empty, insert at the end of next line."
   (es-add-at-eol ","))
 
 (defun es-buffers-with-mode (mode)
-  (remove-if-not
+  (cl-remove-if-not
    (lambda (buf)
      (with-current-buffer buf
        (eq major-mode mode)))
@@ -219,6 +220,7 @@ If the line is empty, insert at the end of next line."
 region is active."
   (interactive)
   (require 'hi-lock)
+  (require 'highlight-symbol)
   (let* ((phrase (if (region-active-p)
                      (regexp-quote (buffer-substring (point) (mark)))
                      (concat "\\_<"
@@ -226,9 +228,9 @@ region is active."
                               (or (symbol-at-point)
                                   (return-from es-highlighter)))
                              "\\_>")))
-         (pattern (find-if (lambda (element)
-                             (equal (first element) phrase))
-                           hi-lock-interactive-patterns)))
+         (pattern (cl-find-if (lambda (element)
+                                (equal (first element) phrase))
+                              hi-lock-interactive-patterns)))
     (if pattern
         (hi-lock-unface-buffer phrase)
         (let ((color (nth highlight-symbol-color-index
@@ -261,64 +263,68 @@ region is active."
   "A simple\(?\) version of expand-region for c-like languages.
 Marks the symbol on first call, then marks the statement."
   (interactive)
-  (flet (( post-scriptum ()
-           (when (and (equal (point) (line-end-position))
-                      (not (equal (point) (point-max))))
-             (forward-char))
-           (exchange-point-and-mark))
-         ( mark-statement-internal ()
-           (back-to-indentation)
-           (set-mark (point))
-           (ignore-errors
-             (while (equal (line-number-at-pos (point))
-                           (line-number-at-pos (mark)))
-               (forward-sexp)))
-           (when (equal (char-after (point))
-                        (aref ";" 0))
-             (forward-char))
-           (post-scriptum))
-         ( mark-colon-internal ()
-           (let (next-opening-bracket next-colon)
+  (let* (( post-scriptum
+           (lambda ()
+             (when (and (equal (point) (line-end-position))
+                        (not (equal (point) (point-max))))
+               (forward-char))
+             (exchange-point-and-mark)))
+         ( mark-statement-internal
+           (lambda ()
              (back-to-indentation)
              (set-mark (point))
-             (setq next-opening-bracket (es-next-match-pos "{")
-                   next-colon (es-next-match-pos ";"))
-             (cond ( (and next-opening-bracket next-colon)
-                     (if (< next-opening-bracket next-colon)
-                         (progn (goto-char next-opening-bracket)
-                                (backward-char)
-                                (forward-sexp))
-                         (goto-char next-colon)))
-                   ( next-opening-bracket
-                     (progn (goto-char next-opening-bracket)
-                            (backward-char)
-                            (forward-sexp)))
-                   ( t (goto-char next-colon)))
+             (ignore-errors
+               (while (equal (line-number-at-pos (point))
+                             (line-number-at-pos (mark)))
+                 (forward-sexp)))
              (when (equal (char-after (point))
                           (aref ";" 0))
                (forward-char))
-             (post-scriptum)))
-         ( select-line-internal ()
-           (back-to-indentation)
-           (set-mark (point))
-           (let (( next-colon
-                   (save-excursion
-                     (when (search-forward ";" nil t)
-                       (point)))))
-             (goto-char
-              (if next-colon
-                  (min next-colon (line-end-position))
-                  (line-end-position))))
-           (post-scriptum)))
+             (funcall post-scriptum)))
+         ( mark-colon-internal
+           (lambda ()
+             (let (next-opening-bracket next-colon)
+               (back-to-indentation)
+               (set-mark (point))
+               (setq next-opening-bracket (es-next-match-pos "{")
+                     next-colon (es-next-match-pos ";"))
+               (cond ( (and next-opening-bracket next-colon)
+                       (if (< next-opening-bracket next-colon)
+                           (progn (goto-char next-opening-bracket)
+                                  (backward-char)
+                                  (forward-sexp))
+                           (goto-char next-colon)))
+                     ( next-opening-bracket
+                       (progn (goto-char next-opening-bracket)
+                              (backward-char)
+                              (forward-sexp)))
+                     ( t (goto-char next-colon)))
+               (when (equal (char-after (point))
+                            (aref ";" 0))
+                 (forward-char))
+               (funcall post-scriptum))))
+         ( select-line-internal
+           (lambda ()
+             (back-to-indentation)
+             (set-mark (point))
+             (let (( next-colon
+                     (save-excursion
+                       (when (search-forward ";" nil t)
+                         (point)))))
+               (goto-char
+                (if next-colon
+                    (min next-colon (line-end-position))
+                    (line-end-position))))
+             (funcall post-scriptum))))
     (cond ( (not (eq last-command this-command))
             (es-mark-symbol-at-point))
           ( (member (char-to-string (char-before (line-end-position)))
                     (list "{" "(" "["))
-            (mark-statement-internal))
+            (funcall mark-statement-internal))
           ( (member (char-before (es-visible-end-of-line))
                     '( ?: ?, ) )
-            (mark-colon-internal))
-          ( t (select-line-internal)))))
+            (funcall mark-colon-internal))
+          ( t (funcall select-line-internal)))))
 
 ;;;###autoload
 (defun es-comment-dwim ()
@@ -369,17 +375,17 @@ Marks the symbol on first call, then marks the statement."
          ( recentf-map (mapcar f:make-recentf-map recentf-list))
          ( merged-list (append buffer-list recentf-map))
          ( no-duplicates
-           (remove-duplicates
+           (cl-remove-duplicates
             merged-list
             :key (lambda (thing)
                    (if (stringp thing)
                        (or (buffer-file-name (get-buffer thing))
-                           (symbol-name (gensym)))
+                           (symbol-name (cl-gensym)))
                        (cdr thing)))
             :test 'equal
             :from-end t))
          ( junk-less
-           (remove-if
+           (cl-remove-if
             (lambda (item)
               (member item (list (buffer-name)
                                  "Map_Sym.txt")))
@@ -390,7 +396,7 @@ Marks the symbol on first call, then marks the statement."
                        (file-name-extension
                         (or (buffer-file-name)
                             ""))))
-                 (remove-if-not
+                 (cl-remove-if-not
                   (lambda (maybe-cons)
                     (if (consp maybe-cons)
                         (when extension
@@ -447,7 +453,7 @@ The \"originals\" won't be included."
 
 (defun es-kill-dead-shells ()
   (mapc 'es-kill-buffer-dont-ask
-        (remove-if-not
+        (cl-remove-if-not
          (lambda (buf)
            (and (eq (es-buffer-mode buf) 'shell-mode)
                 (not (get-buffer-process buf))))
@@ -518,19 +524,20 @@ The \"originals\" won't be included."
 
 (defun es-toggle-true-false-maybe ()
   (save-excursion
-    (flet (( replace (new)
-             (es-mark-symbol-at-point)
-             (delete-region (point) (mark))
-             (insert new)
-             t))
+    (let (( replace
+            (lambda (new)
+              (es-mark-symbol-at-point)
+              (delete-region (point) (mark))
+              (insert new)
+              t)))
       (cond ( (eq (symbol-at-point) 'true)
-              (replace "false"))
+              (funcall replace "false"))
             ( (eq (symbol-at-point) 'false)
-              (replace "true"))
+              (funcall replace "true"))
             ( (eq (symbol-at-point) 't)
-              (replace "nil"))
+              (funcall replace "nil"))
             ( (equal (word-at-point) "nil")
-              (replace "t"))
+              (funcall replace "t"))
             ( t nil)))))
 
 ;;;###autoload
@@ -625,7 +632,7 @@ Ack won't prompt for a directory name in that buffer."
 (defun es-windows-with-buffer (buffer-or-name)
   "In all frames."
   (let ((buffer (window-normalize-buffer buffer-or-name)))
-    (remove-if-not
+    (cl-remove-if-not
      (lambda (window)
        (eq (window-buffer window) buffer))
      (loop for frame in (frame-list)

@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-duplicate-line ()

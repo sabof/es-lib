@@ -1,6 +1,6 @@
 ;;; es-lib-readme-generator.el --- For internal use, and to satisfy curiosity. -*- lexical-binding: t -*-
 
-(require 'cl)
+(require 'cl-lib)
 (require 'loadhist)
 (require 'apropos)
 
@@ -14,19 +14,19 @@
                                         'defun)))
                              all-syms)))
          ( func-aliases (prog1 (cl-remove-if-not
-                           'symbolp
-                           funs-raw
-                           :key 'symbol-function)
-                     (setq funs-raw
-                           (cl-remove-if-not
-                            'consp
-                            funs-raw
-                            :key 'symbol-function))))
-         ( funs (remove-if 'apropos-macrop funs-raw))
-         ( commands (prog1 (remove-if-not 'commandp funs)
-                      (setq funs (remove-if 'commandp funs))))
-         ( macros (remove-if-not 'apropos-macrop funs-raw))
-         ( vars (remove-if-not 'symbolp all-syms)))
+                                'symbolp
+                                funs-raw
+                                :key 'symbol-function)
+                          (setq funs-raw
+                                (cl-remove-if-not
+                                 'consp
+                                 funs-raw
+                                 :key 'symbol-function))))
+         ( funs (cl-remove-if 'apropos-macrop funs-raw))
+         ( commands (prog1 (cl-remove-if-not 'commandp funs)
+                      (setq funs (cl-remove-if 'commandp funs))))
+         ( macros (cl-remove-if-not 'apropos-macrop funs-raw))
+         ( vars (cl-remove-if-not 'symbolp all-syms)))
     (list :defuns-ni funs
           :commands commands
           :macros macros
@@ -46,7 +46,7 @@
                       (directory-files
                        (es-emacs-path "site-lisp/my-scripts/es-lib")
                        nil "^es-"))))
-    (remove-if (lambda (featch)
+    (cl-remove-if (lambda (featch)
                  (memq featch
                        '(es-lib-readme-generator
                          es-lib)))
@@ -71,7 +71,7 @@
                           (cl-remove-if
                            (lambda (sym-nam)
                              (or (equal "aai-mode" sym-nam)
-                                 (search "--" sym-nam)))
+                                 (cl-search "--" sym-nam)))
                            thing
                            :key 'symbol-name)
                           thing))
@@ -79,9 +79,9 @@
       (with-temp-buffer
         (insert "\n## " (symbol-name feature) "\n\n")
         (cl-dolist (type '(:defvars :macros :commands :defuns-ni))
-          (unless (zerop (length (getf analyzed type)))
+          (unless (zerop (length (cl-getf analyzed type)))
             (insert "\n#### " (es--type-name type) ":\n\n")
-            (cl-dolist (item (cl-sort (getf analyzed type) 'string< :key 'symbol-name))
+            (cl-dolist (item (cl-sort (cl-getf analyzed type) 'string< :key 'symbol-name))
               (insert "* " (symbol-name item) "\n")
               (cond ( (eq type :defvars)
                       (when (es-var-documentation item)

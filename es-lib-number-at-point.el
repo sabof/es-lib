@@ -28,7 +28,7 @@
 ;; Boston, MA 02111-1307, USA.
 
 ;;; Code:
-(require 'cl)
+(require 'cl-lib)
 (require 'es-lib-core-macros)
 
 (defun es-number-at-point ()
@@ -61,7 +61,7 @@
                  (result-string (number-to-string
                                  result)))
             (delete-region beg end)
-            (insert-string result-string)
+            (insert result-string)
             (goto-char (max beg
                             (+ start-pos
                                (- (length result-string)
