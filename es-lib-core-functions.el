@@ -133,7 +133,7 @@ If the line is empty, insert at the end of next line."
   (save-excursion
     (if (es-line-empty-p)
         (progn
-          (next-line)
+          (forward-line 1)
           (goto-char (es-visible-end-of-line))
           (insert thing))
         (progn
@@ -168,8 +168,7 @@ If the line is empty, insert at the end of next line."
                   (forward-line -1)
                   (point))
                 (save-excursion
-                  (let ((line-move-visual t))
-                    (next-line -1))
+                  (line-move-visual -1)
                   (point))))
           (call-interactively
            (key-binding (kbd "C-e")))
@@ -441,15 +440,10 @@ The \"originals\" won't be included."
      (mapconcat #'identity (delete-dups lines) "\n"))))
 
 (defun es-next-printable-character-pos (&optional position)
-  (flet ((char-after-or-nil ()
-           (if (characterp (char-after))
-               (char-to-string (char-after)))))
-    (save-excursion
-      (when position (goto-char position))
-      (loop while (member (char-after-or-nil)
-                          '(" " "	" "\n"))
-            do (forward-char)
-            finally (return (char-after-or-nil))))))
+  (save-excursion
+    (when position (goto-char position))
+    (skip-chars-forward " \t\n")
+    (char-after)))
 
 (defun es-kill-dead-shells ()
   (mapc 'es-kill-buffer-dont-ask
