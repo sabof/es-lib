@@ -89,10 +89,6 @@ FUNCTION does not accept arguments"
                                value)))
                     (buffer-list)))
 
-(defun es-string-begins-with-p (string beginning)
-  "Return t if STRING begins with BEGINNING."
-  (string-match-p (concat "^" (regexp-quote beginning)) string))
-
 (defun es-string-remove-properties (string)
   (with-temp-buffer
     (insert string)
