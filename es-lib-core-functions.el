@@ -47,19 +47,24 @@
 
 (defun es-buffer-name-list ()
   (cl-remove-if (lambda (name)
-                  (cl-some (es-back-curry 'string-match-p name)
+                  (cl-some (lambda (regex)
+                             (string-match-p regex name))
                            (list "^ " "^tags$" "^TAGS$")))
                 (mapcar 'buffer-name (buffer-list))))
 
-(defun es-unsaved-buffer-list ()
-  (save-excursion
-    (loop for buf in (buffer-list)
-          when (progn (set-buffer buf)
-                      (and buffer-file-name
-                           (buffer-modified-p)))
-          collect (buffer-name buf))))
+(defun es-buffer-name-list ()
+  (cl-remove-if (lambda (name)
+                  (string-match-p  "^ \\|^tags$\\|^TAGS$"))
+                (mapcar 'buffer-name (buffer-list))))
 
-(defun* es-ido-completing-read-alist (prompt alist &rest rest)
+(defun es-unsaved-buffer-list ()
+  (cl-remove-if-not
+   (lambda (buf)
+     (and (buffer-modified-p buf)
+          (buffer-file-name buf)))
+   (buffer-list)))
+
+(cl-defun es-ido-completing-read-alist (prompt alist &rest rest)
   "Each member can also be a string"
   (require 'ido)
   (setq alist (mapcar (lambda (it) (if (consp it) it (cons it it)))
@@ -201,7 +206,7 @@ If the line is empty, insert at the end of next line."
   (switch-to-buffer (generate-new-buffer "untitled"))
   (lisp-interaction-mode))
 
-(defun* es-define-keys (keymap &rest bindings)
+(cl-defun es-define-keys (keymap &rest bindings)
   "Syntax example:
 \(es-define-keys fundamental-mode-map
   (kbd \"h\") 'backward-char
@@ -214,7 +219,7 @@ If the line is empty, insert at the end of next line."
      '(4 &body))
 
 ;;;###autoload
-(defun* es-highlighter ()
+(cl-defun es-highlighter ()
   "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the \
 region is active."
   (interactive)
@@ -225,7 +230,7 @@ region is active."
                      (concat "\\_<"
                              (symbol-name
                               (or (symbol-at-point)
-                                  (return-from es-highlighter)))
+                                  (cl-return-from es-highlighter)))
                              "\\_>")))
          (pattern (cl-find-if (lambda (element)
                                 (equal (first element) phrase))
@@ -351,13 +356,13 @@ Marks the symbol on first call, then marks the statement."
   (indent-according-to-mode))
 
 ;;;###autoload
-(defun* es-ido-like-helm (&optional this-mode-only)
+(cl-defun es-ido-like-helm (&optional this-mode-only)
   "Choose from a concatenated list of buffers and recent files."
   (interactive "P")
   (require 'recentf)
   (when (window-dedicated-p)
     (message "This is a dedicated window")
-    (return-from es-ido-like-helm))
+    (cl-return-from es-ido-like-helm))
   (let* (( f:parent-dir
            (lambda (name)
              (file-name-nondirectory
@@ -439,7 +444,7 @@ The \"originals\" won't be included."
     (insert
      (mapconcat #'identity (delete-dups lines) "\n"))))
 
-(defun es-next-printable-character-pos (&optional position)
+(defun es-next-visible-character-at-pos (&optional position)
   (save-excursion
     (when position (goto-char position))
     (skip-chars-forward " \t\n")
@@ -454,7 +459,7 @@ The \"originals\" won't be included."
          (buffer-list))))
 
 ;;;###autoload
-(defun* es-manage-unsaved-buffers()
+(cl-defun es-manage-unsaved-buffers()
   "Similar to what happends when emacs is about to quit."
   (interactive)
   (save-excursion
@@ -467,14 +472,14 @@ The \"originals\" won't be included."
                   (cl-dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
                       (save-buffer)))
-                  (return-from es-manage-unsaved-buffers))
+                  (cl-return-from es-manage-unsaved-buffers))
                 ( ?s (save-buffer))
                 ( ?k (es-kill-buffer-dont-ask))
                 ( ?e (recursive-edit))))
             ( or (es-unsaved-buffer-list)
                  (progn
                    (message "All buffers are saved")
-                   (return-from es-manage-unsaved-buffers))))
+                   (cl-return-from es-manage-unsaved-buffers))))
       (message "Done"))))
 
 ;;;###autoload
@@ -535,7 +540,7 @@ The \"originals\" won't be included."
             ( t nil)))))
 
 ;;;###autoload
-(defun* es-ack-replace-symbol
+(cl-defun es-ack-replace-symbol
     (from-symbol-or-string
      to-symbol-or-string
      &key
@@ -563,7 +568,7 @@ files."
                                             "Ack Replace which symbol: "))
                              (setq was-symbol t)
                              sym))
-                         (return-from es-ack-replace-symbol)))
+                         (cl-return-from es-ack-replace-symbol)))
                (setq to-symbol-or-string
                      (read-string
                       (format
@@ -640,7 +645,7 @@ Ack won't prompt for a directory name in that buffer."
         (split-width-threshold 0))
     (pop-to-buffer buf)))
 
-(defun* es-fixup-whitespace (&optional before after)
+(cl-defun es-fixup-whitespace (&optional before after)
   "Fixup white space between objects around point.
 Leave one space or none, according to the context.
 
@@ -668,31 +673,31 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                                 '(   ?\(   ))
                         (member (second SPairRaw)
                                 '(   ?\)   ?\n   )))
-                (return-from insert-space-b nil))
+                (cl-return-from insert-space-b nil))
               ;; C Family
               (when (memq major-mode '(php-mode  c-mode  js2-mode  js-mode  css-mode))
                 (when (equal (first SPairRaw) ?\;)
-                  (return-from insert-space-b t))
+                  (cl-return-from insert-space-b t))
                 (when (or (equal (second SPairRaw) ?\;)
                           (equal SPairRaw '(?\} ?\}))
                           (and (in-string-p) (sp-member ?\'))
                           (member (second SPairRaw) '(?\n  ?\)   ?\(   ?,   ?:   nil)))
-                  (return-from insert-space-b nil)))
+                  (cl-return-from insert-space-b nil)))
               (when (eq major-mode 'js-mode)
                 (when (equal (second SPairRaw) ?. )
-                  (return-from es-fixup-whitespace t)))
+                  (cl-return-from es-fixup-whitespace t)))
               ;; Lisp Family
               (when (memq major-mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode))
                 (when (or (equal SPairRaw '(  ?'  ?\(  )))
-                  (return-from insert-space-b nil))
+                  (cl-return-from insert-space-b nil))
                 (when (or (equal SPairRaw '(  ?\)  ?\(  ))
                           (and (sp-member ?\)) (not (eq (char-before) (char-after))))
                           (and (sp-member ?\() (not (eq (char-before) (char-after)))))
-                  (return-from insert-space-b t)))
+                  (cl-return-from insert-space-b t)))
               (when (memq major-mode '(nxml-mode php-mode web-mode))
                 (when (or (sp-member ?<)
                           (sp-member ?>))
-                  (return-from insert-space-b nil)))
+                  (cl-return-from insert-space-b nil)))
               t)))
       (when insert-space
         (insert ?\s))
