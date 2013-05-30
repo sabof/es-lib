@@ -52,8 +52,8 @@
     result))
 
 (defun es-mark-symbol-at-point ()
-  (cl-multiple-value-bind
-      (start end)
+  (cl-destructuring-bind
+      (start . end)
       (bounds-of-thing-at-point 'symbol)
     (es-set-region start end)))
 

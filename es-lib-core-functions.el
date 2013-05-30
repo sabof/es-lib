@@ -150,11 +150,9 @@ If the line is empty, insert at the end of next line."
   (es-add-at-eol ","))
 
 (defun es-buffers-with-mode (mode)
-  (cl-remove-if-not
-   (lambda (buf)
-     (with-current-buffer buf
-       (eq major-mode mode)))
-   (buffer-list)))
+  (cl-remove mode (buffer-list)
+             :key 'es-buffer-mode
+             :test-not 'eq))
 
 ;;;###autoload
 (defun es-push-line ()
@@ -253,8 +251,8 @@ region is active."
   (interactive "e")
   (save-excursion
     (mouse-set-point event)
-    (cl-multiple-value-bind
-        (start end)
+    (cl-destructuring-bind
+        (start . end)
         (bounds-of-thing-at-point 'symbol)
       (delete-region start end)
       (deactivate-mark)
