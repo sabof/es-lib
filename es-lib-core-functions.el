@@ -38,6 +38,7 @@
 (put 'es-disable-keys 'common-lisp-indent-function
      '(4 &body))
 
+;;;###autoload
 (defun es-kill-buffer-dont-ask (&optional buffer)
   (interactive)
   (when buffer (set-buffer buffer))
@@ -46,13 +47,7 @@
     (kill-buffer)))
 
 (defun es-buffer-name-list ()
-  (cl-remove-if (lambda (name)
-                  (cl-some (lambda (regex)
-                             (string-match-p regex name))
-                           (list "^ " "^tags$" "^TAGS$")))
-                (mapcar 'buffer-name (buffer-list))))
-
-(defun es-buffer-name-list ()
+  "Will omit special and tag buffers."
   (cl-remove-if (lambda (name)
                   (string-match-p  "^ \\|^tags$\\|^TAGS$"))
                 (mapcar 'buffer-name (buffer-list))))
@@ -79,11 +74,13 @@
     major-mode))
 
 (defun es-mapbuffer (function buffer-list)
-  "Perform FUNCTION inside a 'with-current-buffer' for each member of BUFFER-LIST."
-  (mapcar (lambda (buf)
-            (with-current-buffer buf
-              (funcall function buf)))
-          buffer-list))
+  "Perform FUNCTION inside a buffer with each member of BUFFER-LIST as current.
+FUNCTION does not accept arguments"
+  (save-excursion
+    (mapcar (lambda (buf)
+              (set-buffer buf)
+              (funcall function))
+            buffer-list)))
 
 (defun es-buffers-where-local-variable-is (var-sym value)
   (cl-remove-if-not (lambda (buf)
@@ -103,7 +100,7 @@
 
 (defun es-replace-regexp-prog (regexp replacement &optional from to)
   "By default acts on the whole buffer."
-  (assert (or (es-neither from to) (and from to)))
+  (cl-assert (or (es-neither from to) (and from to)))
   (save-match-data
     (save-excursion
       (goto-char (point-min))
@@ -127,7 +124,7 @@
 ;;;###autoload
 (defun es-find-function-bound-to (key-sequence)
   (interactive "kFind function bound to: ")
-  (let ((symbol (key-binding key-sequence)))
+  (let (( symbol (key-binding key-sequence)))
     (if (fboundp symbol)
         (find-function symbol)
         (message "Key sequence unbound"))))
@@ -248,14 +245,24 @@ region is active."
           (hi-lock-set-pattern phrase color)))))
 
 ;;;###autoload
+(defun es-mouse-copy-symbol (event)
+  (interactive "e")
+  (save-excursion
+    (mouse-set-point event)
+    (when (thing-at-point 'symbol)
+      (kill-new (thing-at-point 'symbol)))))
+
+;;;###autoload
 (defun es-mouse-yank-replace-symbol (event)
   (interactive "e")
   (save-excursion
     (mouse-set-point event)
-    (es-mark-symbol-at-point)
-    (delete-region (point) (mark))
-    (deactivate-mark)
-    (yank)))
+    (cl-multiple-value-bind
+        (start end)
+        (bounds-of-thing-at-point 'symbol)
+      (delete-region start end)
+      (deactivate-mark)
+      (yank))))
 
 (defun es-next-match-pos (regex)
   (save-excursion
@@ -621,11 +628,9 @@ files."
 Ack won't prompt for a directory name in that buffer."
   (interactive
    (list (read-directory-name "Directory for ack: ")))
-  (set (make-local-variable
-        'ack-and-a-half-root-directory-functions)
-       (list `(lambda () ,folder)))
-  (set (make-local-variable
-        'ack-and-a-half-prompt-for-directory) nil)
+  (setq-local ack-and-a-half-root-directory-functions
+              (list `(lambda () ,folder)))
+  (setq-local ack-and-a-half-prompt-for-directory nil)
   (message "Ack directory set to: %s" folder))
 
 (defun es-windows-with-buffer (buffer-or-name)
@@ -793,13 +798,6 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                        (concat "-f " font)
                        "")
                    (shell-quote-argument words)))))
-
-(defun es-mouse-copy-symbol (event)
-  (interactive "e")
-  (save-excursion
-    (mouse-set-point event)
-    (when (thing-at-point 'symbol)
-      (kill-new (thing-at-point 'symbol)))))
 
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here

@@ -52,15 +52,10 @@
     result))
 
 (defun es-mark-symbol-at-point ()
-  (es-silence-messages
-   (if (looking-at "\\=\\(\\s_\\|\\sw\\)*\\_>")
-       (goto-char (match-end 0))
-       (unless (memq (char-before) '(?\) ?\"))
-         (forward-sexp)))
-   (mark-sexp -1)
-   (exchange-point-and-mark)
-   (when (equal (char-after) ?\')
-     (forward-char))))
+  (cl-multiple-value-bind
+      (start end)
+      (bounds-of-thing-at-point 'symbol)
+    (es-set-region start end)))
 
 (defun es-active-region-string ()
   (when (region-active-p)
