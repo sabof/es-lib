@@ -31,6 +31,7 @@
 (require 'cl-lib)
 
 (defmacro es-silence-messages (&rest body)
+  (declare (indent defun))
   `(cl-letf (( (symbol-function 'message)
                (symbol-function 'ignore)))
      ,@body))
@@ -78,6 +79,7 @@ Example of usage:
 
 This is a hack, and in no way it excuses package-authors who do that.
 They should provide initialization functions that execute the redefinitions."
+  (declare (indent 1))
   (let (( list-sym (cl-gensym))
         ( list (mapcar (lambda (func)
                          `(,func . ,(symbol-function func)))
@@ -90,6 +92,21 @@ They should provide initialization functions that execute the redefinitions."
         ,list-sym))))
 (put 'es-preserve-functions 'common-lisp-indent-function
      '(2 2 &body))
+
+(defmacro es-after (mode &rest body)
+  "`eval-after-load' MODE evaluate BODY."
+  (declare (indent 1))
+  `(eval-after-load ',mode
+     '(progn ,@body)))
+
+(defmacro es-opts (mode &rest body)
+  (declare (indent 1))
+  (let (( opts-func-sym (intern (concat (symbol-name mode) "-mode-options")))
+        ( hook-sym (intern (concat (symbol-name mode) "-mode-hook"))))
+    `(progn
+       (defun ,opts-func-sym ()
+         ,@body)
+       (add-hook ',hook-sym ',opts-func-sym))))
 
 (provide 'es-lib-core-macros)
 ;; es-lib-core-macros.el ends here

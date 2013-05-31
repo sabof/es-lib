@@ -40,7 +40,7 @@
             (match-beginning 0)
             (match-end 0)))))
 
-(defun* es--change-number-at-point (&optional decrease)
+(defun es--change-number-at-point (&optional decrease)
   (let ((number (es-number-at-point)))
     (if (not number)
         (progn

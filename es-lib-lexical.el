@@ -45,40 +45,42 @@
       arg)))
 
 (defun es-complement (func)
-  "Same as clojure's (complement)."
+  "Same as clojure's \(complement)."
   (lambda (&rest args)
     (not (apply func args))))
 
 (defun es-constantly (arg)
-  "Same as clojure's (constantly)."
-  (lambda (&rest args)
-    arg))
+  "Same as clojure's \(constantly)."
+  (with-no-warnings
+    (lambda (&rest args)
+      arg)))
 
 (defun es-flip (func)
   "Create a function with FUNC's arguments reversed."
   (lambda (&rest args)
     (apply func (reverse args))))
 
-(defun* es-make-timer-buffer (time-limit)
+(defun es-make-timer-buffer (time-limit)
   "Accepts a time-limit in minutes."
   (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))
         ( buf (generate-new-buffer "*timer*"))
+        win
         time-difference
         the-timer)
     (setq the-timer
           (run-with-timer
            0 1 (lambda ()
-                 (block ablock
+                 (catch 'adblock
                    (unless (buffer-live-p buf)
                      (cancel-timer the-timer)
-                     (return-from ablock))
+                     (throw 'ablock nil))
                    (setq time-difference
                          (time-subtract (current-time) start-time))
                    (with-current-buffer buf
                      (erase-buffer)
                      (insert
-                      (if (> (time-to-seconds time-difference)
+                      (if (> (float-time time-difference)
                              (* 60 time-limit))
                           (prog1 (format "%s minutes passed at: %s"
                                          time-limit
@@ -91,11 +93,17 @@
                                    time-difference)
                                   time-limit))))))))
     ;; Shouln't defvars be dynamically bound?
-    (es-pop-to-buffer-vertically buf)
-    (setq cursor-type nil)
-    (window-resize nil (- (window-min-delta)))
-    (set-window-dedicated-p nil t)
-    (setq window-size-fixed t)))
+    (setq win
+          (split-window (frame-root-window)
+                        (- (frame-height)
+                           (+ 2
+                              (if (default-value 'mode-line-format) 1 0)
+                              (if (default-value 'header-line-format) 1 0)))))
+    (set-window-buffer win buf)
+    (set-window-dedicated-p win t)
+    (with-current-buffer buf
+      (setq cursor-type nil)
+      (setq window-size-fixed t))))
 
 (provide 'es-lib-lexical)
 ;;; es-lib-lexical.el ends here

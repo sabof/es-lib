@@ -33,6 +33,7 @@
 (require 'es-lib-core-macros)
 
 (defun es-disable-keys (map &rest keylist)
+  (declare (indent 1))
   (cl-dolist (key keylist)
     (define-key map key nil)))
 (put 'es-disable-keys 'common-lisp-indent-function
@@ -41,15 +42,15 @@
 ;;;###autoload
 (defun es-kill-buffer-dont-ask (&optional buffer)
   (interactive)
-  (when buffer (set-buffer buffer))
-  (set-buffer-modified-p nil)
+  (unless buffer (setq buffer (current-buffer)))
+  (setf (buffer-modified-p buffer) nil)
   (let (kill-buffer-query-functions)
-    (kill-buffer)))
+    (kill-buffer buffer)))
 
 (defun es-buffer-name-list ()
   "Will omit special and tag buffers."
   (cl-remove-if (lambda (name)
-                  (string-match-p  "^ \\|^tags$\\|^TAGS$"))
+                  (string-match-p "^ \\|^tags$\\|^TAGS$" name))
                 (mapcar 'buffer-name (buffer-list))))
 
 (defun es-unsaved-buffer-list ()
@@ -194,8 +195,7 @@ If the line is empty, insert at the end of next line."
 ;;;###autoload
 (defun es-new-empty-buffer ()
   (interactive)
-  (switch-to-buffer (generate-new-buffer "untitled"))
-  (lisp-interaction-mode))
+  (switch-to-buffer (generate-new-buffer "untitled")))
 
 (cl-defun es-define-keys (keymap &rest bindings)
   "Syntax example:
@@ -203,6 +203,7 @@ If the line is empty, insert at the end of next line."
   (kbd \"h\") 'backward-char
   (kbd \"l\") 'forward-char\)
  Returns the keymap in the end."
+  (declare (indent 1))
   (while bindings
     (define-key keymap (pop bindings) (pop bindings)))
   keymap)
@@ -214,29 +215,33 @@ If the line is empty, insert at the end of next line."
   "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the \
 region is active."
   (interactive)
-  (require 'hi-lock)
-  (require 'highlight-symbol)
-  (let* ((phrase (if (region-active-p)
-                     (regexp-quote (buffer-substring (point) (mark)))
-                     (concat "\\_<"
-                             (symbol-name
-                              (or (symbol-at-point)
-                                  (cl-return-from es-highlighter)))
-                             "\\_>")))
-         (pattern (cl-find-if (lambda (element)
-                                (equal (first element) phrase))
-                              hi-lock-interactive-patterns)))
-    (if pattern
-        (hi-lock-unface-buffer phrase)
-        (let ((color (nth highlight-symbol-color-index
-                          highlight-symbol-colors)))
-          (if color ;; wrap
-              (incf highlight-symbol-color-index)
-              (setq highlight-symbol-color-index 1
-                    color (car highlight-symbol-colors)))
-          (setq color `((background-color . ,color)
-                        (foreground-color . "black")))
-          (hi-lock-set-pattern phrase color)))))
+  (with-no-warnings                  ; for "Warning: reference to free variable"
+    (require 'hi-lock)
+    (require 'highlight-symbol)         ; for highlight-symbol-colors et.al
+    (unless hi-lock-mode
+      (hi-lock-mode))
+    (let* ((phrase (if (region-active-p)
+                       (regexp-quote (buffer-substring (point) (mark)))
+                       (concat "\\_<"
+                               (symbol-name
+                                (or (symbol-at-point)
+                                    (cl-return-from es-highlighter)))
+                               "\\_>")))
+           (pattern (cl-find-if (lambda (element)
+                                  (equal (first element) phrase))
+                                hi-lock-interactive-patterns)))
+      (if pattern
+          (hi-lock-unface-buffer phrase)
+          (let ((color (nth highlight-symbol-color-index
+                            highlight-symbol-colors)))
+            (if color ;; wrap
+                (incf highlight-symbol-color-index)
+                (setq highlight-symbol-color-index 1
+                      color (car highlight-symbol-colors)))
+            (setq color `((background-color . ,color)
+                          (foreground-color . "black")))
+            (hi-lock-set-pattern phrase color)
+            )))))
 
 ;;;###autoload
 (defun es-mouse-copy-symbol (event)
@@ -265,7 +270,7 @@ region is active."
 
 ;;;###autoload
 (defun es-c-expand-region ()
-  "A simple\(?\) version of expand-region for c-like languages.
+  "A simplee version of expand-region for c-like languages.
 Marks the symbol on first call, then marks the statement."
   (interactive)
   (let* (( post-scriptum
@@ -339,12 +344,8 @@ Marks the symbol on first call, then marks the statement."
         ( (es-line-empty-p)
           (cond ( (memq major-mode
                         '(lisp-mode lisp-interaction-mode emacs-lisp-mode))
-                  (if (zerop (current-column))
-                      (insert ";;; ")
-                      (insert ";; ")))
-                ( (member major-mode
-                          '(php-mode c-mode
-                            js2-mode js-mode))
+                  (insert ";; "))
+                ( (memq major-mode '(php-mode c-mode js2-mode js-mode))
                   (insert "// "))
                 ( (eq major-mode 'css-mode)
                   (insert "/*  */")
@@ -433,12 +434,12 @@ The \"originals\" won't be included."
 (defun es-delete-duplicate-lines (&optional beg end)
   (interactive)
   (setq beg (or beg
-                (if (region-active-p)
-                    (region-beginning))
+                (when (use-region-p)
+                  (region-beginning))
                 (point-min))
         end (or end
-                (if (region-active-p)
-                    (region-end))
+                (when (use-region-p)
+                  (region-end))
                 (point-max)))
   (let ((lines (split-string (buffer-substring beg end) "\n")))
     (delete-region beg end)
@@ -792,6 +793,18 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                        (concat "-f " font)
                        "")
                    (shell-quote-argument words)))))
+
+(defun es-replace-in-string-multiple (string alist)
+  "For each member of ALIST, replace all occurances of car with cdr.
+car is a literal string, not a regular expression."
+  (cl-dolist (pair alist)
+    (setq string (cl-substitute (cdr pair) (car pair) string)))
+  string)
+
+(defun es-full-window-list ()
+  "Return all windows from all frames"
+  (cl-loop for frame in (remove terminal-frame (frame-list))
+           nconcing (window-list frame)))
 
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here
