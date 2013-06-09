@@ -814,5 +814,27 @@ car is a literal string, not a regular expression."
       (while props (overlay-put ov (pop props) (pop props)))
       ov)))
 
+(defun es-preserve-overlay (ov)
+  (let (props start end)
+    (unless (overlay-get ov 'invisible)
+      (setq props (append (list 'invisible nil) props))
+      (overlay-put ov 'invisible t))
+    (when (overlay-get ov 'evaporate)
+      (setq props (append (list 'evaporate t) props))
+      (overlay-put ov 'evaporate nil))
+    (setq start (overlay-start ov))
+    (setq end (overlay-end ov))
+    (move-overlay ov (point-min) (point-min))
+    (append (list ov start end) props)))
+
+(defun es-restore-overlay (ov-spec)
+  (cl-destructuring-bind
+      (ov start end &rest props)
+      ov-spec
+    (move-overlay ov start end)
+    (while props
+      (overlay-put ov (pop props) (pop props)))
+    ))
+
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here
