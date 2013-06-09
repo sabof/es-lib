@@ -31,6 +31,7 @@
 
 (require 'cl-lib)
 (require 'es-lib-core-macros)
+(require 'es-lib-total-line)
 
 (defun es-duplicate-line ()
   "Duplicate current line."
