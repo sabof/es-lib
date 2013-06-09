@@ -1,5 +1,5 @@
 ;;; es-lib.el --- A collection of emacs utilities
-;;; Version: 0.2
+;;; Version: 0.3
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 ;;; Package-Requires: ((cl-lib "1.0"))
