@@ -235,7 +235,7 @@ region is active."
           (let ((color (nth highlight-symbol-color-index
                             highlight-symbol-colors)))
             (if color ;; wrap
-                (incf highlight-symbol-color-index)
+                (cl-incf highlight-symbol-color-index)
                 (setq highlight-symbol-color-index 1
                       color (car highlight-symbol-colors)))
             (setq color `((background-color . ,color)

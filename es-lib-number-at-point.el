@@ -43,16 +43,18 @@
 (defun es--change-number-at-point (&optional decrease)
   (let ((number (es-number-at-point)))
     (if (not number)
-        (progn
-          (save-excursion
-            (when (re-search-backward "[0-9]" (line-beginning-position) t)
-              (es--change-number-at-point decrease)))
-          (multiple-value-bind (num-string beg end) (es-number-at-point)
-            (when (and (numberp beg)
-                       (equal (- end beg) 1))
-              (forward-char))))
-        (multiple-value-bind (num-string beg end) number
-          ;; number
+        (progn (save-excursion
+                 (when (re-search-backward "[0-9]" (line-beginning-position) t)
+                   (es--change-number-at-point decrease)))
+               (cl-multiple-value-bind
+                   (num-string beg end)
+                   (es-number-at-point)
+                 (when (and (numberp beg)
+                            (equal (- end beg) 1))
+                   (forward-char))))
+        (cl-multiple-value-bind
+            (num-string beg end)
+            number
           (let* ((start-pos (point))
                  (distance-from-end (- end start-pos))
                  (increment (* (expt 10 (1- distance-from-end))

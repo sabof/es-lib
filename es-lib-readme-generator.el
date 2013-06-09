@@ -6,22 +6,24 @@
 
 (defun es-analyze-feature-loadhist (feature)
   (let* (( all-syms (feature-symbols feature))
-         ( funs-raw (mapcar 'cdr
-                            (cl-remove-if-not
-                             (lambda (thing)
-                               (and (consp thing)
-                                    (eq (car thing)
-                                        'defun)))
-                             all-syms)))
-         ( func-aliases (prog1 (cl-remove-if-not
-                                'symbolp
-                                funs-raw
-                                :key 'symbol-function)
-                          (setq funs-raw
-                                (cl-remove-if-not
-                                 'consp
-                                 funs-raw
-                                 :key 'symbol-function))))
+         ( funs-raw
+           (mapcar 'cdr
+                   (cl-remove-if-not
+                    (lambda (thing)
+                      (and (consp thing)
+                           (eq (car thing)
+                               'defun)))
+                    all-syms)))
+         ( func-aliases
+           (prog1 (cl-remove-if-not
+                   'symbolp
+                   funs-raw
+                   :key 'symbol-function)
+             (setq funs-raw
+                   (cl-remove-if-not
+                    'consp
+                    funs-raw
+                    :key 'symbol-function))))
          ( funs (cl-remove-if 'apropos-macrop funs-raw))
          ( commands (prog1 (cl-remove-if-not 'commandp funs)
                       (setq funs (cl-remove-if 'commandp funs))))
@@ -34,7 +36,7 @@
           :func-aliases func-aliases)))
 
 (defun es--type-name (type)
-  (case type
+  (cl-case type
     (:defuns-ni "Non-interactive")
     (:commands "Commands")
     (:defvars "Defvars")
@@ -92,7 +94,7 @@
                       (insert "\n```\n"
                               (documentation item)
                               "\n```\n\n")))
-              (incf total-items))))
+              (cl-incf total-items))))
         (buffer-string))))
 
   (defun es-lib-report ()
