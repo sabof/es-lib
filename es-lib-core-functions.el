@@ -801,5 +801,18 @@ car is a literal string, not a regular expression."
   (cl-loop for frame in (remove terminal-frame (frame-list))
            nconcing (window-list frame)))
 
+(defun es-virtualize-overlay (ov)
+  (prog1 (append (list (overlay-start ov) (overlay-end ov))
+                 (overlay-properties ov))
+    (delete-overlay ov)))
+
+(defun es-realize-overlay (ov-spec)
+  (cl-destructuring-bind
+      (start end &rest props)
+      ov-spec
+    (let ((ov (make-overlay start end)))
+      (while props (overlay-put ov (pop props) (pop props)))
+      ov)))
+
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here

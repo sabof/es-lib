@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 97_
+_Auto-generated before each commit. Total items in the library: 99_
 
 #### Table of contents:
 
@@ -214,6 +214,7 @@ FUNCTION does not accept arguments
 * es-next-visible-character-at-pos
 * es-pop-to-buffer-vertically
 * es-random-member
+* es-realize-overlay
 * es-replace-in-string-multiple
 
 ```
@@ -243,6 +244,7 @@ By default acts on the whole buffer.
 Get variable documentation, or nil if there isn't one.
 ```
 
+* es-virtualize-overlay
 * es-windows-with-buffer
 
 ```
