@@ -228,7 +228,7 @@ region is active."
                                     (cl-return-from es-highlighter)))
                                "\\_>")))
            (pattern (cl-find-if (lambda (element)
-                                  (equal (first element) phrase))
+                                  (equal (cl-first element) phrase))
                                 hi-lock-interactive-patterns)))
       (if pattern
           (hi-lock-unface-buffer phrase)
@@ -468,8 +468,8 @@ The \"originals\" won't be included."
     (save-window-excursion
       (mapc ( lambda (buf)
               (switch-to-buffer buf)
-              (case (read-char
-                     "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
+              (cl-case (read-char
+                        "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
                 ( ?!
                   (cl-dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
@@ -634,8 +634,8 @@ Ack won't prompt for a directory name in that buffer."
     (cl-remove-if-not
      (lambda (window)
        (eq (window-buffer window) buffer))
-     (loop for frame in (frame-list)
-           append (window-list frame)))))
+     (cl-loop for frame in (frame-list)
+              append (window-list frame)))))
 
 (defun es-random-member (list)
   (nth (random (length list)) list))
@@ -664,22 +664,22 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                          (sp-member ?\s)
                          (sp-member ?\n)
                          ;; (eq '(   ?\(   ?\(   ) SPairRaw)
-                         (member (first SPairRaw)
+                         (member (cl-first SPairRaw)
                                  '(   ?\(   ))
-                         (member (second SPairRaw)
+                         (member (cl-second SPairRaw)
                                  '(   ?\)   ?\n   )))
                  (throw 'insert-space nil))
                ;; C Family
                (when (memq major-mode '(php-mode  c-mode  js2-mode  js-mode  css-mode))
-                 (when (equal (first SPairRaw) ?\;)
+                 (when (equal (cl-first SPairRaw) ?\;)
                    (throw 'insert-space t))
-                 (when (or (equal (second SPairRaw) ?\;)
+                 (when (or (equal (cl-second SPairRaw) ?\;)
                            (equal SPairRaw '(?\} ?\}))
                            (and (in-string-p) (sp-member ?\'))
-                           (member (second SPairRaw) '(?\n  ?\)   ?\(   ?,   ?:   nil)))
+                           (member (cl-second SPairRaw) '(?\n  ?\)   ?\(   ?,   ?:   nil)))
                    (throw 'insert-space nil)))
                (when (eq major-mode 'js-mode)
-                 (when (equal (second SPairRaw) ?. )
+                 (when (equal (cl-second SPairRaw) ?. )
                    (cl-return-from es-fixup-whitespace t)))
                ;; Lisp Family
                (when (memq major-mode '(lisp-mode emacs-lisp-mode lisp-interaction-mode))

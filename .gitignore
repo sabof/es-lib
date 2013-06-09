@@ -1,3 +1,4 @@
 /readme-generator.el
 *.elc
 /readme-geneator-for-es-lib.el
+/test.el
