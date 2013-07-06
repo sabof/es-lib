@@ -106,7 +106,7 @@ They should provide initialization functions that execute the redefinitions."
     `(progn
        (defun ,opts-func-sym ()
          ,@body)
-       (add-hook ',hook-sym ',opts-func-sym))))
+       (add-hook ',hook-sym ',opts-func-sym t))))
 
 (provide 'es-lib-core-macros)
 ;; es-lib-core-macros.el ends here
