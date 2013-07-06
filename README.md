@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 42_
+_Auto-generated before each commit. Total items in the library: 101_
 
 #### Table of contents:
 
@@ -47,6 +47,211 @@ _Auto-generated before each commit. Total items in the library: 42_
 * es-buffer-local-set-keys
 
 ## es-lib-core-functions
+
+
+#### Defvars:
+
+* es-figlet-font-history
+* es-figlet-phrase-history
+
+#### Commands:
+
+* es-ack-pin-folder
+
+```
+Set ack root directory for one buffer only.
+Ack won't prompt for a directory name in that buffer.
+```
+
+* es-ack-replace-symbol
+
+```
+Repalace symbol at point, or region contents in multiple
+files.
+
+(fn FROM-SYMBOL-OR-STRING TO-SYMBOL-OR-STRING &key DIRECTORY AUTO-SAVE FINISH-FUNC SILENT)
+```
+
+* es-add-comma-at-eol
+* es-add-semicolon-at-eol
+* es-c-expand-region
+
+```
+A simplee version of expand-region for c-like languages.
+Marks the symbol on first call, then marks the statement.
+```
+
+* es-comment-dwim
+* es-delete-duplicate-lines
+* es-figlet-insert
+
+```
+Insert a figlet-formatted phrase at point:
+ _____ _       _      _
+|  ___(_) __ _| | ___| |_
+| |_  | |/ _` | |/ _ \ __|
+|  _| | | (_| | |  __/ |_
+|_|   |_|\__, |_|\___|\__|
+         |___/
+```
+
+* es-find-function-bound-to
+* es-fixup-whitespace
+
+```
+Fixup white space between objects around point.
+Leave one space or none, according to the context.
+
+An improvment over the built-in fixup-whitespace.
+You might want to do (defalias 'fixup-whitespace 'es-fixup-whitespace)
+```
+
+* es-highlighter
+
+```
+Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the region is active.
+```
+
+* es-ido-like-helm
+
+```
+Choose from a concatenated list of buffers and recent files.
+```
+
+* es-jump-line
+
+```
+end-of-line + newline.
+```
+
+* es-kill-buffer-dont-ask
+* es-manage-unsaved-buffers
+
+```
+Similar to what happends when emacs is about to quit.
+```
+
+* es-mouse-copy-symbol
+* es-mouse-yank-replace-symbol
+* es-new-empty-buffer
+* es-push-line
+
+```
+beginning-of-line + open line.
+```
+
+* es-query-replace-symbol-at-point
+
+#### Non-interactive:
+
+* es-add-at-eol
+
+```
+Insert THING at end of line.
+If the line is empty, insert at the end of next line.
+```
+
+* es-buffer-mode
+* es-buffer-name-list
+
+```
+Will omit special and tag buffers.
+```
+
+* es-buffers-where-local-variable-is
+* es-buffers-with-mode
+* es-color-emacs-color-to-hex
+* es-color-hex-to-list
+* es-color-list-to-hex
+* es-color-normalize-hex
+* es-color-random-hex
+* es-define-keys
+
+```
+Syntax example:
+(es-define-keys fundamental-mode-map
+  (kbd "h") 'backward-char
+  (kbd "l") 'forward-char)
+ Returns the keymap in the end.
+
+(fn KEYMAP &rest BINDINGS)
+```
+
+* es-disable-buffer-scrolling
+* es-disable-keys
+* es-figlet-fonts
+* es-find-duplicates
+
+```
+Multiple duplicates will be listed muliple times.
+The "originals" won't be included.
+```
+
+* es-full-window-list
+
+```
+Return all windows from all frames
+```
+
+* es-ido-completing-read-alist
+
+```
+Each member can also be a string
+
+(fn PROMPT ALIST &rest REST)
+```
+
+* es-kill-dead-shells
+* es-mapbuffer
+
+```
+Perform FUNCTION inside a buffer with each member of BUFFER-LIST as current.
+FUNCTION does not accept arguments
+```
+
+* es-mode-keymap
+* es-next-match-pos
+* es-next-visible-character-at-pos
+* es-pop-to-buffer-vertically
+* es-preserve-overlay
+* es-random-member
+* es-realize-overlay
+* es-replace-in-string-multiple
+
+```
+For each member of ALIST, replace all occurances of car with cdr.
+car is a literal string, not a regular expression.
+```
+
+* es-replace-prog
+
+```
+By default acts on the whole buffer.
+```
+
+* es-replace-regexp-prog
+
+```
+By default acts on the whole buffer.
+```
+
+* es-reset-feature
+* es-restore-overlay
+* es-string-remove-properties
+* es-toggle-true-false-maybe
+* es-unsaved-buffer-list
+* es-var-documentation
+
+```
+Get variable documentation, or nil if there isn't one.
+```
+
+* es-virtualize-overlay
+* es-windows-with-buffer
+
+```
+In all frames.
+```
 
 
 ## es-lib-core-macros
