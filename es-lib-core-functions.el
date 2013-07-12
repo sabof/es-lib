@@ -800,7 +800,10 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
   "For each member of ALIST, replace all occurances of car with cdr.
 car is a literal string, not a regular expression."
   (cl-dolist (pair alist)
-    (setq string (cl-substitute (cdr pair) (car pair) string)))
+    (setq string (replace-regexp-in-string (regexp-quote
+                                            (car pair))
+                                           (cdr pair)
+                                           string)))
   string)
 
 (defun es-full-window-list ()
