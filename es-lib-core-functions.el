@@ -338,10 +338,14 @@ Marks the symbol on first call, then marks the statement."
           ( t (funcall select-line-internal)))))
 
 ;;;###autoload
-(defun es-comment-dwim ()
-  (interactive)
-  (cond ( (region-active-p)
-          (comment-or-uncomment-region (region-beginning) (region-end)))
+(defun es-comment-dwim (arg)
+  (interactive "P")
+  (cond ( (use-region-p)
+          (comment-or-uncomment-region (region-beginning)
+                                       (region-end)
+                                       arg)
+          (indent-region (region-beginning)
+                         (region-end)))
         ( (es-line-empty-p)
           (cond ( (memq major-mode
                         '(lisp-mode lisp-interaction-mode emacs-lisp-mode))
@@ -352,11 +356,12 @@ Marks the symbol on first call, then marks the statement."
                   (insert "/*  */")
                   (forward-char -3))
                 ( t (insert comment-start)
-                    (save-excursion (insert comment-end)))))
-        ( t (comment-or-uncomment-region
-             (line-beginning-position)
-             (line-end-position))))
-  (indent-according-to-mode))
+                    (save-excursion
+                      (insert comment-end)))))
+        ( t (comment-or-uncomment-region (line-beginning-position)
+                                         (line-end-position)
+                                         arg)
+            (indent-according-to-mode))))
 
 ;;;###autoload
 (cl-defun es-ido-like-helm (&optional this-mode-only)
