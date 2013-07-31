@@ -36,7 +36,8 @@
 (defun es-duplicate-line ()
   "Duplicate current line."
   (interactive)
-  (let* (( pnt (point))
+  (let* (( electric-indent-mode)
+         ( pnt (point))
          ( start (es-total-line-beginning-position))
          ( end (es-total-line-end-position))
          ( copy-store (buffer-substring start end)))
