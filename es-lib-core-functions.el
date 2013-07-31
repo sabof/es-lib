@@ -338,7 +338,7 @@ Marks the symbol on first call, then marks the statement."
           ( t (funcall select-line-internal)))))
 
 ;;;###autoload
-(defun es-comment-dwim (arg)
+(defun es-comment-dwim (&optional arg)
   (interactive "P")
   (cond ( (use-region-p)
           (comment-or-uncomment-region (region-beginning)
