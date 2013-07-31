@@ -31,27 +31,26 @@
 (require 'cl-lib)
 (require 'es-lib-core-macros)
 
-(defun es-number-at-point ()
-  (when (looking-at "[[:digit:]-]+")
-    (save-excursion
-      (while (looking-at "[[:digit:]-]+")
-        (backward-char))
-      (list (match-string-no-properties 0)
-            (match-beginning 0)
-            (match-end 0)))))
+(cl-defun es-number-at-point ()
+  (unless (looking-at "[[:digit:]]")
+    (cl-return-from es-number-at-point))
+  (save-excursion
+    (skip-chars-backward "0123456789-")
+    (unless (looking-at "-?[[:digit:]]+")
+      (cl-return-from es-number-at-point))
+    (list (match-string-no-properties 0)
+          (match-beginning 0)
+          (match-end 0))))
 
-(defun es--change-number-at-point (&optional decrease)
+(cl-defun es--change-number-at-point (&optional decrease)
   (let ((number (es-number-at-point)))
     (if (not number)
-        (progn (save-excursion
+        (progn (let (( end-distance (- (line-end-position) (point))))
+                 ;; (cl-return-from es--change-number-at-point)
                  (when (re-search-backward "[0-9]" (line-beginning-position) t)
-                   (es--change-number-at-point decrease)))
-               (cl-multiple-value-bind
-                   (num-string beg end)
-                   (es-number-at-point)
-                 (when (and (numberp beg)
-                            (equal (- end beg) 1))
-                   (forward-char))))
+                   (es--change-number-at-point decrease))
+                 (goto-char (- (line-end-position) end-distance))
+                 ))
         (cl-multiple-value-bind
             (num-string beg end)
             number
