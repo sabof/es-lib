@@ -43,13 +43,13 @@
           (match-beginning 0)
           (match-end 0))))
 
-(cl-defun es--change-number-at-point (&optional decrease)
+(cl-defun es--change-number-at-point (&optional ammout)
   (let ((number (es-number-at-point)))
     (if (not number)
         (progn (let (( end-distance (- (line-end-position) (point))))
                  ;; (cl-return-from es--change-number-at-point)
                  (when (re-search-backward "[0-9]" (line-beginning-position) t)
-                   (es--change-number-at-point decrease))
+                   (es--change-number-at-point ammout))
                  (goto-char (- (line-end-position) end-distance))))
         (cl-multiple-value-bind
             (num-string beg end)
@@ -57,7 +57,7 @@
           (let* ((start-pos (point))
                  (distance-from-end (- end start-pos))
                  (increment (* (expt 10 (1- distance-from-end))
-                               (if decrease -1 1)))
+                               (or ammout 1)))
                  (result (+ (string-to-number num-string) increment))
                  (result-string (number-to-string
                                  result)))
@@ -83,7 +83,7 @@ line."
   "See documentation for `es-increase-number-at-point'."
   (interactive)
   (unless (es-toggle-true-false-maybe)
-    (es--change-number-at-point t)))
+    (es--change-number-at-point -1)))
 
 (provide 'es-lib-number-at-point)
 ;; es-lib-number-at-point.el ends here
