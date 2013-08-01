@@ -32,41 +32,51 @@
 (require 'es-lib-core-macros)
 
 (cl-defun es-number-at-point ()
-  (unless (looking-at "[[:digit:]]")
+  (unless (looking-at-p "[[:digit:]]")
     (cl-return-from es-number-at-point))
-  (save-excursion
-    (skip-chars-backward "0123456789-")
-    (unless (looking-at "-?[[:digit:]]+")
-      (cl-return-from es-number-at-point))
-    (looking-at "[[:digit:]-]+")
-    (list (match-string-no-properties 0)
-          (match-beginning 0)
-          (match-end 0))))
+  (let (allow-negative)
+    (save-excursion
+      (skip-chars-backward "0123456789")
+      (when (< (point-min) (point))
+        (backward-char)
+        (unless (looking-at-p "\\_<-")
+          (forward-char)))
+      (setq allow-negative (looking-at-p "\\_<"))
+      (unless (looking-at-p "-?[[:digit:]]+")
+        (cl-return-from es-number-at-point))
+      (looking-at "-?[[:digit:]]+")
+      (list (match-string-no-properties 0)
+            (match-beginning 0)
+            (match-end 0)
+            allow-negative))))
 
 (cl-defun es--change-number-at-point (&optional ammout)
   (let ((number (es-number-at-point)))
     (if (not number)
         (progn (let (( end-distance (- (line-end-position) (point))))
                  ;; (cl-return-from es--change-number-at-point)
-                 (when (re-search-backward "[0-9]" (line-beginning-position) t)
+                 (when (re-search-backward "[[:digit:]]" (line-beginning-position) t)
                    (es--change-number-at-point ammout))
                  (goto-char (- (line-end-position) end-distance))))
         (cl-multiple-value-bind
-            (num-string beg end)
+            (num-string beg end allow-negative)
             number
           (let* ((start-pos (point))
                  (distance-from-end (- end start-pos))
                  (increment (* (expt 10 (1- distance-from-end))
                                (or ammout 1)))
                  (result (+ (string-to-number num-string) increment))
+                 (--- (unless allow-negative
+                        (setq result (max 0 result))))
                  (result-string (number-to-string
                                  result)))
             (delete-region beg end)
             (insert result-string)
             (goto-char (max beg
                             (+ start-pos
-                               (- (length result-string)
-                                  (length num-string))))))))))
+                               (length result-string)
+                               (- (length num-string)))))
+            (skip-chars-forward "-"))))))
 
 ;;;###autoload
 (defun es-increase-number-at-point ()
