@@ -38,6 +38,7 @@
     (skip-chars-backward "0123456789-")
     (unless (looking-at "-?[[:digit:]]+")
       (cl-return-from es-number-at-point))
+    (looking-at "[[:digit:]-]+")
     (list (match-string-no-properties 0)
           (match-beginning 0)
           (match-end 0))))
@@ -49,8 +50,7 @@
                  ;; (cl-return-from es--change-number-at-point)
                  (when (re-search-backward "[0-9]" (line-beginning-position) t)
                    (es--change-number-at-point decrease))
-                 (goto-char (- (line-end-position) end-distance))
-                 ))
+                 (goto-char (- (line-end-position) end-distance))))
         (cl-multiple-value-bind
             (num-string beg end)
             number
