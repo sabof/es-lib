@@ -54,29 +54,33 @@
   (let ((number (es-number-at-point)))
     (if (not number)
         (progn (let (( end-distance (- (line-end-position) (point))))
-                 ;; (cl-return-from es--change-number-at-point)
                  (when (re-search-backward "[[:digit:]]" (line-beginning-position) t)
                    (es--change-number-at-point ammout))
                  (goto-char (- (line-end-position) end-distance))))
         (cl-multiple-value-bind
             (num-string beg end allow-negative)
             number
-          (let* ((start-pos (point))
-                 (distance-from-end (- end start-pos))
-                 (increment (* (expt 10 (1- distance-from-end))
-                               (or ammout 1)))
-                 (result (+ (string-to-number num-string) increment))
-                 (--- (unless allow-negative
-                        (setq result (max 0 result))))
-                 (result-string (number-to-string
-                                 result)))
+          (let* (( start-pos (point))
+                 ( distance-from-end (- end start-pos))
+                 ( increment (* (expt 10 (1- distance-from-end))
+                                (or ammout 1)))
+                 ( result (+ (string-to-number num-string) increment))
+                 ( --- (unless allow-negative
+                         (setq result (max 0 result))))
+                 ( result-string (number-to-string
+                                  result))
+                 ( suggested-new-pos (+ start-pos
+                                        (length result-string)
+                                        (- (length num-string)))))
+            ;; Don't create an unnecessary undo state
+            (when (string-equal num-string result-string)
+              (cl-return-from es--change-number-at-point))
             (delete-region beg end)
             (insert result-string)
-            (goto-char (max beg
-                            (+ start-pos
-                               (length result-string)
-                               (- (length num-string)))))
-            (skip-chars-forward "-"))))))
+
+            (goto-char (max beg suggested-new-pos))
+            (skip-chars-forward "-")
+            )))))
 
 ;;;###autoload
 (defun es-increase-number-at-point ()
