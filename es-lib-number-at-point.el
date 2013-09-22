@@ -34,7 +34,8 @@
 (cl-defun es-number-at-point ()
   (unless (looking-at-p "[[:digit:]]")
     (cl-return-from es-number-at-point))
-  (let (allow-negative)
+  (let (allow-negative
+        fixed-width)
     (save-excursion
       (skip-chars-backward "0123456789")
       (when (< (point-min) (point))
@@ -45,10 +46,14 @@
       (unless (looking-at-p "-?[[:digit:]]+")
         (cl-return-from es-number-at-point))
       (looking-at "-?[[:digit:]]+")
+      (when (string-match-p "-?0+[[:digit:]]$"
+                            (match-string-no-properties 0))
+        (setq fixed-width (length (match-string-no-properties 0))))
       (list (match-string-no-properties 0)
             (match-beginning 0)
             (match-end 0)
-            allow-negative))))
+            allow-negative
+            fixed-width))))
 
 (cl-defun es--change-number-at-point (&optional ammout)
   (let ((number (es-number-at-point)))
@@ -58,7 +63,7 @@
                    (es--change-number-at-point ammout))
                  (goto-char (- (line-end-position) end-distance))))
       (cl-multiple-value-bind
-          (num-string beg end allow-negative)
+          (num-string beg end allow-negative fixed-width)
           number
         (let* (( start-pos (point))
                ( distance-from-end (- end start-pos))
@@ -67,8 +72,10 @@
                ( result (+ (string-to-number num-string) increment))
                ( --- (unless allow-negative
                        (setq result (max 0 result))))
-               ( result-string (number-to-string
-                                result))
+               ( result-string (if fixed-width
+                                   (format (format "%%0%dd" fixed-width)
+                                           result)
+                                 (number-to-string result)))
                ( suggested-new-pos (+ start-pos
                                       (length result-string)
                                       (- (length num-string)))))

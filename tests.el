@@ -53,6 +53,12 @@
       (es--change-number-at-point)
       (should (= (point) 2)))
 
+    (progn
+      (erase-buffer)
+      (insert "04")
+      (es--change-number-at-point)
+      (should (string-equal "05" (buffer-string))))
+
     ;; Syntax tests
     (erase-buffer)
     (scheme-mode)
