@@ -361,7 +361,8 @@ Marks the symbol on first call, then marks the statement."
         ( t (comment-or-uncomment-region (line-beginning-position)
                                          (line-end-position)
                                          arg)
-            (indent-according-to-mode))))
+            (unless (memq indent-line-function '(coffee-indent-line))
+              (indent-according-to-mode)))))
 
 ;;;###autoload
 (cl-defun es-ido-like-helm (&optional this-mode-only)
