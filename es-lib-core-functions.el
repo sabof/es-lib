@@ -343,9 +343,7 @@ Marks the symbol on first call, then marks the statement."
   (cond ( (use-region-p)
           (comment-or-uncomment-region (region-beginning)
                                        (region-end)
-                                       arg)
-          (indent-region (region-beginning)
-                         (region-end)))
+                                       arg))
         ( (es-line-empty-p)
           (cond ( (memq major-mode
                         '(lisp-mode lisp-interaction-mode emacs-lisp-mode))
@@ -360,9 +358,7 @@ Marks the symbol on first call, then marks the statement."
                       (insert comment-end)))))
         ( t (comment-or-uncomment-region (line-beginning-position)
                                          (line-end-position)
-                                         arg)
-            (unless (memq indent-line-function '(coffee-indent-line))
-              (indent-according-to-mode)))))
+                                         arg))))
 
 ;;;###autoload
 (cl-defun es-ido-like-helm (&optional this-mode-only)
