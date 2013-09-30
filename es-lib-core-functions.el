@@ -437,22 +437,6 @@ The \"originals\" won't be included."
       (setq clone (cl-remove (pop singles) clone :test 'equal :count 1)))
     clone))
 
-;;;###autoload
-(defun es-delete-duplicate-lines (&optional beg end)
-  (interactive)
-  (setq beg (or beg
-                (when (use-region-p)
-                  (region-beginning))
-                (point-min))
-        end (or end
-                (when (use-region-p)
-                  (region-end))
-                (point-max)))
-  (let ((lines (split-string (buffer-substring beg end) "\n")))
-    (delete-region beg end)
-    (insert
-     (mapconcat #'identity (delete-dups lines) "\n"))))
-
 (defun es-next-visible-character-at-pos (&optional position)
   (save-excursion
     (when position (goto-char position))
