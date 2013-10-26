@@ -71,3 +71,33 @@
     (should (string-equal "symbol-0" (buffer-string)))
 
     ))
+
+(ert-deftest es-duplicate-line ()
+  (with-temp-buffer
+    (insert "test")
+    (es-duplicate-line nil)
+    (should (equal (buffer-string)
+                   "test\ntest"))
+    (should (= (point) (point-max))))
+  (with-temp-buffer
+    (insert "test")
+    (es-duplicate-line 2)
+    (should (equal (buffer-string)
+                   "test\ntest\ntest"))
+    (should (= (point) (point-max)))))
+
+(ert-deftest es-duplicate-line-or-region ()
+  (with-temp-buffer
+    (set-mark (point))
+    (activate-mark)
+    (insert "test")
+    (es-duplicate-region)
+    (should (equal (buffer-string)
+                   "test\ntest"))
+    (should (= (point) (point-max))))
+  (with-temp-buffer
+    (insert "test")
+    (es-duplicate-line 2)
+    (should (equal (buffer-string)
+                   "test\ntest\ntest"))
+    (should (= (point) (point-max)))))

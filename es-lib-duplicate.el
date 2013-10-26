@@ -33,27 +33,31 @@
 (require 'es-lib-core-macros)
 (require 'es-lib-total-line)
 
-(defun es-duplicate-line ()
+(defun es-duplicate-line (&optional arg)
   "Duplicate current line."
-  (interactive)
+  (interactive "p")
   (let* (( electric-indent-mode)
          ( pnt (point))
          ( start (es-total-line-beginning-position))
          ( end (es-total-line-end-position))
          ( copy-store (buffer-substring start end)))
     (goto-char end)
-    (newline)
-    (insert copy-store)
-    (goto-char (+ 1 end (- pnt start)))))
+    (cl-loop repeat (or arg 1)
+             do
+             (newline)
+             (insert copy-store))
+    (goto-char (+ (+ 1 end)
+                  (* (1- (or arg 1))
+                     (1+ (length copy-store)))
+                  (- pnt start)))))
 
-(defun es-duplicate-region ()
+(defun es-duplicate-region (start end &optional arg)
   "Duplicate the active region."
-  (interactive)
-  (let (( copy-store
-          (or (es-active-region-string)
-              (error "No active region")))
-        b-pos er-pos)
-    (goto-char (region-end))
+  (interactive "p")
+  (let* (( copy-store
+           (buffer-substring start end))
+         b-pos er-pos fill-prefix)
+    (goto-char end)
     ;; For things like (mark-paragraph)
     (unless (zerop (current-column))
       (newline))
@@ -71,11 +75,11 @@
           cua--explicit-region-start nil)))
 
 ;;;###autoload
-(defun es-duplicate-line-or-region ()
-  (interactive)
+(defun es-duplicate-line-or-region (&optional arg)
+  (interactive "p")
   (if (region-active-p)
-      (es-duplicate-region)
-      (es-duplicate-line)))
+      (es-duplicate-region arg)
+    (es-duplicate-line arg)))
 
 (provide 'es-lib-duplicate)
 ;; es-lib-duplicate.el ends here
