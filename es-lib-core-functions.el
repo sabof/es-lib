@@ -832,5 +832,15 @@ car is a literal string, not a regular expression."
       (overlay-put ov (pop props) (pop props)))
     ))
 
+(cl-defun es-set-window-body-width ((window (selected-window)) width)
+  (interactive (list (read-number "New width: " 80)))
+  (let (( delta (- width (window-body-width))))
+    (window-resize (selected-window) delta t)))
+
+(cl-defun es-set-window-body-height ((window (selected-window)) height)
+  (interactive (list (read-number "New height: " 30)))
+  (let (( delta (- height (window-body-height))))
+    (window-resize (selected-window) delta)))
+
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here
