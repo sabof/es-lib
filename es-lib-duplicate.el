@@ -53,7 +53,7 @@
 
 (defun es-duplicate-region (start end &optional arg)
   "Duplicate the active region."
-  (interactive "p")
+  (interactive "rp")
   (let* (( copy-store
            (buffer-substring start end))
          b-pos er-pos fill-prefix)
@@ -75,10 +75,10 @@
           cua--explicit-region-start nil)))
 
 ;;;###autoload
-(defun es-duplicate-line-or-region (&optional arg)
-  (interactive "p")
+(defun es-duplicate-line-or-region (&optional start end arg)
+  (interactive "rp")
   (if (region-active-p)
-      (es-duplicate-region arg)
+      (es-duplicate-region start end arg)
     (es-duplicate-line arg)))
 
 (provide 'es-lib-duplicate)

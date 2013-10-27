@@ -837,14 +837,14 @@ car is a literal string, not a regular expression."
   (unless window
     (setq window (selected-window)))
   (let (( delta (- width (window-body-width window))))
-    (window-resize (selected-window) delta t)))
+    (window-resize window delta t)))
 
 (cl-defun es-set-window-body-height (window height)
   (interactive (list nil (read-number "New height: " 30)))
   (unless window
     (setq window (selected-window)))
   (let (( delta (- height (window-body-height))))
-    (window-resize (selected-window) delta)))
+    (window-resize window delta)))
 
 (provide 'es-lib-core-functions)
 ;; es-lib-core-functions.el ends here
