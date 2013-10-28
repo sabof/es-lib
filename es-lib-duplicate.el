@@ -63,7 +63,8 @@
     (unless (or (eq major-mode 'haskell-mode)
                 (memq indent-line-function
                       '(insert-tab
-                        indent-relative)))
+                        indent-relative
+                        coffee-indent-line)))
       (indent-region b-pos (point)))
     (goto-char (- (line-end-position) er-pos))
     (activate-mark)
