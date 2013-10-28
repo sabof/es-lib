@@ -34,7 +34,8 @@
 (cl-defun es-number-at-point ()
   (unless (looking-at-p "[[:digit:]]")
     (cl-return-from es-number-at-point))
-  (let (allow-negative)
+  (let (allow-negative
+        fixed-width)
     (save-excursion
       (skip-chars-backward "0123456789")
       (when (< (point-min) (point))
@@ -45,10 +46,14 @@
       (unless (looking-at-p "-?[[:digit:]]+")
         (cl-return-from es-number-at-point))
       (looking-at "-?[[:digit:]]+")
+      (when (string-match-p "-?0+[[:digit:]]$"
+                            (match-string-no-properties 0))
+        (setq fixed-width (length (match-string-no-properties 0))))
       (list (match-string-no-properties 0)
             (match-beginning 0)
             (match-end 0)
-            allow-negative))))
+            allow-negative
+            fixed-width))))
 
 (cl-defun es--change-number-at-point (&optional ammout)
   (let ((number (es-number-at-point)))
@@ -57,30 +62,32 @@
                  (when (re-search-backward "[[:digit:]]" (line-beginning-position) t)
                    (es--change-number-at-point ammout))
                  (goto-char (- (line-end-position) end-distance))))
-        (cl-multiple-value-bind
-            (num-string beg end allow-negative)
-            number
-          (let* (( start-pos (point))
-                 ( distance-from-end (- end start-pos))
-                 ( increment (* (expt 10 (1- distance-from-end))
-                                (or ammout 1)))
-                 ( result (+ (string-to-number num-string) increment))
-                 ( --- (unless allow-negative
-                         (setq result (max 0 result))))
-                 ( result-string (number-to-string
-                                  result))
-                 ( suggested-new-pos (+ start-pos
-                                        (length result-string)
-                                        (- (length num-string)))))
-            ;; Don't create an unnecessary undo state
-            (when (string-equal num-string result-string)
-              (cl-return-from es--change-number-at-point))
-            (delete-region beg end)
-            (insert result-string)
+      (cl-multiple-value-bind
+          (num-string beg end allow-negative fixed-width)
+          number
+        (let* (( start-pos (point))
+               ( distance-from-end (- end start-pos))
+               ( increment (* (expt 10 (1- distance-from-end))
+                              (or ammout 1)))
+               ( result (+ (string-to-number num-string) increment))
+               ( --- (unless allow-negative
+                       (setq result (max 0 result))))
+               ( result-string (if fixed-width
+                                   (format (format "%%0%dd" fixed-width)
+                                           result)
+                                 (number-to-string result)))
+               ( suggested-new-pos (+ start-pos
+                                      (length result-string)
+                                      (- (length num-string)))))
+          ;; Don't create an unnecessary undo state
+          (when (string-equal num-string result-string)
+            (cl-return-from es--change-number-at-point))
+          (delete-region beg end)
+          (insert result-string)
 
-            (goto-char (max beg suggested-new-pos))
-            (skip-chars-forward "-")
-            )))))
+          (goto-char (max beg suggested-new-pos))
+          (skip-chars-forward "-")
+          )))))
 
 ;;;###autoload
 (defun es-increase-number-at-point ()

@@ -53,6 +53,12 @@
       (es--change-number-at-point)
       (should (= (point) 2)))
 
+    (progn
+      (erase-buffer)
+      (insert "04")
+      (es--change-number-at-point)
+      (should (string-equal "05" (buffer-string))))
+
     ;; Syntax tests
     (erase-buffer)
     (scheme-mode)
@@ -65,3 +71,34 @@
     (should (string-equal "symbol-0" (buffer-string)))
 
     ))
+
+(ert-deftest es-duplicate-line ()
+  (with-temp-buffer
+    (insert "test")
+    (es-duplicate-line nil)
+    (should (equal (buffer-string)
+                   "test\ntest"))
+    (should (= (point) (point-max))))
+  (with-temp-buffer
+    (insert "test")
+    (es-duplicate-line 2)
+    (should (equal (buffer-string)
+                   "test\ntest\ntest"))
+    (should (= (point) (point-max)))))
+
+(ert-deftest es-duplicate-line-or-region ()
+  (with-temp-buffer
+    (set-mark (point))
+    (activate-mark)
+    (insert "test")
+    (call-interactively 'es-duplicate-region)
+    (should (equal (buffer-string)
+                   "test\ntest"))
+    (should (= (point) (point-max))))
+  (with-temp-buffer
+    (set-mark (point))
+    (insert "test")
+    (call-interactively 'es-duplicate-region)
+    ;; (should (equal (buffer-string)
+    ;;                "test\ntest\ntest"))
+    (should (= (point) (point-max)))))

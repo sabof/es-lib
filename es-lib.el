@@ -2,7 +2,7 @@
 ;;; Version: 0.3
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
-;;; Package-Requires: ((cl-lib "1.0"))
+;;; Package-Requires: ((cl-lib "0.3"))
 
 ;; This file is NOT part of GNU Emacs.
 ;;

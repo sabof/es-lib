@@ -19,7 +19,7 @@ A collecton of emacs utilities, and basis for several of my packages. Here are s
 
 # Index:
 
-_Auto-generated before each commit. Total items in the library: 101_
+_Auto-generated before each commit. Total items in the library: 100_
 
 #### Table of contents:
 
@@ -133,7 +133,6 @@ Similar to what happends when emacs is about to quit.
 
 * es-mouse-copy-symbol
 * es-mouse-yank-replace-symbol
-* es-new-empty-buffer
 * es-push-line
 
 ```
