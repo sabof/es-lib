@@ -677,7 +677,7 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                                  '(   ?\)   ?\n   )))
                  (throw 'insert-space nil))
                ;; C Family
-               (when (memq major-mode '(php-mode  c-mode  js2-mode  js-mode  css-mode))
+               (when (memq major-mode '(coffee-mode php-mode  c-mode  js2-mode  js-mode  css-mode))
                  (when (or (member (cl-first pair) operators)
                            (member (cl-second pair) operators))
                    (throw 'insert-space t))
@@ -701,7 +701,8 @@ You might want to do \(defalias 'fixup-whitespace 'es-fixup-whitespace\)"
                            (and (sp-member ?\)) (not (eq (char-before) (char-after))))
                            (and (sp-member ?\() (not (eq (char-before) (char-after)))))
                    (throw 'insert-space t)))
-               (when (memq major-mode '(nxml-mode php-mode web-mode))
+               ;; Markup
+               (when (memq major-mode '(html-mode nxml-mode php-mode web-mode))
                  (when (or (sp-member ?<)
                            (sp-member ?>))
                    (throw 'insert-space nil)))
