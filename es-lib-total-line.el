@@ -33,8 +33,10 @@
   (save-excursion
     (when pos (goto-char pos))
     (es-while-point-moving
-     (end-of-visual-line)
-     (end-of-line))
+     (goto-char (max (save-excursion
+                       (vertical-motion 1)
+                       (1- (point)))
+                     (line-end-position))))
     (point)))
 
 (defun es-total-line-beginning-position (&optional pos)
