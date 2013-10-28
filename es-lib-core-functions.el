@@ -3,6 +3,7 @@
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 
+
 ;;; Commentary:
 
 ;; The project is hosted at https://github.com/sabof/es-lib
@@ -304,7 +305,7 @@ Marks the symbol on first call, then marks the statement."
                            (progn (goto-char next-opening-bracket)
                                   (backward-char)
                                   (forward-sexp))
-                           (goto-char next-colon)))
+                         (goto-char next-colon)))
                      ( next-opening-bracket
                        (progn (goto-char next-opening-bracket)
                               (backward-char)
@@ -325,7 +326,7 @@ Marks the symbol on first call, then marks the statement."
                (goto-char
                 (if next-colon
                     (min next-colon (line-end-position))
-                    (line-end-position))))
+                  (line-end-position))))
              (funcall post-scriptum))))
     (cond ( (not (eq last-command this-command))
             (es-mark-symbol-at-point))
@@ -393,7 +394,7 @@ Marks the symbol on first call, then marks the statement."
                    (if (stringp thing)
                        (or (buffer-file-name (get-buffer thing))
                            (symbol-name (cl-gensym)))
-                       (cdr thing)))
+                     (cdr thing)))
             :test 'equal
             :from-end t))
          ( junk-less
