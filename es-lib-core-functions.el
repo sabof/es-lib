@@ -344,7 +344,9 @@ Marks the symbol on first call, then marks the statement."
   (cond ( (use-region-p)
           (comment-or-uncomment-region (region-beginning)
                                        (region-end)
-                                       arg))
+                                       arg)
+          (indent-region (region-beginning)
+                         (region-end)))
         ( (es-line-empty-p)
           (cond ( (memq major-mode
                         '(lisp-mode lisp-interaction-mode emacs-lisp-mode))
@@ -360,10 +362,16 @@ Marks the symbol on first call, then marks the statement."
         ( t (comment-or-uncomment-region (line-beginning-position)
                                          (line-end-position)
                                          arg)
-            )))
+            (indent-according-to-mode))))
 
-(defun es-ido-like-helm-all-entities ()
+;;;###autoload
+(cl-defun es-ido-like-helm (&optional this-mode-only)
+  "Choose from a concatenated list of buffers and recent files."
+  (interactive "P")
   (require 'recentf)
+  (when (window-dedicated-p)
+    (message "This is a dedicated window")
+    (cl-return-from es-ido-like-helm))
   (let* (( f:parent-dir
            (lambda (name)
              (file-name-nondirectory
@@ -394,50 +402,31 @@ Marks the symbol on first call, then marks the statement."
             (lambda (item)
               (member item (list (buffer-name)
                                  "Map_Sym.txt")))
-            no-duplicates)))
-    junk-less))
-
-
-;;;###autoload
-(cl-defun es-ido-like-helm (&optional everything)
-  "Choose from a concatenated list of buffers and recent files."
-  (interactive "P")
-  (when (window-dedicated-p)
-    (message "This is a dedicated window")
-    (cl-return-from es-ido-like-helm))
-  (let* (( junk-less (es-ido-like-helm-all-entities))
-         ( root (locate-dominating-file
-                 default-directory
-                 (lambda (dir)
-                   (directory-files
-                    dir nil "^\\.projectile$\\|^Trunk$")
-                   )))
-         ( org-root (es-org-path))
-         ( ---
-           (when root
-             (setq root (file-truename root))))
+            no-duplicates))
          ( mode-filter
-           (if (or (not root) everything)
-               junk-less
-             (let (( extension (file-name-extension
-                                (or (buffer-file-name)
-                                    ""))))
-               (remove-if-not (lambda (item)
-                                (let (( path (if (consp item)
-                                                 (cdr item)
-                                               (with-current-buffer item
-                                                 default-directory))))
-                                  (or (string-prefix-p org-root path)
-                                      (string-prefix-p root path))))
-                              (es-ido-like-helm-all-entities)))))
+           (if this-mode-only
+               (let (( extension
+                       (file-name-extension
+                        (or (buffer-file-name)
+                            ""))))
+                 (cl-remove-if-not
+                  (lambda (maybe-cons)
+                    (if (consp maybe-cons)
+                        (when extension
+                          (equal (file-name-extension
+                                  (cdr maybe-cons))
+                                 extension))
+                        (eq (es-buffer-mode maybe-cons)
+                            major-mode)))
+                  junk-less))
+               junk-less))
          ( file
            (es-ido-completing-read-alist
-            "Choose existing: " mode-filter nil t))
-         ( buffer-list (es-buffer-name-list)))
+            "Choose existing: " mode-filter nil t)))
     (when file
       (if (member file buffer-list)
           (switch-to-buffer file)
-        (find-file file)))))
+          (find-file file)))))
 
 (defun es-find-duplicates (list)
   "Multiple duplicates will be listed muliple times.
