@@ -61,13 +61,13 @@
           (buffer-file-name buf)))
    (buffer-list)))
 
-(cl-defun es-ido-completing-read-alist (prompt alist &rest rest)
+(cl-defun es-ido-completing-read-alist (prompt alist &rest additional-ido-args)
   "Each member can also be a string"
   (require 'ido)
   (setq alist (mapcar (lambda (it) (if (consp it) it (cons it it)))
                       alist))
   (let (( selection (apply 'ido-completing-read prompt
-                           (mapcar 'car alist) rest)))
+                           (mapcar 'car alist) additional-ido-args)))
     (when selection
       (cdr (cl-find selection alist :key 'car :test 'equal)))))
 
@@ -402,31 +402,22 @@ Marks the symbol on first call, then marks the statement."
             (lambda (item)
               (member item (list (buffer-name)
                                  "Map_Sym.txt")))
-            no-duplicates))
-         ( mode-filter
-           (if this-mode-only
-               (let (( extension
-                       (file-name-extension
-                        (or (buffer-file-name)
-                            ""))))
-                 (cl-remove-if-not
-                  (lambda (maybe-cons)
-                    (if (consp maybe-cons)
-                        (when extension
-                          (equal (file-name-extension
-                                  (cdr maybe-cons))
-                                 extension))
-                        (eq (es-buffer-mode maybe-cons)
-                            major-mode)))
-                  junk-less))
-               junk-less))
-         ( file
-           (es-ido-completing-read-alist
-            "Choose existing: " mode-filter nil t)))
+            no-duplicates)))
+    junk-less))
+
+(defun es-ido-files-and-buffers (prompt list)
+  (interactive)
+  (let (( ido-result
+          (es-ido-completing-read-alist prompt list nil t))
+        ( buffer-list (es-buffer-name-list)))
     (when file
       (if (member file buffer-list)
           (switch-to-buffer file)
           (find-file file)))))
+
+;;;###autoload
+;; old-func
+
 
 (defun es-find-duplicates (list)
   "Multiple duplicates will be listed muliple times.
