@@ -416,8 +416,63 @@ Marks the symbol on first call, then marks the statement."
           (find-file file)))))
 
 ;;;###autoload
-;; old-func
-
+(cl-defun es-ido-like-helm (&optional this-mode-only)
+  "Choose from a concatenated list of buffers and recent files."
+  (interactive "P")
+  (require 'recentf)
+  (when (window-dedicated-p)
+    (message "This is a dedicated window")
+    (cl-return-from es-ido-like-helm))
+  (let* (( f:parent-dir
+           (lambda (name)
+             (file-name-nondirectory
+              (directory-file-name
+               (file-name-directory name)))))
+         ( f:make-recentf-map
+           (lambda (item)
+             (cons (propertize
+                    (concat (file-name-nondirectory item)
+                            "<" (funcall f:parent-dir item) ">")
+                    'face 'font-lock-keyword-face)
+                   item)))
+         ( buffer-list (es-buffer-name-list))
+         ( recentf-map (mapcar f:make-recentf-map recentf-list))
+         ( merged-list (append buffer-list recentf-map))
+         ( no-duplicates
+           (cl-remove-duplicates
+            merged-list
+            :key (lambda (thing)
+                   (if (stringp thing)
+                       (or (buffer-file-name (get-buffer thing))
+                           (symbol-name (cl-gensym)))
+                     (cdr thing)))
+            :test 'equal
+            :from-end t))
+         ( junk-less
+           (cl-remove-if
+            (lambda (item)
+              (member item (list (buffer-name)
+                                 "Map_Sym.txt")))
+            no-duplicates))
+         ( mode-filter
+           (if this-mode-only
+               (let (( extension
+                       (file-name-extension
+                        (or (buffer-file-name)
+                            ""))))
+                 (cl-remove-if-not
+                  (lambda (maybe-cons)
+                    (if (consp maybe-cons)
+                        (when extension
+                          (equal (file-name-extension
+                                  (cdr maybe-cons))
+                                 extension))
+                      (eq (es-buffer-mode maybe-cons)
+                          major-mode)))
+                  junk-less))
+             junk-less)))
+    (es-ido-files-and-buffers "Choose existing: "
+                              mode-filter)))
 
 (defun es-find-duplicates (list)
   "Multiple duplicates will be listed muliple times.
