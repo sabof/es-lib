@@ -32,7 +32,8 @@
 
 (defmacro es-silence-messages (&rest body)
   (declare (indent defun))
-  `(let ((message-log-max))
+  `(cl-letf (((symbol-function 'message)
+              (symbol-function 'ignore)))
      ,@body))
 (put 'es-silence-messages 'common-lisp-indent-function
      '(&body))
