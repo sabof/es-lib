@@ -76,10 +76,10 @@
           cua--explicit-region-start nil)))
 
 ;;;###autoload
-(defun es-duplicate-line-or-region (&optional start end arg)
-  (interactive "rp")
+(defun es-duplicate-line-or-region (arg)
+  (interactive "p")
   (if (region-active-p)
-      (es-duplicate-region start end arg)
+      (es-duplicate-region (region-beginning) (region-end) arg)
     (es-duplicate-line arg)))
 
 (provide 'es-lib-duplicate)
