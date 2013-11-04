@@ -60,7 +60,7 @@
   (lambda (&rest args)
     (apply func (reverse args))))
 
-(defun es-make-timer-buffer (time-limit)
+(defun es-timer (time-limit)
   "Accepts a time-limit in minutes."
   (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))
@@ -87,9 +87,9 @@
                                          (format-time-string
                                           "%H:%M"))
                             (cancel-timer the-timer))
-                          (format "%s / %s:00"
-                                  (format-time-string
-                                   "%M:%S"
+                        (format "%s / %s:00"
+                                (format-time-string
+                                 "%M:%S"
                                    time-difference)
                                   time-limit))))))))
     ;; Shouln't defvars be dynamically bound?
