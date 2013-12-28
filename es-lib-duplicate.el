@@ -49,7 +49,9 @@
     (goto-char (+ (+ 1 end)
                   (* (1- (or arg 1))
                      (1+ (length copy-store)))
-                  (- pnt start)))))
+                  (- pnt start)))
+    (when goal-column
+      (move-to-column goal-column))))
 
 (defun es-duplicate-region (start end &optional arg)
   "Duplicate the active region."

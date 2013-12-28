@@ -90,8 +90,8 @@
                         (format "%s / %s:00"
                                 (format-time-string
                                  "%M:%S"
-                                   time-difference)
-                                  time-limit))))))))
+                                 time-difference)
+                                time-limit))))))))
     ;; Shouln't defvars be dynamically bound?
     (setq win
           (split-window (frame-root-window)
