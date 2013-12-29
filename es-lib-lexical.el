@@ -60,7 +60,7 @@
   (lambda (&rest args)
     (apply func (reverse args))))
 
-(defun es-timer (time-limit)
+(defun es-timer (time-limit &optional callback)
   "Accepts a time-limit in minutes."
   (interactive (list (read-number "Time limit: ")))
   (let (( start-time (current-time))

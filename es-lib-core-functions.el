@@ -224,46 +224,50 @@ region is active."
       (hi-lock-mode))
     (let* ((phrase (if (region-active-p)
                        (regexp-quote (buffer-substring (point) (mark)))
-                       (concat "\\_<"
-                               (symbol-name
-                                (or (symbol-at-point)
-                                    (cl-return-from es-highlighter)))
-                               "\\_>")))
+                     (concat "\\_<"
+                             (symbol-name
+                              (or (symbol-at-point)
+                                  (cl-return-from es-highlighter)))
+                             "\\_>")))
            (pattern (cl-find-if (lambda (element)
                                   (equal (cl-first element) phrase))
                                 hi-lock-interactive-patterns)))
       (if pattern
           (hi-lock-unface-buffer phrase)
-          (let ((color (nth highlight-symbol-color-index
-                            highlight-symbol-colors)))
-            (if color ;; wrap
-                (cl-incf highlight-symbol-color-index)
-                (setq highlight-symbol-color-index 1
-                      color (car highlight-symbol-colors)))
-            (setq color `((background-color . ,color)
-                          (foreground-color . "black")))
-            (hi-lock-set-pattern phrase color)
-            )))))
+        (let ((color (nth highlight-symbol-color-index
+                          highlight-symbol-colors)))
+          (if color ;; wrap
+              (cl-incf highlight-symbol-color-index)
+            (setq highlight-symbol-color-index 1
+                  color (car highlight-symbol-colors)))
+          (setq color `((background-color . ,color)
+                        (foreground-color . "black")))
+          (hi-lock-set-pattern phrase color)
+          )))))
 
 ;;;###autoload
 (defun es-mouse-copy-symbol (event)
   (interactive "e")
   (save-excursion
-    (mouse-set-point event)
-    (when (thing-at-point 'symbol)
-      (kill-new (thing-at-point 'symbol)))))
+    (save-window-excursion
+      (mouse-select-window event)
+      (mouse-set-point event)
+      (when (thing-at-point 'symbol)
+        (kill-new (thing-at-point 'symbol))))))
 
 ;;;###autoload
 (defun es-mouse-yank-replace-symbol (event)
   (interactive "e")
   (save-excursion
-    (mouse-set-point event)
-    (cl-destructuring-bind
-        (start . end)
-        (bounds-of-thing-at-point 'symbol)
-      (delete-region start end)
-      (deactivate-mark)
-      (yank))))
+    (save-window-excursion
+      (mouse-select-window event)
+      (mouse-set-point event)
+      (cl-destructuring-bind
+          (start . end)
+          (bounds-of-thing-at-point 'symbol)
+        (delete-region start end)
+        (deactivate-mark)
+        (yank)))))
 
 (defun es-next-match-pos (regex)
   (save-excursion
