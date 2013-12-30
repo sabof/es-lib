@@ -416,10 +416,10 @@ Marks the symbol on first call, then marks the statement."
   (let (( ido-result
           (es-ido-completing-read-alist prompt list nil t))
         ( buffer-list (es-buffer-name-list)))
-    (when file
-      (if (member file buffer-list)
-          (switch-to-buffer file)
-          (find-file file)))))
+    (when ido-result
+      (if (member ido-result buffer-list)
+          (switch-to-buffer ido-result)
+        (find-file ido-result)))))
 
 ;;;###autoload
 (cl-defun es-ido-like-helm (&optional this-mode-only)
