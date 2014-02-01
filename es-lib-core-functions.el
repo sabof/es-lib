@@ -225,9 +225,10 @@ region is active."
     (let* ((phrase (if (region-active-p)
                        (regexp-quote (buffer-substring (point) (mark)))
                      (concat "\\_<"
-                             (symbol-name
-                              (or (symbol-at-point)
-                                  (cl-return-from es-highlighter)))
+                             (regexp-quote
+                              (symbol-name
+                               (or (symbol-at-point)
+                                   (cl-return-from es-highlighter))))
                              "\\_>")))
            (pattern (cl-find-if (lambda (element)
                                   (equal (cl-first element) phrase))
