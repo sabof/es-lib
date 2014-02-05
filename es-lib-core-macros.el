@@ -103,6 +103,8 @@ They should provide initialization functions that execute the redefinitions."
 
 (defmacro es-opts (mode &rest body)
   (declare (indent 1))
+  (cl-assert (symbolp mode))
+  (cl-assert (not (string-match-p "mode" (symbol-name mode))))
   (let (( opts-func-sym (intern (concat (symbol-name mode) "-mode-options")))
         ( hook-sym (intern (concat (symbol-name mode) "-mode-hook"))))
     `(progn

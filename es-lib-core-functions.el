@@ -125,8 +125,10 @@ FUNCTION does not accept arguments"
   (unless (equal key-sequence "")
     (let (( symbol (key-binding key-sequence)))
       (if (fboundp symbol)
-          (find-function symbol)
-          (message "Key sequence unbound")))))
+          (progn
+            (ring-insert find-tag-marker-ring (point-marker))
+            (find-function symbol))
+        (user-error "Key sequence unbound")))))
 
 (defun es-add-at-eol (thing)
   "Insert THING at end of line.
