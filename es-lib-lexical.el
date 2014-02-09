@@ -82,11 +82,15 @@
                      (insert
                       (if (> (float-time time-difference)
                              (* 60 time-limit))
-                          (prog1 (format "%s minutes passed at: %s"
-                                         time-limit
-                                         (format-time-string
-                                          "%H:%M"))
-                            (cancel-timer the-timer))
+                          (let (( message
+                                  (format "%s minutes passed at: %s"
+                                          time-limit
+                                          (format-time-string
+                                           "%H:%M"))))
+                            (when (fboundp 'sauron-add-event)
+                              (sauron-add-event 'es-timer 5 message))
+                            (cancel-timer the-timer)
+                            message)
                         (format "%s / %s:00"
                                 (format-time-string
                                  "%M:%S"

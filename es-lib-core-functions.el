@@ -512,10 +512,10 @@ The \"originals\" won't be included."
   (interactive)
   (save-excursion
     (save-window-excursion
-      (mapc ( lambda (buf)
+      (mapc (lambda (buf)
               (switch-to-buffer buf)
-              (cl-case (read-char
-                        "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
+              (cl-case
+                  (read-char "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
                 ( ?!
                   (cl-dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
