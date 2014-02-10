@@ -31,9 +31,7 @@
 (require 'es-lib-text-navigate)
 (require 'es-lib-buffer-local-set-key)
 (require 'es-lib-lexical)
-(require 'es-lib-duplicate)
 (require 'es-lib-total-line)
-(require 'es-lib-number-at-point)
 
 (provide 'es-lib)
 ;;; es-lib.el ends here
