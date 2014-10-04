@@ -108,7 +108,7 @@ They should provide initialization functions that execute the redefinitions."
   (let (( opts-func-sym (intern (concat (symbol-name mode) "-mode-options")))
         ( hook-sym (intern (concat (symbol-name mode) "-mode-hook"))))
     `(progn
-       (defun ,opts-func-sym ()
+       (cl-defun ,opts-func-sym ()
          ,@body)
        (add-hook ',hook-sym ',opts-func-sym t))))
 

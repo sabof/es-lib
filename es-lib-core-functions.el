@@ -208,6 +208,7 @@ If the line is empty, insert at the end of next line."
   (kbd \"l\") 'forward-char\)
  Returns the keymap in the end."
   (declare (indent 1))
+  (setq keymap (or keymap (current-local-map)))
   (while bindings
     (define-key keymap (pop bindings) (pop bindings)))
   keymap)
@@ -215,13 +216,17 @@ If the line is empty, insert at the end of next line."
      '(4 &body))
 
 ;;;###autoload
+(defvar es-highlighter-colors
+  '("DeepPink" "cyan" "MediumPurple1" "SpringGreen1"
+    "DarkOrange" "HotPink1" "RoyalBlue1" "OliveDrab"))
+(defvar-local es-highlighter-color-index 0)
+
 (cl-defun es-highlighter ()
   "Like `highlight-symbol-at-point', but will also (un)highlight a phrase if the \
 region is active."
   (interactive)
   (with-no-warnings                  ; for "Warning: reference to free variable"
     (require 'hi-lock)
-    (require 'highlight-symbol)         ; for highlight-symbol-colors et.al
     (unless hi-lock-mode
       (hi-lock-mode))
     (let* ((phrase (if (region-active-p)
@@ -237,11 +242,11 @@ region is active."
                                 hi-lock-interactive-patterns)))
       (if pattern
           (hi-lock-unface-buffer phrase)
-        (let ((color (nth highlight-symbol-color-index
-                          highlight-symbol-colors)))
+        (let ((color (nth es-highlighter-color-index
+                          es-highlighter-colors)))
           (if color ;; wrap
-              (cl-incf highlight-symbol-color-index)
-            (setq highlight-symbol-color-index 1
+              (cl-incf es-highlighter-color-index)
+            (setq es-highlighter-color-index 1
                   color (car highlight-symbol-colors)))
           (setq color `((background-color . ,color)
                         (foreground-color . "black")))
@@ -265,12 +270,14 @@ region is active."
     (save-window-excursion
       (mouse-select-window event)
       (mouse-set-point event)
-      (cl-destructuring-bind
-          (start . end)
-          (bounds-of-thing-at-point 'symbol)
-        (delete-region start end)
-        (deactivate-mark)
-        (yank)))))
+      (let ((bounds (bounds-of-thing-at-point 'symbol)))
+        (when bounds
+          (cl-destructuring-bind
+              (start . end)
+              bounds
+            (delete-region start end)
+            (deactivate-mark)
+            (yank)))))))
 
 (defun es-next-match-pos (regex)
   (save-excursion
@@ -581,6 +588,12 @@ The \"originals\" won't be included."
               (funcall replace "false"))
             ( (eq (symbol-at-point) 'false)
               (funcall replace "true"))
+
+            ( (equal (word-at-point) "FIXED")
+              (funcall replace "FIXME"))
+            ( (equal (word-at-point) "FIXME")
+              (funcall replace "FIXED"))
+
             ( (eq (symbol-at-point) 't)
               (funcall replace "nil"))
             ( (equal (word-at-point) "nil")

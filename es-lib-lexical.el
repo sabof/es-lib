@@ -71,7 +71,7 @@
     (setq the-timer
           (run-with-timer
            0 1 (lambda ()
-                 (catch 'adblock
+                 (catch 'ablock
                    (unless (buffer-live-p buf)
                      (cancel-timer the-timer)
                      (throw 'ablock nil))
