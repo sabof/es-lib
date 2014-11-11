@@ -1,5 +1,5 @@
 ;;; es-lib-core-functions.el --- Random functions
-;;; Version: 0.1
+;;; Version: 0.4
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 

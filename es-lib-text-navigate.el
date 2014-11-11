@@ -1,5 +1,5 @@
 ;;; es-lib-text-navigate.el --- Functions for moving around a buffer, and getting information about the surrounding text.
-;;; Version: 0.1
+;;; Version: 0.4
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 

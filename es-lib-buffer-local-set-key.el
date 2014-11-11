@@ -1,5 +1,5 @@
 ;;; es-lib-buffer-local-set-key.el --- Define keys in one buffer, not shared by buffers of the same mode
-;;; Version: 0.1
+;;; Version: 0.4
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 

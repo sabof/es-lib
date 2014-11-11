@@ -1,5 +1,5 @@
 ;;; es-lib-total-line.el --- A family of functions to naturally move with folded code
-;;; Version: 0.1
+;;; Version: 0.4
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 

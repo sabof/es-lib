@@ -1,5 +1,5 @@
 ;;; es-lib-lexical.el --- A collection of emacs utilities: lexically bound functions.  -*- lexical-binding: t -*-
-;;; Version: 0.1
+;;; Version: 0.4
 ;;; Author: sabof
 ;;; URL: https://github.com/sabof/es-lib
 
