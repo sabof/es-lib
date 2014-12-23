@@ -522,7 +522,10 @@ The \"originals\" won't be included."
       (mapc (lambda (buf)
               (switch-to-buffer buf)
               (cl-case
-                  (read-char "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? ")
+                  (progn
+                    ;; Work-aroudnd for a bug where the paritial key-sequence isn't cleared
+                    (message "")
+                    (read-char "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? "))
                 ( ?!
                   (cl-dolist (buf (es-unsaved-buffer-list))
                     (with-current-buffer buf
