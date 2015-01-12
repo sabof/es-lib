@@ -363,18 +363,24 @@ Marks the symbol on first call, then marks the statement."
                                        arg)
           (indent-region (region-beginning)
                          (region-end)))
+
         ( (es-line-empty-p)
           (cond ( (memq major-mode
                         '(lisp-mode lisp-interaction-mode emacs-lisp-mode))
                   (insert ";; "))
                 ( (memq major-mode '(php-mode c-mode js2-mode js-mode))
                   (insert "// "))
-                ( (eq major-mode 'css-mode)
-                  (insert "/*  */")
-                  (forward-char -3))
                 ( t (insert comment-start)
                     (save-excursion
-                      (insert comment-end)))))
+                      (insert comment-end))
+                    (if (looking-back " ")
+                        (unless (looking-at " ")
+                          (save-excursion
+                            (insert " ")))
+                      (insert " ")
+                      (unless (looking-at " ")
+                        (save-excursion
+                          (insert " ")))))))
         ( t (comment-or-uncomment-region (line-beginning-position)
                                          (line-end-position)
                                          arg)
