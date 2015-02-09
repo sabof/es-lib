@@ -98,18 +98,19 @@ They should provide initialization functions that execute the redefinitions."
 (defmacro es-after (mode &rest body)
   "`eval-after-load' MODE evaluate BODY."
   (declare (indent 1))
-  `(eval-after-load ',mode
-     '(progn ,@body)))
+  `(eval-after-load
+    ',mode '(progn ,@body)))
 
 (defmacro es-opts (mode &rest body)
   (declare (indent 1))
   (cl-assert (symbolp mode))
-  (cl-assert (not (string-match-p "mode" (symbol-name mode))))
+  (cl-assert (not (string-match-p "mode" (symbol-name mode)))
+             t "Don't add \"-mode\" to the name of the mode.")
   (let (( opts-func-sym (intern (concat (symbol-name mode) "-mode-options")))
         ( hook-sym (intern (concat (symbol-name mode) "-mode-hook"))))
     `(progn
        (cl-defun ,opts-func-sym ()
-         ,@body)
+                 ,@body)
        (add-hook ',hook-sym ',opts-func-sym t))))
 
 (provide 'es-lib-core-macros)
