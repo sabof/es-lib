@@ -527,19 +527,25 @@ The \"originals\" won't be included."
     (save-window-excursion
       (mapc (lambda (buf)
               (switch-to-buffer buf)
-              (cl-case
-                  (progn
-                    ;; Work-aroudnd for a bug where the paritial key-sequence isn't cleared
-                    (message "")
-                    (read-char "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? "))
-                ( ?!
-                  (cl-dolist (buf (es-unsaved-buffer-list))
-                    (with-current-buffer buf
-                      (save-buffer)))
-                  (cl-return-from es-manage-unsaved-buffers))
-                ( ?s (save-buffer))
-                ( ?k (es-kill-buffer-dont-ask))
-                ( ?e (recursive-edit))))
+              (cl-loop with done = nil
+                       until done
+                       do (progn
+                            (setq done t)
+                            (cl-case
+                                (progn
+                                  ;; Work-aroudnd for a bug where the paritial key-sequence isn't cleared
+                                  (message "")
+                                  (read-char "cNext(n) Save(s) Save All(!) Edit(e) Kill(k)? "))
+                              ( ?!
+                                (cl-dolist (buf (es-unsaved-buffer-list))
+                                  (with-current-buffer buf
+                                    (save-buffer)))
+                                (cl-return-from es-manage-unsaved-buffers))
+                              ( ?s (save-buffer))
+                              ( ?k (es-kill-buffer-dont-ask))
+                              ( ?e (recursive-edit))
+                              ( otherwise (setq done nil)))
+                            )))
             ( or (es-unsaved-buffer-list)
                  (progn
                    (message "All buffers are saved")
@@ -554,14 +560,14 @@ The \"originals\" won't be included."
                (buffer-substring-no-properties
                 (region-beginning)
                 (region-end))
-               (symbol-name
-                (symbol-at-point))))
+             (symbol-name
+              (symbol-at-point))))
          ( replace-what
            (if (region-active-p)
                (regexp-quote original)
-               (concat "\\_<"
-                       (regexp-quote original)
-                       "\\_>")))
+             (concat "\\_<"
+                     (regexp-quote original)
+                     "\\_>")))
          ( replacement
            (read-from-minibuffer
             (format "Replace \"%s\" with: " original)
