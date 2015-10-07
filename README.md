@@ -1,5 +1,5 @@
 #es-lib
-A collecton of emacs utilities, and basis for several of my packages. Here are some highlights:
+A collection of emacs utilities, and basis for several of my packages. Here are some highlights:
 
 #### Packages:
 
